@@ -1,7 +1,9 @@
-import React from 'react';
-import { GraduationCap } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 export function Hero() {
+
+  const navigate = useNavigate();
+
   return (
     <div className="relative min-h-screen flex items-center">
       <div className="absolute inset-0 z-0">
@@ -35,10 +37,16 @@ export function Hero() {
           </p>
           
           <div className="flex gap-4">
-            <button className="bg-[#0033FF] text-white px-8 py-3 rounded-lg hover:bg-[#0033FF]/90 transition-colors font-medium">
+            <button className="bg-[#0033FF] text-white px-8 py-3 rounded-lg hover:bg-[#0033FF]/90 transition-colors font-medium"
+            onClick={() => {
+              window.location.hash = '#program'; // Navigate to #program
+            }}
+            >
               Programs
             </button>
-            <button className="border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium">
+            <button className="border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white/10 transition-colors font-medium"
+            onClick={() => navigate("/about")}
+            >
               Learn More
             </button>
           </div>

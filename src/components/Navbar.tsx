@@ -1,6 +1,7 @@
   import { useState, useEffect } from "react";
   import Modal from "react-modal";
-  import { LogIn, X, User2, Presentation, ChevronDown, ChevronUp } from "lucide-react";
+  import { LogIn, X, User2, Presentation, ChevronDown } from "lucide-react";
+  import { Link, useNavigate } from 'react-router-dom';
 
   export function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
@@ -21,6 +22,12 @@
 
     const togglePrograms = () => setIsProgramsOpen(!isProgramsOpen);
 
+    const navigate = useNavigate();
+
+    const handleReadMore = (id: string) => {
+      navigate(`/programs/${id}`);
+    };
+
     return (
       <nav
         className={`fixed w-full z-50 transition-all duration-300 ${
@@ -31,11 +38,13 @@
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <div className="flex items-center">
+            <Link to="/">
               <img
                 src={isScrolled ? "/black_logo.png" : "/white_logo.png"}
                 alt="Logo"
                 className="h-12 w-12 object-contain"
               />
+              </Link>
             </div>
 
             {/* Centered Links */}
@@ -88,12 +97,14 @@
                             {/* Program Cards */}
                             {[
                               {
+                                id : "fullstack",
                                 title: "Full Stack Coding Bootcamp",
                                 description:
                                   "Become a Full Stack software developer using React, Javascript and Node. Master the most sought-after- skills and land a job as a developer.",
                                 icon: <img src="/fs.png" alt="Full Stack Icon" />,
                               },
                               {
+                                id : "qualityassurance",
                                 title: "Quality Assurance",
                                 description:
                                   "Become a Quality Assurance Engineer mastering Selenium and Jest. Learn automated testing best practices and land a job as a QA professional.",
@@ -108,7 +119,9 @@
                                 <div className="text-3xl mb-2 p-4 rounded-full bg-blue-50">{program.icon}</div>
                                 <h4 className="font-bold text-lg mb-2">{program.title}</h4>
                                 <p className="text-sm text-gray-600 mb-4">{program.description}</p>
-                                <button className="bg-[#0033FF] text-white px-8 py-3 rounded-lg hover:bg-[#0033FF]/90 transition-colors font-medium">
+                                <button className="bg-[#0033FF] text-white px-8 py-3 rounded-lg hover:bg-[#0033FF]/90 transition-colors font-medium"
+                                onClick={() => handleReadMore(program.id)}
+                                >
                                   Read More
                                 </button>
                               </div>
@@ -121,8 +134,8 @@
                 </div>
 
                 {/* About Link */}
-                <a
-                  href="#about"
+                <Link
+                  to="/about"
                   className={`transition-colors font-medium ${
                     isScrolled
                       ? "text-[#000000] hover:text-[#0033FF]"
@@ -130,7 +143,7 @@
                   }`}
                 >
                   About
-                </a>
+                </Link>
               </div>
             </div>
 

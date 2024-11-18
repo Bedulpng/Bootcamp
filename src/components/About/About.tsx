@@ -26,7 +26,7 @@ export default function AboutSection() {
         {/* Right Content - Full Image */}
         <div className="relative bg-gradient-to-br from-blue-100 to-blue-50 p-0 lg:p-0">
             <img
-            src="/about .png"
+            src="/about.png"
             alt="Illustration"
             className="w-full h-full object-cover rounded-none"
             />

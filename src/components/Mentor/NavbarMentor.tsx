@@ -1,6 +1,7 @@
 'use client'
 
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 import { Bell, ChevronDown, LogOut, Settings } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -14,26 +15,46 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 export default function NavbarMentor() {
+  const [activeNav, setActiveNav] = useState('/dashboard') // Default active link
+
+  const navItems = [
+    { path: '/dashboard', label: 'Dashboard' },
+    { path: '/dashboard/batch', label: 'Explore Batch' },
+    { path: '/dashboard/trainee', label: 'Trainee' },
+  ]
+
   return (
     <header className="border-b">
-      <div className="container relative flex h-16 items-center px-4">
-        <Link to="/dashboard">
+      <div className="container relative flex h-16 items-center px-8 justify-between">
+        {/* Logo */}
+        <Link to="/dashboard" className="flex-shrink-0">
           <img
-            src="/white_logo_big.png"
+            src="/Logo_black_big.png"
             alt="Logo"
-            width={40}
-            height={40}
+            width={150}
+            height={50}
             className="rounded"
           />
         </Link>
-        <nav className="flex-1 flex items-center justify-center">
-          <div className="flex items-center gap-12">
-            <Link to="/dashboard">Dashboard</Link>
-            <Link to="/batch">Explore Batch</Link>
-            <Link to="/trainee">Trainee</Link>
-          </div>
+
+        {/* Navigation */}
+        <nav className="flex items-center justify-center gap-12">
+          {navItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              onClick={() => setActiveNav(item.path)}
+              className={`${
+                activeNav === item.path ? 'text-wgs-blue font-semibold' : 'text-gray-700'
+              } transition-colors hover:text-wgs-blue`}
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
-        <div className="absolute right-4 flex items-center gap-4">
+
+        {/* User Menu */}
+        <div className="flex-shrink-0 flex items-center gap-4">
           <Button variant="ghost" size="icon" className="h-10 w-10">
             <Bell className="h-6 w-6" />
           </Button>

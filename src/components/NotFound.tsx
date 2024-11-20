@@ -13,7 +13,7 @@ export default function NotFound() {
         </p>
         <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
           <Link
-            to="/dashboard"
+            to="/"
             className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-[#0033FF] hover:bg-[#0026CC] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0033FF]"
           >
             <Home className="mr-2 h-4 w-4" />

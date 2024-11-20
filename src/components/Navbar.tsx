@@ -40,7 +40,7 @@
             <div className="flex items-center">
             <Link to="/">
               <img
-                src={isScrolled ? "/black_logo.png" : "/white_logo.png"}
+                src={isScrolled ? "/Logo_black.png" : "/white_logo.png"}
                 alt="Logo"
                 className="h-12 w-12 object-contain"
               />

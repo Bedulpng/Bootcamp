@@ -7,6 +7,7 @@ import {
   CardContent
 } from "@/components/ui/card"
 import { PieChart, Pie, Cell } from "recharts"
+import { Link } from 'react-router-dom'
 
 export default function MentorDb() {
 
@@ -36,9 +37,11 @@ export default function MentorDb() {
                       <p className="text-4xl font-bold mb-2">50</p>
                       <p className="text-sm text-gray-600">Total Trainee</p>
                     </div>
+                    <Link to="/dashboard/trainee" className='w-full'>
                     <Button className="w-full bg-white text-black hover:bg-gray-100">
                       More
                     </Button>
+                    </Link>
                   </CardContent>
                 </Card>
 
@@ -48,9 +51,11 @@ export default function MentorDb() {
                       <p className="text-4xl font-bold mb-2">100</p>
                       <p className="text-sm text-gray-600">Total Challenge</p>
                     </div>
+                    <Link to="/dashboard/batch" className='w-full'>
                     <Button className="w-full bg-white text-black hover:bg-gray-100">
                       More
                     </Button>
+                    </Link>
                   </CardContent>
                 </Card>
 
@@ -60,9 +65,11 @@ export default function MentorDb() {
                       <p className="text-4xl font-bold mb-2">12</p>
                       <p className="text-sm text-gray-600">Total Batch</p>
                     </div>
+                    <Link to="/dashboard/batch" className='w-full'>
                     <Button className="w-full bg-white text-black hover:bg-gray-100">
                       More
                     </Button>
+                    </Link>
                   </CardContent>
                 </Card>
               </div>

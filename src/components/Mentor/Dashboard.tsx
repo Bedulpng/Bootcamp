@@ -1,5 +1,7 @@
 'use client'
 
+import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { PenLine, User, CheckCheck } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
@@ -8,8 +10,22 @@ import {
 } from "@/components/ui/card"
 import { PieChart, Pie, Cell } from "recharts"
 import { Link } from 'react-router-dom'
+import ProfileEditor from './Modal/ProfileEdit'
 
 export default function MentorDb() {
+  const [isModalOpen, setModalOpen] = useState(false)
+
+  const handleEditProfile = () => {
+    setModalOpen(true)
+  }
+
+  const navigate = useNavigate() // Use navigate hook from react-router-dom
+
+  const handleSeeMore = () => {
+    // Navigate to /dashboard/batch with the My batch filter
+    navigate('/dashboard/batch?filter=my-batch')
+  }
+
 
   const data = [
     { name: 'Present', value: 75 },
@@ -104,7 +120,11 @@ export default function MentorDb() {
                             </div>
                           </div>
                         </div>
-                        <Button variant="secondary" className="bg-white hover:bg-gray-50 w-36">
+                        <Button 
+                        variant="secondary" 
+                        className="bg-white hover:bg-gray-50 w-36"
+                        onClick={handleSeeMore}
+                        >
                           See More
                         </Button>
                       </div>
@@ -168,13 +188,18 @@ export default function MentorDb() {
                     <h3 className="font-semibold text-xl mb-1">MENTOR NAME</h3>
                     <p className="text-sm text-muted-foreground uppercase tracking-wide">THIS MENTOR ROLE</p>
                   </div>
-                  <Button variant="ghost" className="text-gray-500 hover:text-gray-700 hover:bg-transparent p-0 h-auto">
+                  <Button 
+                  variant="ghost" 
+                  className="text-gray-500 hover:text-gray-700 hover:bg-transparent p-0 h-auto"
+                  onClick={handleEditProfile}
+                  >
                     <span className="flex items-center gap-2 text-sm">
                       Edit Profile <PenLine className="w-3 h-3" />
                     </span>
                   </Button>
                 </CardContent>
               </Card>
+              <ProfileEditor open={isModalOpen} onOpenChange={setModalOpen} />
 
               {/* Completion Percentage Card */}
               <Card className="bg-[#0040FF] rounded-3xl shadow-md">

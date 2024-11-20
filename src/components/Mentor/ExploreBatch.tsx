@@ -2,34 +2,33 @@
 
 import * as React from 'react'
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
-
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { useNavigate, useLocation } from 'react-router-dom' // Use React Router hooks
 
-export default function Batch() {
+export default function ExploreBatch() {
+  const navigate = useNavigate()
+  const location = useLocation()
   const [currentSlide, setCurrentSlide] = React.useState(0)
   const [isAnimating, setIsAnimating] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState('')
-  const [activeFilter, setActiveFilter] = React.useState('all-batch')
+  const [activeFilter, setActiveFilter] = React.useState<'all-batch' | 'my-batch'>('all-batch')
+
+  // Check the current filter from URL
+  React.useEffect(() => {
+    const searchParams = new URLSearchParams(location.search)
+    const filter = searchParams.get('filter')
+    if (filter && (filter === 'my-batch' || filter === 'all-batch')) {
+      setActiveFilter(filter)
+    }
+  }, [location.search])
 
   const carouselItems = [
-    {
-      id: 1,
-      image: '/placeholder.png?height=200&width=600',
-      title: 'Developer Bootcamp',
-    },
-    {
-      id: 2,
-      image: '/placeholder.png?height=200&width=600',
-      title: 'Learn to Code',
-    },
-    {
-      id: 3,
-      image: '/placeholder.png?height=200&width=600',
-      title: 'Master Development',
-    },
+    { id: 1, image: '/placeholder.png?height=200&width=600', title: 'Developer Bootcamp' },
+    { id: 2, image: '/placeholder.png?height=200&width=600', title: 'Learn to Code' },
+    { id: 3, image: '/placeholder.png?height=200&width=600', title: 'Master Development' },
   ]
 
   const totalSlides = carouselItems.length
@@ -68,6 +67,11 @@ export default function Batch() {
 
     return () => clearInterval(timer)
   }, [])
+
+  const handleFilterChange = (filter: 'all-batch' | 'my-batch') => {
+    setActiveFilter(filter)
+    navigate(`/dashboard/batch?filter=${filter}`) // Update URL with the new filter
+  }
 
   return (
     <div className="container mx-auto px-4 py-10 mb-24">
@@ -161,7 +165,7 @@ export default function Batch() {
                   ? 'bg-blue-500 text-white'
                   : 'text-gray-600 hover:bg-gray-100'
               )}
-              onClick={() => setActiveFilter('all-batch')}
+              onClick={() => handleFilterChange('all-batch')}
             >
               All Batch
             </button>
@@ -172,7 +176,7 @@ export default function Batch() {
                   ? 'bg-blue-500 text-white'
                   : 'text-gray-600 hover:bg-gray-100'
               )}
-              onClick={() => setActiveFilter('my-batch')}
+              onClick={() => handleFilterChange('my-batch')}
             >
               My Batch
             </button>

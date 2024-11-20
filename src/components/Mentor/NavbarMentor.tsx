@@ -1,7 +1,7 @@
 'use client'
 
-import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { Bell, ChevronDown, LogOut, Settings } from 'lucide-react'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -15,7 +15,13 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 export default function NavbarMentor() {
-  const [activeNav, setActiveNav] = useState('/dashboard') // Default active link
+  const location = useLocation() // Hook to get the current route
+  const [activeNav, setActiveNav] = useState(location.pathname) // Initialize with the current route
+
+  // Sync activeNav with route changes
+  useEffect(() => {
+    setActiveNav(location.pathname)
+  }, [location.pathname])
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard' },
@@ -73,10 +79,10 @@ export default function NavbarMentor() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
                 Settings
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <LogOut className="mr-2 h-4 w-4" />

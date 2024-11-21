@@ -17,6 +17,7 @@ import FooterMentor from './components/Mentor/FooterMentor';
 import NotFound from './components/NotFound';
 import Batch from './components/Mentor/ExploreBatch';
 import Trainee from './components/Mentor/Trainee';
+import Note from './components/Mentor/Note/NoteRoute';
 
 // Layout component to handle conditional rendering of Navbar and Footer
 function Layout({ children }: { children: React.ReactNode }) {
@@ -113,6 +114,14 @@ function App() {
           element={
             <Layout>
               <Trainee />
+            </Layout>
+          }
+        />
+        <Route
+          path="/dashboard/note"
+          element={
+            <Layout>
+              <Note />
             </Layout>
           }
         />

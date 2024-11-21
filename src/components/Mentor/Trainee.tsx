@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Search, Download, Users, Calendar, Eye } from 'lucide-react'
+import { Search, Download, Users, Calendar, Eye, NotepadText } from 'lucide-react'
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
 import { NoteManagementButton } from "./NoteButton"
@@ -81,6 +82,7 @@ const classes = [
 ]
 
 export default function Trainee() {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState('trainee')
   const [trainees, setTrainees] = useState(initialTrainees)
@@ -221,11 +223,21 @@ export default function Trainee() {
       <div className="max-w-6xl w-full bg-white rounded-2xl shadow-lg overflow-hidden">
         {/* Header */}
         <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-800">
-              {activeTab === 'trainee' ? 'Trainee Management' : activeTab === 'class' ? 'Class Management' : 'Final Presentation'}
-            </h1>
-            
+      <div className="flex items-center">
+        <h1 className="text-3xl font-bold text-gray-800">
+          {activeTab === 'trainee' ? 'Trainee Management' : activeTab === 'class' ? 'Class Management' : 'Final Presentation'}
+        </h1>
+        <div className="ml-auto flex space-x-2">
+          <div>
+            <Button 
+              variant="outline" 
+              className="bg-gray-400 text-white border-none hover:bg-gray-500 transition-colors duration-300"
+              onClick={() => navigate('/dashboard/note')}
+            >
+              <NotepadText className="mr-2 h-4 w-4"/> Note Management
+            </Button>
+          </div>
+          <div>
             <Button 
               onClick={handleDownload} 
               variant="outline" 
@@ -235,6 +247,8 @@ export default function Trainee() {
             </Button>
           </div>
         </div>
+      </div>
+    </div>
   
         {/* Tabs and Search */}
         <div className="p-6 border-b border-gray-200">

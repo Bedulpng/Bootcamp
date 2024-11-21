@@ -4,16 +4,75 @@ import { useState } from 'react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Search, Download, Pencil, Eye, Users, Calendar } from 'lucide-react'
+import { Search, Download, Users, Calendar, Eye } from 'lucide-react'
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'
+import { NoteManagementButton } from "./NoteButton"
+import { FpNoteManagementButton } from './FpNoteManagement'
+
+interface Note {
+  id: string;
+  message: string;
+  sender: {
+    name: string;
+    role: string;
+  };
+  file?: {
+    url: string;
+    type: 'image' | 'file';
+    name: string;
+  };
+}
+
+
+interface Trainee {
+  id: string;
+  name: string;
+  class: string;
+  batch: string;
+  github: string;
+  note: Note | null;
+  fpNote: Note | null;
+}
 
 // Mock data
-const trainees = [
-  { id: 1, name: "John Doe", class: "Quality Assurance", batch: "12", github: "github.com/johndoe", note: null },
-  { id: 2, name: "Jane Smith", class: "Fullstack Developer", batch: "13", github: "github.com/janesmith", note: "Excellent progress" },
-  { id: 3, name: "Bob Johnson", class: "Data Science", batch: "11", github: "github.com/bobjohnson", note: "Needs improvement in Python" },
-]
+const initialTrainees: Trainee[] = [
+  { 
+    id: "1", 
+    name: "John Doe", 
+    class: "Quality Assurance", 
+    batch: "12", 
+    github: "github.com/johndoe", 
+    note: null, 
+    fpNote: null // Added fpNote
+  },
+  { 
+    id: "2", 
+    name: "Jane Smith", 
+    class: "Fullstack Developer", 
+    batch: "13", 
+    github: "github.com/janesmith", 
+    note: { 
+      id: "note1", 
+      message: "Excellent progress", 
+      sender: { name: "Instructor", role: "Teacher" } 
+    }, 
+    fpNote: null // Added fpNote
+  },
+  { 
+    id: "3", 
+    name: "Bob Johnson", 
+    class: "Data Science", 
+    batch: "11", 
+    github: "github.com/bobjohnson", 
+    note: { 
+      id: "note2", 
+      message: "Needs improvement in Python", 
+      sender: { name: "Mentor", role: "Advisor" } 
+    }, 
+    fpNote: null // Added fpNote
+  },
+];
 
 const classes = [
   { id: 1, name: "Quality Assurance", trainees: 15, startDate: "2023-01-01" },
@@ -24,6 +83,7 @@ const classes = [
 export default function Trainee() {
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState('trainee')
+  const [trainees, setTrainees] = useState(initialTrainees)
 
   const filteredTrainees = trainees.filter(trainee => 
     trainee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -34,26 +94,93 @@ export default function Trainee() {
     cls.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  const filteredFinalPresentation = trainees.filter(trainee =>
+    trainee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    trainee.class.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  const handleAddNote = (traineeId: string, note: { message: string; file?: File }) => {
+    setTrainees(trainees.map(trainee => 
+      trainee.id === traineeId 
+        ? { 
+            ...trainee, 
+            note: { 
+              id: `note${Date.now()}`, 
+              message: note.message, 
+              sender: { name: 'Current User', role: 'Instructor' },
+              file: note.file 
+                ? { 
+                    url: URL.createObjectURL(note.file), 
+                    type: note.file.type.startsWith('image/') ? 'image' : 'file',
+                    name: note.file.name 
+                  } 
+                : undefined
+            } 
+          }
+        : trainee
+    ))
+  }
+
+  const handleDeleteNote = (traineeId: string, noteId: string) => {
+    setTrainees(trainees.map(trainee => 
+      trainee.id === traineeId ? { ...trainee, note: null } : trainee
+    ))
+  }
+
+  const handleAddFpNote = (traineeId: string, note: { message: string; file?: File }) => {
+    setTrainees(trainees.map(trainee => 
+      trainee.id === traineeId 
+        ? { 
+            ...trainee, 
+            fpNote: { 
+              id: `fpnote${Date.now()}`, 
+              message: note.message, 
+              sender: { name: 'Tester', role: 'Examiner' },
+              file: note.file 
+                ? { 
+                    url: URL.createObjectURL(note.file), 
+                    type: note.file.type.startsWith('image/') ? 'image' : 'file',
+                    name: note.file.name 
+                  } 
+                : undefined
+            } 
+          }
+        : trainee
+    ))
+  }
+
+  const handleDeleteFpNote = (traineeId: string, noteId: string) => {
+    setTrainees(trainees.map(trainee => 
+      trainee.id === traineeId ? { ...trainee, fpNote: null } : trainee
+    ))
+  }
+
   const handleDownload = async () => {
     const workbook = new ExcelJS.Workbook()
-    const worksheet = workbook.addWorksheet(activeTab === 'trainee' ? 'Trainees' : 'Classes')
+    const worksheet = workbook.addWorksheet(activeTab === 'trainee' ? 'Trainees' : activeTab === 'class' ? 'Classes' : 'Final Presentation')
 
     // Add header row
     if (activeTab === 'trainee') {
       worksheet.addRow(['Trainee Name', 'Class', 'Batch', 'GitHub', 'Note'])
-    } else {
+    } else if (activeTab === 'class') {
       worksheet.addRow(['Class Name', 'Number of Trainees', 'Start Date'])
+    } else {
+      worksheet.addRow(['Trainee Name', 'Batch', 'Class', 'Note'])
     }
     worksheet.getRow(1).font = { bold: true }
 
     // Add data rows
     if (activeTab === 'trainee') {
       filteredTrainees.forEach(trainee => {
-        worksheet.addRow([trainee.name, trainee.class, trainee.batch, trainee.github, trainee.note || ''])
+        worksheet.addRow([trainee.name, trainee.class, trainee.batch, trainee.github, trainee.note?.message || ''])
       })
-    } else {
+    } else if (activeTab === 'class') {
       filteredClasses.forEach(cls => {
         worksheet.addRow([cls.name, cls.trainees, cls.startDate])
+      })
+    } else {
+      filteredFinalPresentation.forEach(trainee => {
+        worksheet.addRow([trainee.name, trainee.batch, trainee.class, trainee.note?.message || ''])
       })
     }
 
@@ -85,7 +212,8 @@ export default function Trainee() {
 
     // Generate Excel file and trigger download
     const buffer = await workbook.xlsx.writeBuffer()
-    saveAs(new Blob([buffer]), `${activeTab === 'trainee' ? 'Trainees' : 'Classes'}Recap.xlsx`)
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+    saveAs(blob, `${activeTab === 'trainee' ? 'Trainees' : activeTab === 'class' ? 'Classes' : 'FinalPresentation'}Recap.xlsx`)
   }
 
   return (
@@ -95,7 +223,7 @@ export default function Trainee() {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-bold text-gray-800">
-              {activeTab === 'trainee' ? 'Trainee Management' : 'Class Management'}
+              {activeTab === 'trainee' ? 'Trainee Management' : activeTab === 'class' ? 'Class Management' : 'Final Presentation'}
             </h1>
             
             <Button 
@@ -134,12 +262,23 @@ export default function Trainee() {
               >
                 <Calendar className="mr-2 h-4 w-4" /> Classes
               </Button>
+              <Button
+                onClick={() => setActiveTab('finalPresentation')}
+                variant={activeTab === 'finalPresentation' ? 'default' : 'outline'}
+                className={`rounded-full transition-all duration-300 ${
+                  activeTab === 'finalPresentation' 
+                    ? 'bg-blue-500 text-white' 
+                    : 'text-blue-500 hover:text-blue-700'
+                }`}
+              >
+                <Eye className="mr-2 h-4 w-4" /> Final Presentation
+              </Button>
             </div>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 type="text"
-                placeholder={activeTab === 'trainee' ? "Search trainees..." : "Search classes..."}
+                placeholder={activeTab === 'trainee' ? "Search trainees..." : activeTab === 'class' ? "Search classes..." : "Search final presentations..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 w-64 rounded-full border-gray-300 focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition-all duration-300"
@@ -161,50 +300,71 @@ export default function Trainee() {
                     <TableHead className="text-gray-600 font-semibold">Github</TableHead>
                     <TableHead className="text-gray-600 font-semibold">Note</TableHead>
                   </>
-                ) : (
+                ) : activeTab === 'class' ? (
                   <>
                     <TableHead className="text-gray-600 font-semibold">Class Name</TableHead>
                     <TableHead className="text-gray-600 font-semibold">Number of Trainees</TableHead>
                     <TableHead className="text-gray-600 font-semibold">Start Date</TableHead>
                   </>
+                ) : (
+                  <>
+                    <TableHead className="text-gray-600 font-semibold">Trainee Name</TableHead>
+                    <TableHead className="text-gray-600 font-semibold">Batch</TableHead>
+                    <TableHead className="text-gray-600 font-semibold">Class</TableHead>
+                    <TableHead className="text-gray-600 font-semibold">Note</TableHead>
+                  </>
                 )}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {activeTab === 'trainee' ? (
+              {activeTab === 'trainee' && (
                 filteredTrainees.map((trainee) => (
                   <TableRow key={trainee.id} className="hover:bg-gray-50 transition-colors duration-200">
                     <TableCell className="font-medium">{trainee.name}</TableCell>
                     <TableCell>{trainee.class}</TableCell>
                     <TableCell>{trainee.batch}</TableCell>
                     <TableCell>
-                      <a href={`https://${trainee.github}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700 transition-colors duration-200">
+                      <a 
+                        href={`https://${trainee.github}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-blue-600 hover:text-blue-800 hover:underline transition-all duration-300"
+                      >
                         {trainee.github}
                       </a>
                     </TableCell>
                     <TableCell>
-                      <div className={`inline-block rounded-md ${trainee.note === null ? 'bg-gray-100' : 'bg-cyan-100'}`}>
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          className={`text-sm font-medium ${trainee.note === null ? 'text-gray-600 hover:text-gray-900 hover:bg-gray-200' : 'text-cyan-600 hover:text-cyan-800 hover:bg-cyan-200'}`}
-                        >
-                          {trainee.note === null ? (
-                            <>Add Note<Pencil className="ml-2 h-4 w-4" /></>
-                          ) : (
-                            <>View Notes <Eye className="ml-2 h-4 w-4" /></>
-                          )}
-                        </Button>
-                      </div>
+                      <NoteManagementButton
+                        trainee={trainee}
+                        onAddNote={handleAddNote}
+                        onDeleteNote={handleDeleteNote}
+                      />
                     </TableCell>
                   </TableRow>
                 ))
-              ) : (
+              )}
+              {activeTab === 'class' && (
                 filteredClasses.map((cls) => (
                   <TableRow key={cls.id} className="hover:bg-gray-50 transition-colors duration-200">
                     <TableCell className="font-medium">{cls.name}</TableCell>
                     <TableCell>{cls.trainees}</TableCell>
                     <TableCell>{cls.startDate}</TableCell>
+                  </TableRow>
+                ))
+              )}
+              {activeTab === 'finalPresentation' && (
+                filteredFinalPresentation.map((trainee) => (
+                  <TableRow key={trainee.id} className="hover:bg-gray-50 transition-colors duration-200">
+                    <TableCell className="font-medium">{trainee.name}</TableCell>
+                    <TableCell>{trainee.batch}</TableCell>
+                    <TableCell>{trainee.class}</TableCell>
+                    <TableCell>
+                      <FpNoteManagementButton
+                        trainee={trainee}
+                        onAddNote={handleAddFpNote}
+                        onDeleteNote={handleDeleteFpNote}
+                      />
+                    </TableCell>
                   </TableRow>
                 ))
               )}

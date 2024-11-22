@@ -19,8 +19,7 @@ export function NoteModal({ isOpen, onClose, onSave, initialNote }: NoteModalPro
     e.preventDefault();
     onSave({
       content,
-      visibility,
-      mentorId: 'current-mentor-id', // In a real app, this would come from auth context
+      visibility, // In a real app, this would come from auth context
       mentorName: 'Johnathan Doe', // In a real app, this would come from auth context
     });
     onClose();

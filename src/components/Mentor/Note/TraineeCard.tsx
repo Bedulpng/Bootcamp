@@ -1,109 +1,93 @@
-import { ChevronRight, Plus, Pencil, Trash2, GraduationCap, Users } from 'lucide-react';
-import type { Trainee, Note } from './types';
+import { useState } from 'react';
+import { Trainee } from './types';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { NoteList } from './NoteList';
+import { NoteModal } from './NoteModal';
 
-interface TraineeCardProps {
-  trainee: Trainee;
-  onAddNote: (traineeId: string) => void;
-  onSendNote: (traineeId: string, note: Note) => void;
-  onManageNotes: (traineeId: string) => void;
-  onEditNote: (traineeId: string, note: Note) => void;
-  onDeleteNote: (traineeId: string, noteId: string) => void;
+interface TraineeListProps {
+  trainees: Trainee[];
 }
 
-export function TraineeCard({ 
-  trainee, 
-  onAddNote,  
-  onManageNotes,
-  onEditNote,
-  onDeleteNote 
-}: TraineeCardProps) {
-  const hasNotes = trainee.notes.length > 0;
+export function TraineeList({ trainees }: TraineeListProps) {
+  const [expandedTrainee, setExpandedTrainee] = useState<string | null>(null);
+  const [isNoteModalOpen, setNoteModalOpen] = useState(false);
+  const [selectedTrainee, setSelectedTrainee] = useState<Trainee | null>(null);
+
+  const handleAddNoteClick = (trainee: Trainee) => {
+    setSelectedTrainee(trainee);
+    setNoteModalOpen(true);
+  };
+
+  const handleNoteModalClose = () => {
+    setNoteModalOpen(false);
+    setSelectedTrainee(null);
+  };
+
+  const handleSaveNote = (note: Omit<Trainee['notes'][0], 'id' | 'createdAt'>) => {
+    if (!selectedTrainee) return;
+
+    console.log('Note saved for trainee:', selectedTrainee.name, note);
+
+    // Add the new note to the trainee's note list (for local state update).
+    // In a real application, you'd also send this to the backend.
+    selectedTrainee.notes = [
+      ...selectedTrainee.notes,
+      { id: String(Date.now()), createdAt: new Date().toISOString(), ...note },
+    ];
+
+    setNoteModalOpen(false);
+  };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-      <div className="flex items-start space-x-6 mb-6">
-        <div className="flex-shrink-0">
-          <img
-            src={trainee.avatar}
-            alt={`${trainee.name}'s profile`}
-            className="w-20 h-20 rounded-full object-cover border-2 border-blue-100"
-          />
-        </div>
-        <div className="flex-grow">
-          <div className="flex justify-between items-start">
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900">{trainee.name}</h3>
-              <p className="text-sm text-gray-600">{trainee.email}</p>
-              <div className="mt-2 flex items-center space-x-4">
-                <div className="flex items-center text-sm text-gray-700">
-                  <GraduationCap className="w-4 h-4 mr-1 text-blue-600" />
-                  <span>{trainee.cohort}</span>
-                </div>
-                <div className="flex items-center text-sm text-gray-700">
-                  <Users className="w-4 h-4 mr-1 text-blue-600" />
-                  <span>{trainee.batch}</span>
-                </div>
+    <div className="space-y-4">
+      {trainees.map((trainee) => (
+        <div
+          key={trainee.id}
+          className="bg-white rounded-lg shadow-sm border border-gray-100"
+        >
+          <div
+            className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+            onClick={() =>
+              setExpandedTrainee(
+                expandedTrainee === trainee.id ? null : trainee.id
+              )
+            }
+          >
+            <div className="flex items-center space-x-4">
+              <img
+                src={trainee.avatar}
+                alt={trainee.name}
+                className="w-12 h-12 rounded-full object-cover"
+              />
+              <div className="flex-1">
+                <h3 className="font-medium text-gray-900">{trainee.name}</h3>
+                <p className="text-sm text-gray-500">{trainee.email}</p>
               </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => onAddNote(trainee.id)}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Note
-              </button>
-              <button
-                onClick={() => onManageNotes(trainee.id)}
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
+              {expandedTrainee === trainee.id ? (
+                <ChevronUp className="w-5 h-5 text-gray-400" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-gray-400" />
+              )}
             </div>
           </div>
-        </div>
-      </div>
 
-      {hasNotes && (
-        <div className="space-y-4 mt-6">
-          {trainee.notes.map(note => (
-            <div key={note.id} className="p-4 bg-gray-50 rounded-md">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Note</span>
-                <span className="text-xs text-gray-500">
-                  {new Date(note.createdAt).toLocaleDateString()}
-                </span>
-              </div>
-              <p className="text-sm text-gray-600">{note.content}</p>
-              <div className="mt-2 flex items-center justify-between">
-                <span className="text-xs text-gray-500">By {note.mentorName}</span>
-                <div className="flex items-center space-x-2">
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    note.visibility === 'trainee' 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {note.visibility === 'trainee' ? 'Visible to trainee' : 'Admin only'}
-                  </span>
-                  <button
-                    onClick={() => onEditNote(trainee.id, note)}
-                    className="p-1 text-gray-600 hover:text-blue-600 transition-colors"
-                    title="Edit note"
-                  >
-                    <Pencil className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => onDeleteNote(trainee.id, note.id)}
-                    className="p-1 text-gray-600 hover:text-red-600 transition-colors"
-                    title="Delete note"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
+          {expandedTrainee === trainee.id && (
+            <div className="px-4 pb-4 border-t border-gray-100 mt-2 pt-4">
+              <NoteList
+                notes={trainee.notes}
+                onAddNote={() => handleAddNoteClick(trainee)}
+              />
             </div>
-          ))}
+          )}
         </div>
+      ))}
+
+      {isNoteModalOpen && selectedTrainee && (
+        <NoteModal
+          isOpen={isNoteModalOpen}
+          onClose={handleNoteModalClose}
+          onSave={handleSaveNote}
+        />
       )}
     </div>
   );

@@ -9,6 +9,7 @@ import FormPage from './pages/firstpage/form';
 import Dashboard from './pages/secondpge/Dashboard';
 import SubjectDetail from './pages/secondpge/subjectdetail';
 import NotificationPage from './pages/secondpge/top/Notification';
+import Profile from './pages/secondpge/top/profile';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -23,6 +24,7 @@ root.render(
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/subjectdetail/:id" element={<SubjectDetail />} />
         <Route path="/Notification" element={<NotificationPage />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

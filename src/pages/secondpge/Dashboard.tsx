@@ -50,8 +50,9 @@ const Dashboard: React.FC = () => {
             : items.slice().sort((a, b) => a.id - b.id);
     };
 
-    return (
-        <div className="bg-white overflow-hidden min-h-screen md:px-44 lg:px-10 xl:px-56">
+    return (        
+    <div className="bg-white overflow-hidden min-h-screen md:px-44 lg:px-10 xl:px-56">
+
             <Navbar />
             <div className="flex justify-center items-center h-[40vh] w-[80vw] bg-black rounded-lg shadow-lg mt-8">
                 <h2 className="text-[96px] font-extrabold text-white">Class Name</h2>

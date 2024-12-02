@@ -19,6 +19,8 @@ import Batch from './components/Mentor/ExploreBatch';
 import Trainee from './components/Mentor/Trainee';
 import { NoteRoute } from './components/Mentor/Note/NoteRoute';
 import { TraineePage } from './components/Mentor/Note/TraineePage';
+import { MentorLogin } from './components/Login/MentorLogin';
+import { TraineeLogin } from './components/Login/TraineeLogin';
 
 // Layout component to handle conditional rendering of Navbar and Footer
 function Layout({ children }: { children: React.ReactNode }) {
@@ -132,6 +134,22 @@ function App() {
             <Layout>
               <TraineePage />
             </Layout>
+          }
+        />
+        <Route
+          path="/login/mentor"
+          element={
+            
+              <MentorLogin />
+            
+          }
+        />
+        <Route
+          path="/login/trainee"
+          element={
+
+              <TraineeLogin />
+            
           }
         />
         {/* Route without Layout */}

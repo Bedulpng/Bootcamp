@@ -10,7 +10,7 @@ const NotificationPage: React.FC = () => {
   ]);
   const [filter, setFilter] = useState<string>("all");
   const [showModal, setShowModal] = useState(false);
-  const [selectedNotification, setSelectedNotification] = useState<null | { id: number; title: string; detail: string; read: boolean }>(null);
+  const [selectedNotification, setSelectedNotification] = useState<null | { id: number; message: string; d}>(null);
 
   const markAllAsRead = () => {
     setNotifications(notifications.map((notif) => ({ ...notif, read: true })));
@@ -40,8 +40,6 @@ const NotificationPage: React.FC = () => {
   const openNotification = (notification: { id: number; title: string; detail: string; read: boolean }) => {
     setSelectedNotification(notification);
     setShowModal(true);
-
-    // Tandai notifikasi sebagai terbaca
     setNotifications((prev) =>
       prev.map((notif) => (notif.id === notification.id ? { ...notif, read: true } : notif))
     );
@@ -55,10 +53,8 @@ const NotificationPage: React.FC = () => {
   return (
     <div className="bg-white min-h-screen overflow-hidden md:px-44 lg:px-10 xl:px-56">
       <Navbar />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
-          {/* Filter Section */}
           <div className="w-64 bg-gray-50 p-6 rounded-lg h-fit">
             <h2 className="text-lg font-medium mb-4 text-black">Filter</h2>
             <div className="space-y-4">

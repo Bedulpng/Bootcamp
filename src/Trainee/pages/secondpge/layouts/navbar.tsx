@@ -14,7 +14,7 @@ const Navbar: React.FC = () => {
   const Notification = () => {
     navigate("/notification");
   };
-
+  
   const handleProfileClick = () => {
     navigate("/profile");
   };

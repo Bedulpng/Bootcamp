@@ -12,15 +12,49 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {jwtDecode} from 'jwt-decode'; // You need to install this package: npm install jwt-decode
 
 export default function NavbarMentor() {
   const location = useLocation();
-  const navigate = useNavigate(); // Initialize useNavigate for navigation
+  const navigate = useNavigate();
   const [activeNav, setActiveNav] = useState(location.pathname);
+  const [mentorName, setMentorName] = useState('');
+  const [mentorRole, setMentorRole] = useState('');
 
   useEffect(() => {
     setActiveNav(location.pathname);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const fetchMentorDetails = async () => {
+      const refreshToken = localStorage.getItem('refreshToken'); // Get the access token from localStorage
+      if (!refreshToken) {
+        alert('Access token not found. Please log in.');
+        navigate('/login');
+        return;
+      }
+
+      try {
+        const decodedToken: any = jwtDecode(refreshToken); // Decode the token to extract user ID
+        const userId = decodedToken.id; // Assuming the user ID is stored in 'userId'
+
+        // Fetch the mentor details using the userId
+        const response = await fetch(`http://10.10.103.20:4000/admin/mentor/${userId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setMentorName(data.fullName);
+          setMentorRole(data.role);
+        } else {
+          console.error('Failed to fetch mentor details');
+        }
+      } catch (error) {
+        console.error('Error fetching mentor details:', error);
+        alert('An error occurred while fetching mentor details.');
+      }
+    };
+
+    fetchMentorDetails();
+  }, [navigate]);
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard' },
@@ -103,8 +137,8 @@ export default function NavbarMentor() {
                   <AvatarFallback>M</AvatarFallback>
                 </Avatar>
                 <div className="text-sm text-left">
-                  <div>MENTOR NAME</div>
-                  <div className="text-xs text-muted-foreground">THIS MENTOR ROLE</div>
+                  <div>{mentorName || 'Loading...'}</div>
+                  <div className="text-xs text-muted-foreground">{mentorRole || 'Loading...'}</div>
                 </div>
                 <ChevronDown className="h-4 w-4 ml-2" />
               </Button>

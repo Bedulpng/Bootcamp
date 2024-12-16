@@ -1,33 +1,64 @@
-'use client'
+'use client';
 
-import { Link, useLocation } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { Bell, ChevronDown, LogOut, Settings } from 'lucide-react'
-
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Bell, ChevronDown, LogOut } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@/components/ui/dropdown-menu';
 
 export default function NavbarMentor() {
-  const location = useLocation() // Hook to get the current route
-  const [activeNav, setActiveNav] = useState(location.pathname) // Initialize with the current route
+  const location = useLocation();
+  const navigate = useNavigate(); // Initialize useNavigate for navigation
+  const [activeNav, setActiveNav] = useState(location.pathname);
 
-  // Sync activeNav with route changes
   useEffect(() => {
-    setActiveNav(location.pathname)
-  }, [location.pathname])
+    setActiveNav(location.pathname);
+  }, [location.pathname]);
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard' },
     { path: '/dashboard/batch', label: 'Explore Batch' },
     { path: '/dashboard/trainee', label: 'Trainee' },
-  ]
+  ];
+
+  const handleLogout = async () => {
+    const refreshToken = localStorage.getItem('refreshToken'); // Assume refresh token is stored in localStorage
+
+    if (!refreshToken) {
+      alert('No refresh token found. Please log in again.');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://10.10.103.20:4000/trainee/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (response.ok) {
+        alert('Logout successful');
+        localStorage.removeItem('refreshToken'); // Remove the token from localStorage
+        navigate('/'); // Redirect to the login page
+      } else {
+        const errorData = await response.json();
+        alert(`Logout failed: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+      alert('An error occurred while logging out.');
+    }
+  };
 
   return (
     <header className="border-b">
@@ -79,12 +110,8 @@ export default function NavbarMentor() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              {/* <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
-              </DropdownMenuItem> */}
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Log out
               </DropdownMenuItem>
@@ -93,5 +120,5 @@ export default function NavbarMentor() {
         </div>
       </div>
     </header>
-  )
+  );
 }

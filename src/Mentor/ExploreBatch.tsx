@@ -2,9 +2,9 @@
 
 import * as React from 'react'
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+import { Button } from '@/Landing/components/ui/button'
+import { Card, CardContent } from '@/Landing/components/ui/card'
+import { Input } from '@/Landing/components/ui/input'
 import { cn } from '@/lib/utils'
 import { useNavigate, useLocation } from 'react-router-dom' // Use React Router hooks
 

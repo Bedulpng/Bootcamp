@@ -4,15 +4,15 @@ import { Link, useLocation } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { Bell, ChevronDown, LogOut, Settings } from 'lucide-react'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/Landing/components/ui/avatar'
+import { Button } from '@/Landing/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@/Landing/components/ui/dropdown-menu'
 
 export default function NavbarMentor() {
   const location = useLocation() // Hook to get the current route

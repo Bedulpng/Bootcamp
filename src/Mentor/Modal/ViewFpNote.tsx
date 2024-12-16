@@ -1,11 +1,11 @@
 "use client"
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/Landing/components/ui/dialog"
+import { Button } from "@/Landing/components/ui/button"
+import { Card, CardContent, CardFooter } from "@/Landing/components/ui/card"
 import { Trash2 } from 'lucide-react'
 
-interface ViewNoteProps {
+interface ViewFpNoteProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   note: {
@@ -24,12 +24,12 @@ interface ViewNoteProps {
   onDelete: () => void;
 }
 
-export function ViewNote({ isOpen, setIsOpen, note, onDelete }: ViewNoteProps) {
+export function ViewFpNote({ isOpen, setIsOpen, note, onDelete }: ViewFpNoteProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>You just sent a note!</DialogTitle>
+          <DialogTitle>Final Presentation Note</DialogTitle>
         </DialogHeader>
         <Card>
           <CardContent className="space-y-4 pt-4">
@@ -81,3 +81,4 @@ export function ViewNote({ isOpen, setIsOpen, note, onDelete }: ViewNoteProps) {
     </Dialog>
   )
 }
+

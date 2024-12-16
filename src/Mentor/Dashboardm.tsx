@@ -3,11 +3,11 @@
 import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { PenLine, User, CheckCheck } from 'lucide-react'
-import { Button } from "@/components/ui/button"
+import { Button } from "@/Landing/components/ui/button"
 import {
   Card,
   CardContent
-} from "@/components/ui/card"
+} from "@/Landing/components/ui/card"
 import { PieChart, Pie, Cell } from "recharts"
 import { Link } from 'react-router-dom'
 import ProfileEditor from './Modal/ProfileEdit'

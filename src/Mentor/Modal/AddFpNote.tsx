@@ -3,23 +3,23 @@
 import { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { X, Upload } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/Landing/components/ui/button"
+import { Textarea } from "@/Landing/components/ui/textarea"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/Landing/components/ui/dialog"
 
-interface AddNoteProps {
+interface AddFpNoteProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   onSubmit: (note: { message: string; file?: File }) => void;
 }
 
-export function AddNote({ isOpen, setIsOpen, onSubmit }: AddNoteProps) {
+export function AddFpNote({ isOpen, setIsOpen, onSubmit }: AddFpNoteProps) {
   const [file, setFile] = useState<File | null>(null)
   const [note, setNote] = useState('')
 
@@ -51,9 +51,9 @@ export function AddNote({ isOpen, setIsOpen, onSubmit }: AddNoteProps) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Note</DialogTitle>
+          <DialogTitle>Add Final Presentation Note</DialogTitle>
           <DialogDescription>
-            Upload a file, add a note, and manage your grading here.
+            Upload a file, add a note for the final presentation.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -86,10 +86,10 @@ export function AddNote({ isOpen, setIsOpen, onSubmit }: AddNoteProps) {
             )}
           </div>
           <div className="space-y-2">
-            <label htmlFor="note" className="block text-sm font-medium text-gray-700 mb-1">Note</label>
+            <label htmlFor="note" className="block text-sm font-medium text-gray-700 mb-1">Final Presentation Note</label>
             <Textarea
               id="note"
-              placeholder="Add a note (max 300 characters)"
+              placeholder="Add a note for the final presentation (max 300 characters)"
               value={note}
               onChange={handleNoteChange}
               maxLength={300}
@@ -109,3 +109,4 @@ export function AddNote({ isOpen, setIsOpen, onSubmit }: AddNoteProps) {
     </Dialog>
   )
 }
+

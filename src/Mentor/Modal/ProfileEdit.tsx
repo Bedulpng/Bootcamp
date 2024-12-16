@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/Landing/components/ui/button"
+import { Input } from "@/Landing/components/ui/input"
+import { Label } from "@/Landing/components/ui/label"
 import {
   Dialog,
   DialogContent,
@@ -12,8 +12,8 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+} from "@/Landing/components/ui/dialog"
+import { Avatar, AvatarFallback, AvatarImage } from "@/Landing/components/ui/avatar"
 
 interface ProfileEditorProps {
   open: boolean

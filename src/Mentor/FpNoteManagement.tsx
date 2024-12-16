@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react'
-import { Button } from "@/components/ui/button"
+import { Button } from "@/Landing/components/ui/button"
 import { Pencil, Eye } from 'lucide-react'
 import { AddFpNote } from './Modal/AddFpNote'
 import { ViewFpNote } from './Modal/ViewFpNote'

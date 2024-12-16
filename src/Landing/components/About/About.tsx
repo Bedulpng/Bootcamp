@@ -1,5 +1,5 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/Landing/components/ui/card"
+import { Badge } from "@/Landing/components/ui/badge"
 
 export default function AboutSection() {
   return (

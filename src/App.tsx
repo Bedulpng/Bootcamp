@@ -3,27 +3,30 @@ import './index.css';
 import './tailwind.css';
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Navbar } from './Mentor/components/Navbar';
-import { Hero } from './Mentor/components/Hero';
-import { Testimonial } from './Mentor/components/Testimonial';
-import LeadingComp from './Mentor/components/LeadingCompanies';
-import ProgramsPage from './Mentor/components/Program';
-import { Footer } from './Mentor/components/Footer';
-import Contact from './Mentor/components/Contact';
-import ContactSect from './Mentor/components/Contact-section';
-import RmFs from './Mentor/components/ReadMore_Programs/ReadMoreFs';
-import RmQa from './Mentor/components/ReadMore_Programs/ReadMoreQa';
-import ScrollTop from './Mentor/components/ScrollUp';
-import AboutSection from './Mentor/components/About/About';
-import MentorDb from './Mentor/components/Mentor/Dashboardm';
-import NavbarMentor from './Mentor/components/Mentor/NavbarMentor';
-import FooterMentor from './Mentor/components/Mentor/FooterMentor';
-import NotFound from './Mentor/components/NotFound';
-import Batch from './Mentor/components/Mentor/ExploreBatch';
-import Trainee from './Mentor/components/Mentor/Trainee';
-import { NoteRoute } from './Mentor/components/Mentor/Note/NoteRoute';
-import { TraineePage } from './Mentor/components/Mentor/Note/TraineePage';
+import { Navbar } from './Landing/components/Navbar';
+import { Hero } from './Landing/components/Hero';
+import { Testimonial } from './Landing/components/Testimonial';
+import LeadingComp from './Landing/components/LeadingCompanies';
+import ProgramsPage from './Landing/components/Program';
+import { Footer } from './Landing/components/Footer';
+import Contact from './Landing/components/Contact';
+import ContactSect from './Landing/components/Contact-section';
+import RmFs from './Landing/components/ReadMore_Programs/ReadMoreFs';
+import RmQa from './Landing/components/ReadMore_Programs/ReadMoreQa';
+import ScrollTop from './Landing/components/ScrollUp';
+import AboutSection from './Landing/components/About/About';
 
+//Mentor
+import MentorDb from './Mentor/Dashboardm';
+import NavbarMentor from './Mentor/NavbarMentor';
+import FooterMentor from './Mentor/FooterMentor';
+import NotFound from './Landing/components/NotFound';
+import Batch from './Mentor/ExploreBatch';
+import Trainee from './Mentor/Trainee';
+import { NoteRoute } from './Mentor/Note/NoteRoute';
+import { TraineePage } from './Mentor/Note/TraineePage';
+
+//Trainee
 import LoginPage from './Trainee/pages/firstpage/login';
 import FormPage from './Trainee/pages/firstpage/form';
 import Dashboard from './Trainee/pages/secondpge/Dashboard';

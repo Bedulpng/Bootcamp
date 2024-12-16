@@ -3,8 +3,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Button } from "@/Landing/components/ui/button"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/Landing/components/ui/table"
 import { Search, Download, Users, Calendar, Eye, NotepadText } from 'lucide-react'
 import ExcelJS from 'exceljs'
 import { saveAs } from 'file-saver'

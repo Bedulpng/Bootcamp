@@ -21,6 +21,8 @@ import { NoteRoute } from './components/Mentor/Note/NoteRoute';
 import { TraineePage } from './components/Mentor/Note/TraineePage';
 import { MentorLogin } from './components/Login/MentorLogin';
 import { TraineeLogin } from './components/Login/TraineeLogin';
+import ProtectedRoute from './components/ProtectedRoute';
+import Rbac from './components/RbacRoute';
 
 // Layout component to handle conditional rendering of Navbar and Footer
 function Layout({ children }: { children: React.ReactNode }) {
@@ -99,9 +101,13 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            <Layout>
-              <MentorDb />
-            </Layout>
+            <Rbac allowedRoles={['ADMIN', 'MENTOR']}>
+              <ProtectedRoute>
+                <Layout>
+                  <MentorDb />
+                </Layout>
+              </ProtectedRoute>
+            </Rbac>
           }
         />
         <Route

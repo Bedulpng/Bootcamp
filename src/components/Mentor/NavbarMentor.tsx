@@ -12,7 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {jwtDecode} from 'jwt-decode'; // You need to install this package: npm install jwt-decode
+import { jwtDecode } from 'jwt-decode'; // You need to install this package: npm install jwt-decode
+import axios from 'axios'; // You need to install this package: npm install axios
 
 export default function NavbarMentor() {
   const location = useLocation();
@@ -20,6 +21,7 @@ export default function NavbarMentor() {
   const [activeNav, setActiveNav] = useState(location.pathname);
   const [mentorName, setMentorName] = useState('');
   const [mentorRole, setMentorRole] = useState('');
+  const [profileImage, setProfileImage] = useState('');
 
   useEffect(() => {
     setActiveNav(location.pathname);
@@ -27,26 +29,20 @@ export default function NavbarMentor() {
 
   useEffect(() => {
     const fetchMentorDetails = async () => {
-      const refreshToken = localStorage.getItem('refreshToken'); // Get the access token from localStorage
-      if (!refreshToken) {
-        alert('Access token not found. Please log in.');
-        navigate('/login');
-        return;
-      }
-
       try {
-        const decodedToken: any = jwtDecode(refreshToken); // Decode the token to extract user ID
-        const userId = decodedToken.id; // Assuming the user ID is stored in 'userId'
+        const refreshToken = localStorage.getItem('refreshToken');
+        const decodedToken: any = jwtDecode(refreshToken as string);
+        const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
 
-        // Fetch the mentor details using the userId
-        const response = await fetch(`http://10.10.103.20:4000/admin/mentor/${userId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setMentorName(data.fullName);
-          setMentorRole(data.role);
-        } else {
-          console.error('Failed to fetch mentor details');
-        }
+        // Fetch mentor details
+        const response = await axios.get(`http://10.10.103.20:4000/admin/mentor/${userId}`);
+        setMentorName(response.data.fullName);
+        setMentorRole(response.data.role);
+
+        // Fetch the professional profile image
+        const profileResponse = await axios.get(`http://10.10.103.20:4000/trainee/${userId}/pro`);
+        setProfileImage(profileResponse.data.profileImage); // Store the profile image path
+        
       } catch (error) {
         console.error('Error fetching mentor details:', error);
         alert('An error occurred while fetching mentor details.');
@@ -63,7 +59,7 @@ export default function NavbarMentor() {
   ];
 
   const handleLogout = async () => {
-    const refreshToken = localStorage.getItem('refreshToken'); // Assume refresh token is stored in localStorage
+    const refreshToken = localStorage.getItem('refreshToken');
 
     if (!refreshToken) {
       alert('No refresh token found. Please log in again.');
@@ -72,25 +68,19 @@ export default function NavbarMentor() {
     }
 
     try {
-      const response = await fetch('http://10.10.103.20:4000/trainee/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ refreshToken }),
+      const response = await axios.post('http://10.10.103.20:4000/trainee/logout', {
+        refreshToken,
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         alert('Logout successful');
         localStorage.removeItem('refreshToken'); // Remove the token from localStorage
         navigate('/'); // Redirect to the login page
-      } else {
-        const errorData = await response.json();
-        alert(`Logout failed: ${errorData.message}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error during logout:', error);
-      alert('An error occurred while logging out.');
+      const errorMessage = error.response?.data?.message || 'An error occurred while logging out.';
+      alert(`Logout failed: ${errorMessage}`);
     }
   };
 
@@ -133,12 +123,19 @@ export default function NavbarMentor() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 p-1">
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
-                  <AvatarImage src="/placeholder.svg" alt="Mentor" />
-                  <AvatarFallback>M</AvatarFallback>
+                <AvatarImage src={`http://10.10.103.20:4000${profileImage}`} alt="Mentor" />
+                          <AvatarFallback>
+                            {mentorName
+                              ? mentorName
+                                  .split(' ') // Split the name by spaces
+                                  .map((word) => word.charAt(0).toUpperCase()) // Take the first letter of each word and capitalize it
+                                  .join('') // Join the initials
+                              : '?'}
+                          </AvatarFallback>
                 </Avatar>
                 <div className="text-sm text-left">
-                  <div>{mentorName || 'Loading...'}</div>
-                  <div className="text-xs text-muted-foreground">{mentorRole || 'Loading...'}</div>
+                  <div>{mentorName || 'THIS MENTOR NAME'}</div>
+                  <div className="text-xs text-muted-foreground">{mentorRole || 'THIS MENTOR ROLE'}</div>
                 </div>
                 <ChevronDown className="h-4 w-4 ml-2" />
               </Button>

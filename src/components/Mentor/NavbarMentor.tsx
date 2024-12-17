@@ -45,7 +45,7 @@ export default function NavbarMentor() {
         
       } catch (error) {
         console.error('Error fetching mentor details:', error);
-        alert('An error occurred while fetching mentor details.');
+       
       }
     };
 

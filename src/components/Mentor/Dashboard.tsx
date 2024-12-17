@@ -19,7 +19,7 @@
     const [isModalOpen, setModalOpen] = useState(false)
     const [mentorName, setMentorName] = useState('');
     const [mentorRole, setMentorRole] = useState('');
-    const [profileImage, setProfileImage] = useState('');
+    const [profileImage, setProfileImage] = useState<string | null>(null);
 
     const handleEditProfile = () => {
       setModalOpen(true)
@@ -47,22 +47,28 @@
           const refreshToken = localStorage.getItem('refreshToken');
           const decodedToken: any = jwtDecode(refreshToken as string);
           const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
-  
+    
           // Fetch mentor details
           const response = await axios.get(`http://10.10.103.20:4000/admin/mentor/${userId}`);
           setMentorName(response.data.fullName);
           setMentorRole(response.data.role);
-  
+    
           // Fetch the professional profile image
           const profileResponse = await axios.get(`http://10.10.103.20:4000/trainee/${userId}/pro`);
-          setProfileImage(profileResponse.data.profileImage); // Store the profile image path
-  
+    
+          // Check if profile image exists
+          if (profileResponse.data.profileImage) {
+            setProfileImage(profileResponse.data.profileImage); // Store the profile image path
+          } else {
+            setProfileImage(null); // Set to null if profile image not found
+          }
+    
         } catch (error) {
           console.error('Error fetching mentor details:', error);
-          alert('An error occurred while fetching mentor details.');
+          
         }
       };
-  
+    
       fetchMentorDetails();
     }, [navigate]);
     console.log(profileImage);

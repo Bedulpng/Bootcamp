@@ -24,7 +24,7 @@ interface ProfileEditorProps {
 
 export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) {
   const navigate = useNavigate();
-  const [profileImage, setProfileImage] = useState('');
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [profile, setProfile] = useState({
     fullName: '',
     nickname: '',
@@ -158,16 +158,27 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
         const decodedToken: any = jwtDecode(refreshToken as string);
         const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
 
+        if (profileImage) {
+          return; // Exit the function early if profile image already exists
+        }
+
+  
         // Fetch the professional profile image
         const profileResponse = await axios.get(`http://10.10.103.20:4000/trainee/${userId}/pro`);
-        setProfileImage(profileResponse.data.profileImage); // Store the profile image path
-
+  
+        // Check if profile image exists
+        if (profileResponse.data.profileImage) {
+          setProfileImage(profileResponse.data.profileImage); // Store the profile image path
+        } else {
+          setProfileImage(null); // Set to null if profile image not found
+        }
+  
       } catch (error) {
         console.error('Error fetching mentor details:', error);
-        alert('An error occurred while fetching mentor details.');
+        
       }
     };
-
+  
     fetchMentorDetails();
   }, [navigate]);
 
@@ -227,9 +238,15 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
                   Profile photo
                 </Label>
                 <Avatar className="h-24 w-24">
-                <AvatarImage src={`http://10.10.103.20:4000${profileImage}`} alt="Mentor" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
+                    {profileImage ? (
+                      // If profileImage exists, render it
+                      <AvatarImage src={`http://10.10.103.20:4000${profileImage}`} alt="Mentor" />
+                    ) : (
+                       // If profileImage doesn't exist, render imagePreview
+                      <AvatarImage src={imagePreview || undefined} alt="Mentor Preview" />
+                    )}
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
                 <div className="flex gap-2">
                   <Button
                     type="button"

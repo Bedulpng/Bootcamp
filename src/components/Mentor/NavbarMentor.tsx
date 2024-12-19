@@ -35,12 +35,12 @@ export default function NavbarMentor() {
         const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
 
         // Fetch mentor details
-        const response = await axios.get(`http://10.10.103.20:4000/admin/mentor/${userId}`);
+        const response = await axios.get(`http://10.10.103.169:4000/admin/mentor/${userId}`);
         setMentorName(response.data.fullName);
         setMentorRole(response.data.role);
 
         // Fetch the professional profile image
-        const profileResponse = await axios.get(`http://10.10.103.20:4000/trainee/${userId}/pro`);
+        const profileResponse = await axios.get(`http://10.10.103.169:4000/trainee/${userId}/pro`);
         setProfileImage(profileResponse.data.profileImage); // Store the profile image path
         
       } catch (error) {
@@ -68,7 +68,7 @@ export default function NavbarMentor() {
     }
 
     try {
-      const response = await axios.post('http://10.10.103.20:4000/trainee/logout', {
+      const response = await axios.post('http://10.10.103.169:4000/trainee/logout', {
         refreshToken,
       });
 
@@ -123,7 +123,7 @@ export default function NavbarMentor() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 p-1">
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
-                <AvatarImage src={`http://10.10.103.20:4000${profileImage}`} alt="Mentor" />
+                <AvatarImage src={`http://10.10.103.169:4000${profileImage}`} alt="Mentor" />
                           <AvatarFallback>
                             {mentorName
                               ? mentorName

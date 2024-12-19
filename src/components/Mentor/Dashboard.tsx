@@ -15,11 +15,24 @@
   import ProfileEditor from './Modal/ProfileEdit'
   import { jwtDecode } from 'jwt-decode'
 
+  interface Batch {
+    id: string;
+    batchNum: number;
+    batchClass: string;
+    batchTitle: string;
+    batchDesc: string;
+    mentorId?: string;
+    startDate: string; // If the dates are strings from the backend
+    endDate: string; // If the dates are strings from the backend
+    status: string;
+  }
+
   export default function MentorDb() {
     const [isModalOpen, setModalOpen] = useState(false)
     const [mentorName, setMentorName] = useState('');
     const [mentorRole, setMentorRole] = useState('');
     const [profileImage, setProfileImage] = useState<string | null>(null);
+    const [batches, setBatches] = useState<Batch[]>([]);
 
     const handleEditProfile = () => {
       setModalOpen(true)
@@ -40,6 +53,19 @@
 
     const COLORS = ['#FFD700', '#0000FF'] // Bright yellow and solid blue
 
+    useEffect(() => {
+      const fetchBatches = async () => {
+        try {
+          const response = await axios.get('http://10.10.103.169:4000/admin/batch'); // Replace with your API URL
+          setBatches(response.data);
+        } catch (error) {
+          console.error('Error fetching batches:', error);
+        }
+      };
+    
+      fetchBatches();
+    }, []);
+
     // Custom label component for the donut chart
     useEffect(() => {
       const fetchMentorDetails = async () => {
@@ -49,12 +75,12 @@
           const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
     
           // Fetch mentor details
-          const response = await axios.get(`http://10.10.103.20:4000/admin/mentor/${userId}`);
+          const response = await axios.get(`http://10.10.103.169:4000/admin/mentor/${userId}`);
           setMentorName(response.data.fullName);
           setMentorRole(response.data.role);
     
           // Fetch the professional profile image
-          const profileResponse = await axios.get(`http://10.10.103.20:4000/trainee/${userId}/pro`);
+          const profileResponse = await axios.get(`http://10.10.103.169:4000/trainee/${userId}/pro`);
     
           // Check if profile image exists
           if (profileResponse.data.profileImage) {
@@ -114,7 +140,7 @@
                   <Card className="bg-green-400 rounded-2xl shadow-lg">
                     <CardContent className="p-6 flex flex-col items-center justify-between h-[180px]">
                       <div className="text-center">
-                        <p className="text-4xl font-bold mb-2">12</p>
+                        <p className="text-4xl font-bold mb-2">{batches.length}</p>
                         <p className="text-sm text-gray-600">Total Batch</p>
                       </div>
                       <Link to="/dashboard/batch" className='w-full'>
@@ -220,7 +246,7 @@
                     <div className="text-center flex-1 flex flex-col items-center justify-center">
                     <div className="w-17 h-17 rounded-full border-2 border-gray-200 flex items-center justify-center mb-6">
                     <Avatar className="h-16 w-16 border-gray-800 rounded-full">
-                        <AvatarImage src={`http://10.10.103.20:4000${profileImage}`} alt="Mentor" />
+                        <AvatarImage src={`http://10.10.103.169:4000${profileImage}`} alt="Mentor" />
                           <AvatarFallback>
                             {mentorName
                               ? mentorName

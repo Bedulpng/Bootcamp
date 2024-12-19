@@ -1,12 +1,26 @@
 'use client'
 
 import * as React from 'react'
+import axios from 'axios'
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { useNavigate, useLocation } from 'react-router-dom' // Use React Router hooks
+
+interface Batch {
+  id: string;
+  batchNum: number;
+  batchClass: string;
+  batchTitle: string;
+  batchDesc: string;
+  mentorId?: string;
+  startDate: string; // If the dates are strings from the backend
+  endDate: string; // If the dates are strings from the backend
+  status: string;
+}
+
 
 export default function ExploreBatch() {
   const navigate = useNavigate()
@@ -15,6 +29,21 @@ export default function ExploreBatch() {
   const [isAnimating, setIsAnimating] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState('')
   const [activeFilter, setActiveFilter] = React.useState<'all-batch' | 'my-batch'>('all-batch')
+  const [batches, setBatches] = React.useState<Batch[]>([]);
+
+  // Fetch batch data
+  React.useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        const response = await axios.get('http://10.10.103.169:4000/admin/batch'); // Replace with your API URL
+        setBatches(response.data);
+      } catch (error) {
+        console.error('Error fetching batches:', error);
+      }
+    };
+  
+    fetchBatches();
+  }, []);
 
   // Check the current filter from URL
   React.useEffect(() => {
@@ -151,7 +180,7 @@ export default function ExploreBatch() {
 
           {/* Showing Batch Text */}
           <div className="mt-2 text-right text-sm text-gray-600">
-            Showing {Array.from({ length: 6 }).length} Batch
+            Showing {batches.length} Batch
           </div>
         </div>
 
@@ -186,20 +215,20 @@ export default function ExploreBatch() {
 
       {/* Course Cards */}
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Card key={i}>
+        {batches.map((batch) => (
+          <Card key={batch.id}>
             <CardContent className="p-4">
               <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
                 <img
-                  alt="Course thumbnail"
+                  alt={`Thumbnail for ${batch.batchTitle}`}
                   className="h-full w-full object-cover"
                   height={200}
-                  src="/placeholder.png"
+                  src="/placeholder.png" // Replace with actual image if available
                   width={300}
                 />
               </div>
-              <h3 className="mt-4 font-semibold">Batch Title</h3>
-              <p className="text-sm text-muted-foreground">Lorem ipsum dolor sit amet</p>
+              <h4 className="mt-4 mb-4 font-semibold">{batch.batchTitle || 'This Batch Title'}</h4>
+              <p className="text-sm text-muted-foreground">{batch.batchDesc || 'This batch description' }</p>
             </CardContent>
           </Card>
         ))}

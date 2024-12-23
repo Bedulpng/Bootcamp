@@ -35,7 +35,7 @@ export default function ExploreBatch() {
   React.useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const response = await axios.get('http://10.10.103.169:4000/admin/batch'); // Replace with your API URL
+        const response = await axios.get('http://10.10.103.87:4000/admin/batch'); // Replace with your API URL
         setBatches(response.data);
       } catch (error) {
         console.error('Error fetching batches:', error);

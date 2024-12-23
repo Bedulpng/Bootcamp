@@ -19,7 +19,7 @@ export function MentorLogin() {
     };
 
     try {
-      const response = await fetch('http://10.10.103.169:4000/trainee/login', {
+      const response = await fetch('http://10.10.103.87:4000/trainee/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

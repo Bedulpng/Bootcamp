@@ -16,7 +16,7 @@ import NavbarMentor from './components/Mentor/NavbarMentor';
 import FooterMentor from './components/Mentor/FooterMentor';
 import NotFound from './components/NotFound';
 import Batch from './components/Mentor/ExploreBatch';
-import Trainee from './components/Mentor/Trainee';
+import { TraineePages } from './components/TraineeManagement/TraineePage';
 import { NoteRoute } from './components/Mentor/Note/NoteRoute';
 import { TraineePage } from './components/Mentor/Note/TraineePage';
 import { MentorLogin } from './components/Login/MentorLogin';
@@ -122,7 +122,7 @@ function App() {
           path="/dashboard/trainee"
           element={
             <Layout>
-              <Trainee />
+              <TraineePages />
             </Layout>
           }
         />

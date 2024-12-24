@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { User } from 'lucide-react';
+import { User, ChevronDown, LogOut } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/LandingPage/ui/avatar';
+import { Button } from '@/LandingPage/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/LandingPage/ui/dropdown-menu';
 
 const Navbar: React.FC = () => {
   const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -44,7 +53,7 @@ const Navbar: React.FC = () => {
     <nav className="flex items-center justify-between text-black bg-white shadow-lg sm:px-6 md:-mx-44 lg:px-8 xl:-mx-56">
       <div className="flex items-center h-16">
         <img
-          src="/logo/WGS.png"
+          src="/black_logo_big.png"
           alt="Logo"
           className="w-48 cursor-pointer"
           onClick={handleLogoClick}

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const MainLayout: React.FC = () => {
+const navbara: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -59,4 +59,4 @@ const MainLayout: React.FC = () => {
         )};
         
 
-export default MainLayout;
+export default navbara;

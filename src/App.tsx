@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 
-//Landing Page
+// Landing Page Components
 import { Navbar } from './LandingPage/Navbar';
 import { Hero } from './LandingPage/Hero';
 import { Testimonial } from './LandingPage/Testimonial';
@@ -14,7 +14,7 @@ import RmQa from './LandingPage/ReadMore_Programs/ReadMoreQa';
 import ScrollTop from './LandingPage/ScrollUp';
 import AboutSection from './LandingPage/About/About';
 
-//Mentor
+// Mentor Components
 import MentorDb from './Mentor/components/Mentor/Dashboard';
 import NavbarMentor from './Mentor/components/Mentor/NavbarMentor';
 import FooterMentor from './Mentor/components/Mentor/FooterMentor';
@@ -24,35 +24,37 @@ import Trainee from './Mentor/components/Mentor/Trainee';
 import { NoteRoute } from './Mentor/components/Mentor/Note/NoteRoute';
 import { TraineePage } from './Mentor/components/Mentor/Note/TraineePage';
 
-//Trainee
+// Trainee Components
 import LoginPage from './Trainee/firstpage/login';
 import FormPage from './Trainee/firstpage/form';
 import Dashboard from './Trainee/secondpge/Dashboard';
 
-//Admin
-import MainLayout from './Admin/Layouts/MainLayout';
+// Admin Components
 import Dashboarda from './Admin/pages/Dashboard/dashboard';
-import Courses from './pages/Courses/courses';
-import NotificationPage from './pages/Notification/NotificationPage';
-import UserManagement from './pages/UserManagement/UserManagement';
-import ClassManagement from './pages/ClassManagement/ClassManagement';
-import CertificateManagement from './pages/CertificateManagement/CertificateManagement';
-import ViewNotes from './pages/ViewNotes/ViewNotes';
 
+// Layout Component
 function Layout({ children }: { children: React.ReactNode }) {
-  const isDashboard = window.location.pathname.startsWith('/dashboardm');
+  const location = useLocation();
+
+  const isDashboard = location.pathname.startsWith('/dashboardm');
+  const isAuthPage = location.pathname === '/loginpage' || location.pathname === '/form';
 
   return (
     <div className="min-h-screen bg-white">
-      {isDashboard ? <NavbarMentor /> : <Navbar />}
+      {!isAuthPage && (isDashboard ? <NavbarMentor /> : <Navbar />)}
       {children}
       <ScrollTop />
-      {isDashboard ? <FooterMentor /> : <Footer />}
+      {!isAuthPage && (isDashboard ? <FooterMentor /> : <Footer />)}
     </div>
   );
 }
 
+// Auth Layout for Login and Form Pages
+function AuthLayout({ children }: { children: React.ReactNode }) {
+  return <div className="min-h-screen bg-white">{children}</div>;
+}
 
+// Main Content for Landing Page
 function MainContent() {
   return (
     <>
@@ -71,76 +73,29 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Landing Page Routes */}
+        <Route path="/" element={<Layout><MainContent /></Layout>} />
+        <Route path="/contact" element={<Layout><ContactSect /></Layout>} />
+        <Route path="/programs/fullstack" element={<Layout><RmFs /></Layout>} />
+        <Route path="/programs/qualityassurance" element={<Layout><RmQa /></Layout>} />
+        <Route path="/about" element={<Layout><AboutSection /></Layout>} />
 
-        {/*Landing Page Route */}
-        <Route path="/" element={ <Layout><MainContent /></Layout>}/>
-        <Route path="/contact" element={ <Layout><ContactSect /></Layout>}/>
-        <Route path="/programs/fullstack" element={ <Layout><RmFs /></Layout>}/>
-        <Route
-          path="/programs/qualityassurance"
-          element={
-            <Layout>
-              <RmQa />
-            </Layout>
-          }
-        />
-        <Route
-          path="/about"
-          element={
-            <Layout>
-              <AboutSection />
-            </Layout>
-          }
-        />
+        {/* Mentor Routes */}
+        <Route path="/dashboardm" element={<Layout><MentorDb /></Layout>} />
+        <Route path="/dashboardm/batch" element={<Layout><Batch /></Layout>} />
+        <Route path="/dashboardm/trainee" element={<Layout><Trainee /></Layout>} />
+        <Route path="/dashboardm/note" element={<Layout><NoteRoute /></Layout>} />
+        <Route path="/dashboardm/note/:classId/batch/:batchId" element={<Layout><TraineePage /></Layout>} />
 
-        {/*Mentor Route */}
-        <Route
-          path="/dashboardm"
-          element={
-            <Layout>
-              <MentorDb />
-            </Layout>
-          }
-        />
-        <Route
-          path="/dashboardm/batch"
-          element={
-            <Layout>
-              <Batch />
-            </Layout>
-          }
-        />
-        <Route
-          path="/dashboardm/trainee"
-          element={
-            <Layout>
-              <Trainee />
-            </Layout>
-          }
-        />
-        <Route
-          path="/dashboardm/note"
-          element={
-            <Layout>
-              <NoteRoute />
-            </Layout>
-          }
-        />
-        <Route
-          path="/dashboardm/note/:classId/batch/:batchId"
-          element={
-            <Layout>
-              <TraineePage />
-            </Layout>
-          }
-        />
+        {/* Trainee Routes */}
+        <Route path="/loginpage" element={<AuthLayout><LoginPage /></AuthLayout>} />
+        <Route path="/form" element={<AuthLayout><FormPage /></AuthLayout>} />
+        <Route path="/dashboard" element={<AuthLayout><Dashboard /></AuthLayout>} />
 
-        {/*Trainee Route */}
-        <Route path="/loginpage" element={ <Layout><LoginPage /></Layout>}/>
-        <Route path="/form" element={ <Layout><FormPage /></Layout>}/>
-        <Route path="/dashboard" element={ <Layout><Dashboard /></Layout>}/>
+        {/* Admin Routes */}
+        <Route path="/dashboarda" element={<AuthLayout><Dashboarda /></AuthLayout>} />
 
-        {/* Route without Layout */}
+        {/* Not Found */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

@@ -25,4 +25,37 @@ export interface Certificate {
     certificates: Certificate[];
     classes: Class[];
   }
+
+  export interface Class {
+    id: string;
+    className: string;
+    createdAt: string;
+    participant: number;
+    batchId: string;
+    status: string;
+  }
+  
+  export interface Mentor {
+    id: string;
+    fullName: string;
+    email: string;
+  }
+  
+  export interface Batch {
+    id: string;
+    batchNum: number;
+    batchClass: string;
+    batchTitle: string;
+    batchDesc: string;
+    mentorId?: string;
+    startDate: string;
+    endDate: string;
+    status: string;
+    mentor: Mentor;
+    participants: any[];
+    challenges: any[];
+    classes: Class[];
+    lessons: any[];
+  }
+  
   

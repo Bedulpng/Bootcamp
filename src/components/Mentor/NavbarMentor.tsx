@@ -35,12 +35,12 @@ useEffect(() => {
       const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
 
       // Fetch mentor details
-      const response = await axios.get(`http://192.168.1.8:4000/admin/mentor/${userId}`);
+      const response = await axios.get(`http://10.10.103.87:4000/admin/mentor/${userId}`);
       setMentorName(response.data.fullName);
       setMentorRole(response.data.role);
 
       // Fetch the professional profile image
-      const profileResponse = await axios.get(`http://192.168.1.8:4000/trainee/${userId}/pro`);
+      const profileResponse = await axios.get(`http://10.10.103.87:4000/trainee/${userId}/pro`);
       if (profileResponse.data && profileResponse.data.profileImage) {
         setProfileImage(profileResponse.data.profileImage); // Store the profile image path
       } else {
@@ -70,7 +70,7 @@ useEffect(() => {
     }
 
     try {
-      const response = await axios.post('http://192.168.1.8:4000/trainee/logout', {
+      const response = await axios.post('http://10.10.103.87:4000/trainee/logout', {
         refreshToken,
       });
 
@@ -125,7 +125,7 @@ useEffect(() => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 p-1">
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
-                <AvatarImage src={`http://192.168.1.8:4000${profileImage}`} alt="Mentor" />
+                <AvatarImage src={`http://10.10.103.87:4000${profileImage}`} alt="Mentor" />
                           <AvatarFallback>
                             {mentorName
                               ? mentorName

@@ -1,106 +1,113 @@
-'use client'
+'use client';
 
-import * as React from 'react'
-import axios from 'axios'
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
-import { useNavigate, useLocation } from 'react-router-dom' // Use React Router hooks
-
-interface Batch {
-  id: string;
-  batchNum: number;
-  batchClass: string;
-  batchTitle: string;
-  batchDesc: string;
-  mentorId?: string;
-  startDate: string; // If the dates are strings from the backend
-  endDate: string; // If the dates are strings from the backend
-  status: string;
-}
-
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
+import { useNavigate, useLocation } from 'react-router-dom'; 
+import { Batch } from '../../types/Trainee';
+import { jwtDecode } from 'jwt-decode'
 
 export default function ExploreBatch() {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [currentSlide, setCurrentSlide] = React.useState(0)
-  const [isAnimating, setIsAnimating] = React.useState(false)
-  const [searchQuery, setSearchQuery] = React.useState('')
-  const [activeFilter, setActiveFilter] = React.useState<'all-batch' | 'my-batch'>('all-batch')
-  const [batches, setBatches] = React.useState<Batch[]>([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilter, setActiveFilter] = useState<'all-batch' | 'my-batch'>('all-batch');
+  const [batches, setBatches] = useState<Batch[]>([]);
+  const [mentorBatches, setMentorBatches] = useState<Batch[]>([]);
 
-  // Fetch batch data
-  React.useEffect(() => {
+  // Fetch all batches
+  useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const response = await axios.get('http://192.168.1.8:4000/admin/batch'); // Replace with your API URL
+        const response = await axios.get('http://10.10.103.87:4000/admin/batch'); // Replace with your API URL
         setBatches(response.data);
       } catch (error) {
         console.error('Error fetching batches:', error);
       }
     };
-  
+
     fetchBatches();
   }, []);
 
-  // Check the current filter from URL
-  React.useEffect(() => {
-    const searchParams = new URLSearchParams(location.search)
-    const filter = searchParams.get('filter')
+  // Fetch batches by mentor ID
+  useEffect(() => {
+     // Ensure mentorId is defined
+
+    const fetchMentorBatches = async () => {
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        const decodedToken: any = jwtDecode(refreshToken as string);
+        const mentorId = decodedToken.id;
+        if (!mentorId) return;
+
+        const response = await axios.get(`http://10.10.103.87:4000/admin/batch/${mentorId}`); // Replace with your API URL
+        setMentorBatches(response.data);
+      } catch (error) {
+        console.error('Error fetching batches by mentorId:', error);
+      }
+    };
+
+    fetchMentorBatches();
+  }, []);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const filter = searchParams.get('filter');
     if (filter && (filter === 'my-batch' || filter === 'all-batch')) {
-      setActiveFilter(filter)
+      setActiveFilter(filter);
     }
-  }, [location.search])
+  }, [location.search]);
 
   const carouselItems = [
     { id: 1, image: '/placeholder.png?height=200&width=600', title: 'Developer Bootcamp' },
     { id: 2, image: '/placeholder.png?height=200&width=600', title: 'Learn to Code' },
     { id: 3, image: '/placeholder.png?height=200&width=600', title: 'Master Development' },
-  ]
+  ];
 
-  const totalSlides = carouselItems.length
+  const totalSlides = carouselItems.length;
 
   const handlePrevSlide = () => {
-    if (isAnimating) return
-    setIsAnimating(true)
-
-    setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1))
-  }
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
+  };
 
   const handleNextSlide = () => {
-    if (isAnimating) return
-    setIsAnimating(true)
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setCurrentSlide((prev) => prev + 1);
+  };
 
-    setCurrentSlide((prev) => prev + 1)
-  }
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (currentSlide === totalSlides) {
-      // Reset to first slide without animation
       const timeout = setTimeout(() => {
-        setIsAnimating(false)
-        setCurrentSlide(0)
-      }, 500)
-      return () => clearTimeout(timeout)
+        setIsAnimating(false);
+        setCurrentSlide(0);
+      }, 500);
+      return () => clearTimeout(timeout);
     } else {
-      setTimeout(() => setIsAnimating(false), 500)
+      setTimeout(() => setIsAnimating(false), 500);
     }
-  }, [currentSlide, totalSlides])
+  }, [currentSlide, totalSlides]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const timer = setInterval(() => {
-      handleNextSlide()
-    }, 2000)
+      handleNextSlide();
+    }, 2000);
 
-    return () => clearInterval(timer)
-  }, [])
+    return () => clearInterval(timer);
+  }, []);
 
   const handleFilterChange = (filter: 'all-batch' | 'my-batch') => {
-    setActiveFilter(filter)
-    navigate(`/dashboard/batch?filter=${filter}`) // Update URL with the new filter
-  }
+    setActiveFilter(filter);
+    navigate(`/dashboard/batch?filter=${filter}`); // Update URL with the new filter
+  };
 
   return (
     <div className="container mx-auto px-4 py-10 mb-24">
@@ -180,7 +187,7 @@ export default function ExploreBatch() {
 
           {/* Showing Batch Text */}
           <div className="mt-2 text-right text-sm text-gray-600">
-            Showing {batches.length} Batch
+            Showing {(activeFilter === 'all-batch' ? batches : mentorBatches).length} Batch
           </div>
         </div>
 
@@ -215,7 +222,7 @@ export default function ExploreBatch() {
 
       {/* Course Cards */}
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {batches.map((batch) => (
+      {(activeFilter === 'all-batch' ? batches : mentorBatches).map((batch) => (
           <Card key={batch.id}>
             <CardContent className="p-4">
               <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
@@ -228,7 +235,7 @@ export default function ExploreBatch() {
                 />
               </div>
               <h4 className="mt-4 mb-4 font-semibold">{batch.batchTitle || 'This Batch Title'}</h4>
-              <p className="text-sm text-muted-foreground">{batch.batchDesc || 'This batch description' }</p>
+              <p className="text-sm text-muted-foreground">{batch.batchDesc || 'This batch description'}</p>
             </CardContent>
           </Card>
         ))}

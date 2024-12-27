@@ -25,7 +25,7 @@ export default function ExploreBatch() {
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const response = await axios.get('http://10.10.103.87:4000/admin/batch'); // Replace with your API URL
+        const response = await axios.get('http://10.10.103.139:4000/admin/batch'); // Replace with your API URL
         setBatches(response.data);
       } catch (error) {
         console.error('Error fetching batches:', error);
@@ -46,7 +46,7 @@ export default function ExploreBatch() {
         const mentorId = decodedToken.id;
         if (!mentorId) return;
 
-        const response = await axios.get(`http://10.10.103.87:4000/admin/batch/${mentorId}`); // Replace with your API URL
+        const response = await axios.get(`http://10.10.103.139:4000/admin/batch/${mentorId}`); // Replace with your API URL
         setMentorBatches(response.data);
       } catch (error) {
         console.error('Error fetching batches by mentorId:', error);
@@ -223,7 +223,30 @@ export default function ExploreBatch() {
       {/* Course Cards */}
       <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {(activeFilter === 'all-batch' ? batches : mentorBatches).map((batch) => (
-          <Card key={batch.id}>
+          <Card key={batch.id} 
+          onClick={async () => {
+            try {
+              // Fetch the batch data from the API
+              const response = await fetch(`http://10.10.103.139:4000/admin/batchs/${batch.id}`);
+              if (!response.ok) {
+                throw new Error(`Failed to fetch batch with ID: ${batch.id}`);
+              }
+              const data = await response.json();
+              console.log('Fetched batch:', data);
+    
+              // Navigate to the dashboard with batch data
+              navigate(`/dashboard/batch/${batch.id}`, { state: { batchData: data } });
+            } catch (error) {
+              if (error instanceof Error) {
+                console.error('Error fetching batch:', error.message);
+              } else {
+                console.error('Unknown error:', error);
+              }
+            }
+          }}
+          className="cursor-pointer"
+          >
+
             <CardContent className="p-4">
               <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
                 <img

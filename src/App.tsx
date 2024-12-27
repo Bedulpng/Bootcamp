@@ -23,6 +23,7 @@ import { MentorLogin } from './components/Login/MentorLogin';
 import { TraineeLogin } from './components/Login/TraineeLogin';
 import ProtectedRoute from './components/ProtectedRoute';
 import Rbac from './components/RbacRoute';
+import DashboardPage from './components/Mentor/BatchPage';
 
 // Layout component to handle conditional rendering of Navbar and Footer
 function Layout({ children }: { children: React.ReactNode }) {
@@ -139,6 +140,14 @@ function App() {
           element={
             <Layout>
               <TraineePage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/dashboard/batch/:batchId"
+          element={
+            <Layout>
+              <DashboardPage />
             </Layout>
           }
         />

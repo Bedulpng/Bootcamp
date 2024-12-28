@@ -20,7 +20,7 @@ export function TraineeLogin() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://10.10.103.139:4000/trainee/login', {
+      const response = await axios.post('http://192.168.1.8:4000/trainee/login', {
         ...loginData,
         role: 'TRAINEE', // Menambahkan role TRAINEE secara default
       });

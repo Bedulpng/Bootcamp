@@ -86,7 +86,7 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
 
     try {
       const response = await axios.post(
-        'http://10.10.103.139:4000/uploads/profile',
+        'http://192.168.1.8:4000/uploads/profile',
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
@@ -130,7 +130,7 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
 
       // Send the updated profile data
       const response = await axios.put(
-        'http://10.10.103.139:4000/trainee/edit',
+        'http://192.168.1.8:4000/trainee/edit',
         payload,
         {
           headers: {
@@ -164,7 +164,7 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
 
   
         // Fetch the professional profile image
-        const profileResponse = await axios.get(`http://10.10.103.139:4000/trainee/${userId}/pro`);
+        const profileResponse = await axios.get(`http://192.168.1.8:4000/trainee/${userId}/pro`);
   
         // Check if profile image exists
         if (profileResponse.data.profileImage) {
@@ -240,7 +240,7 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
                 <Avatar className="h-24 w-24">
                     {profileImage ? (
                       // If profileImage exists, render it
-                      <AvatarImage src={`http://10.10.103.139:4000${profileImage}`} alt="Mentor" />
+                      <AvatarImage src={`http://192.168.1.8:4000${profileImage}`} alt="Mentor" />
                     ) : (
                        // If profileImage doesn't exist, render imagePreview
                       <AvatarImage src={imagePreview || undefined} alt="Mentor Preview" />

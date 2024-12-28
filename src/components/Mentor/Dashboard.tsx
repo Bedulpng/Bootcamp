@@ -2,7 +2,7 @@
 
   import { useNavigate } from 'react-router-dom'
   import axios from 'axios'
-  import { useState, useEffect } from 'react'
+  import { useState, useEffect, useRef} from 'react'
   import { PenLine, CheckCheck } from 'lucide-react'
   import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
   import { Button } from "@/components/ui/button"
@@ -24,6 +24,9 @@
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const [batches, setBatches] = useState<Batch[]>([]);
     const [trainees, setTrainees] = useState<Trainee[]>([]);
+    const [batch, setMyBatch] = useState<number[]>([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const handleEditProfile = () => {
       setModalOpen(true)
@@ -47,7 +50,7 @@
     useEffect(() => {
       const fetchBatches = async () => {
         try {
-          const response = await axios.get('http://10.10.103.139:4000/admin/batch'); // Replace with your API URL
+          const response = await axios.get('http://192.168.1.8:4000/admin/batch'); // Replace with your API URL
           setBatches(response.data);
         } catch (error) {
           console.error('Error fetching batches:', error);
@@ -56,6 +59,39 @@
     
       fetchBatches();
     }, []);
+
+    useEffect(() => {
+      // Fetch batches connected to the mentor
+      const fetchBatches = async () => {
+        try {
+          const refreshToken = localStorage.getItem('refreshToken');
+          const decodedToken: any = jwtDecode(refreshToken as string);
+          const mentorId = decodedToken.id;
+          if (!mentorId) return;
+
+          const response = await axios.get(`http://192.168.1.8:4000/admin/batch/${mentorId}`);
+          const batchNumbers = response.data.map((batch: { batchNum: number }) => batch.batchNum);
+          setMyBatch(batchNumbers);
+        } catch (error) {
+          console.error('Error fetching batches:', error);
+        }
+      };
+  
+      fetchBatches();
+    }, []);
+  
+    const handleDotClick = (index: number) => {
+      setCurrentIndex(index);
+  
+      if (scrollContainerRef.current) {
+        const scrollWidth = scrollContainerRef.current.scrollWidth;
+        const itemWidth = scrollWidth / batches.length; // Divide total scrollable width by number of batches
+        scrollContainerRef.current.scrollTo({
+          left: itemWidth * index,
+          behavior: 'smooth',
+        });
+      }
+    };
 
       useEffect(() => {
         async function loadTrainees() {
@@ -79,12 +115,12 @@
           const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
     
           // Fetch mentor details
-          const response = await axios.get(`http://10.10.103.139:4000/admin/mentor/${userId}`);
+          const response = await axios.get(`http://192.168.1.8:4000/admin/mentor/${userId}`);
           setMentorName(response.data.fullName);
           setMentorRole(response.data.role);
     
           // Fetch the professional profile image
-          const profileResponse = await axios.get(`http://10.10.103.139:4000/trainee/${userId}/pro`);
+          const profileResponse = await axios.get(`http://192.168.1.8:4000/trainee/${userId}/pro`);
     
           // Check if profile image exists
           if (profileResponse.data.profileImage) {
@@ -160,43 +196,57 @@
                 <div className="grid gap-6 md:grid-cols-2">
                   {/* Incoming Class Card */}
                   <Card className="bg-[#ffff80] rounded-2xl shadow-lg w-[440px]">
-                    <CardContent className="p-6">
-                      <div className="flex justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-bold text-xl mb-1">Incoming Class</h3>
-                          <p className="text-sm font-medium mb-4">Friday 1 November 2024</p>
-                          <div className="space-y-2">
-                            <p className="text-lg font-semibold">09:00 - QA</p>
-                            <p className="text-sm font-medium">Tuesday 5 November 2024</p>
-                            <p className="text-lg font-semibold">09:00 - FS DEV</p>
-                          </div>
-                        </div>
-                        <div className="flex flex-col  gap-4">
-                          <div className="bg-white rounded-xl w-36 h-48 flex flex-col">
-                            <div className="px-4 pt-4 pb-2 text-center">
-                              <p className="text-xs mb-4 mt-4">My Batch</p>
-                              <p className="font-bold text-5xl text-center">12</p>
+                      <CardContent className="p-6">
+                        <div className="flex justify-between">
+                          <div className="flex-1">
+                            <h3 className="font-bold text-xl mb-1">Incoming Class</h3>
+                            <p className="text-sm font-medium mb-4">Friday 1 November 2024</p>
+                            <div className="space-y-2">
+                              <p className="text-lg font-semibold">09:00 - QA</p>
+                              <p className="text-sm font-medium">Tuesday 5 November 2024</p>
+                              <p className="text-lg font-semibold">09:00 - FS DEV</p>
                             </div>
-                            <div className="mt-auto px-4 pb-4">
-                              <div className="flex justify-center gap-2">
-                                <div className="w-2 h-2 bg-black rounded-full" />
-                                <div className="w-2 h-2 bg-gray-300 rounded-full" />
-                                <div className="w-2 h-2 bg-gray-300 rounded-full" />
-                                <div className="w-2 h-2 bg-gray-300 rounded-full" />
+                          </div>
+                          <div className="flex flex-col gap-4">
+                            <div className="bg-white rounded-xl w-36 h-48 flex flex-col overflow-hidden">
+                              <div
+                                ref={scrollContainerRef}
+                                className="px-4 pt-4 pb-2 text-center overflow-hidden scrollbar-hide"
+                                style={{
+                                  WebkitOverflowScrolling: 'touch', // Smooth scrolling
+                                  scrollBehavior: 'smooth',
+                                }}
+                              >
+                                <p className="text-xs mb-4 mt-4">My Batch</p>
+                                <div className="font-bold text-5xl text-center">{batch[currentIndex] || 'N/A'}</div>
                               </div>
+                              {batch.length > 1 && (
+                                <div className="mt-auto px-6 pb-6">
+                                  <div className="flex justify-center gap-2">
+                                    {batch.map((_, index) => (
+                                      <div
+                                        key={index}
+                                        className={`w-2 h-2 rounded-full cursor-pointer ${
+                                          currentIndex === index ? 'bg-black' : 'bg-gray-300'
+                                        }`}
+                                        onClick={() => handleDotClick(index)}
+                                      />
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                             </div>
+                            <Button
+                              variant="secondary"
+                              className="bg-white hover:bg-gray-50 w-36"
+                              onClick={handleSeeMore}
+                            >
+                              See More
+                            </Button>
                           </div>
-                          <Button 
-                          variant="secondary" 
-                          className="bg-white hover:bg-gray-50 w-36"
-                          onClick={handleSeeMore}
-                          >
-                            See More
-                          </Button>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
 
                   {/* Activity Chart Card */}
                   <Card className="bg-white rounded-2xl shadow-lg">
@@ -250,7 +300,7 @@
                     <div className="text-center flex-1 flex flex-col items-center justify-center">
                     <div className="w-17 h-17 rounded-full border-2 border-gray-200 flex items-center justify-center mb-6">
                     <Avatar className="h-16 w-16 border-gray-800 rounded-full">
-                        <AvatarImage src={`http://10.10.103.139:4000${profileImage}`} alt="Mentor" />
+                        <AvatarImage src={`http://192.168.1.8:4000${profileImage}`} alt="Mentor" />
                           <AvatarFallback>
                             {mentorName
                               ? mentorName
@@ -290,12 +340,12 @@
                       <div className="relative w-full h-2 bg-gray-400 rounded-full overflow-hidden">
                         <div
                           className="absolute top-0 left-0 h-full bg-[#0040FF] rounded-full"
-                          style={{ width: "50%" }}
+                          style={{ width: "69%" }}
                         />
                       </div>
                       <div className="mt-2 text-center">
                         <p className="text-sm">
-                          <span className="font-semibold">50%</span>
+                          <span className="font-semibold">69%</span>
                           {" Challenge Completed"}
                         </p>
                       </div>

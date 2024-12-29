@@ -17,13 +17,12 @@ import FooterMentor from './components/Mentor/FooterMentor';
 import NotFound from './components/NotFound';
 import Batch from './components/Mentor/ExploreBatch';
 import { TraineePages } from './components/TraineeManagement/TraineePage';
-import { NoteRoute } from './components/Mentor/Note/NoteRoute';
-import { TraineePage } from './components/Mentor/Note/TraineePage';
 import { MentorLogin } from './components/Login/MentorLogin';
 import { TraineeLogin } from './components/Login/TraineeLogin';
 import ProtectedRoute from './components/ProtectedRoute';
 import Rbac from './components/RbacRoute';
 import DashboardPage from './components/Mentor/BatchPage';
+import NotesPage from './components/Mentor/Notes/page';
 
 // Layout component to handle conditional rendering of Navbar and Footer
 function Layout({ children }: { children: React.ReactNode }) {
@@ -131,15 +130,7 @@ function App() {
           path="/dashboard/note"
           element={
             <Layout>
-              <NoteRoute />
-            </Layout>
-          }
-        />
-        <Route
-          path="/dashboard/note/:classId/batch/:batchId"
-          element={
-            <Layout>
-              <TraineePage />
+              <NotesPage />
             </Layout>
           }
         />

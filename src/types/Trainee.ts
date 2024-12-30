@@ -10,6 +10,8 @@ export interface Certificate {
     className: string;
     createdAt: string;
   }
+
+  export type Visibility = 'All' | 'FOR_TRAINEE' | 'FOR_GRADER'; // Adjust based on the enum in your Prisma schem
   
   export interface Trainee {
     id: string;
@@ -24,7 +26,26 @@ export interface Certificate {
     confident: string;
     certificates: Certificate[];
     classes: Class[];
+    graderNotes?: Note[]; // Notes graded by this user
+    traineeNotes?: Note[]; // Notes related to this trainee
   }
+
+  export interface Note {
+    id: string;
+    content: string;
+    visibility: Visibility;
+    createdAt: string;
+    grader: {
+      id: string;
+      fullName: string;
+      nickname: string;
+    };
+    trainee: {
+      id: string;
+      fullName: string;
+      nickname: string;
+    };
+  };
 
   export interface Class {
     id: string;

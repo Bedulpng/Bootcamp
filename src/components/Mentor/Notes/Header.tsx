@@ -1,8 +1,8 @@
 import React from "react";
 
 type HeaderProps = {
-  filter: "All" | "Trainee" | "Admin";
-  setFilter: React.Dispatch<React.SetStateAction<"All" | "Trainee" | "Admin">>;
+  filter: "All" | "FOR_TRAINEE" | "FOR_GRADER";
+  setFilter: React.Dispatch<React.SetStateAction<"All" | "FOR_TRAINEE" | "FOR_GRADER">>;
 };
 
 export default function Header({ }: HeaderProps) {

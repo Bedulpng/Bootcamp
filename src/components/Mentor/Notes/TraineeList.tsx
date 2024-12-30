@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Trainee } from './page'
+import { Trainee} from '../../../types/Trainee'
 
 type TraineeListProps = {
   trainees: Trainee[]
@@ -15,8 +15,8 @@ export default function TraineeList({ trainees, onSelectTrainee }: TraineeListPr
         {trainees.map((trainee) => (
           <Card key={trainee.id}>
             <CardContent className="p-4">
-              <h3 className="font-semibold mb-2">{trainee.name}</h3>
-              <p className="text-sm text-gray-600 mb-4">{trainee.email}</p>
+              <h3 className="font-semibold mb-2">{trainee.fullName}</h3>
+              <p className="text-sm text-gray-600 mb-4">{trainee.email}</p>     
               <Button onClick={() => onSelectTrainee(trainee)}>Add Note</Button>
             </CardContent>
           </Card>

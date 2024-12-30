@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import Header from './Header';
 import TraineeSearch from './TraineeSearch';
 import TraineeList from './TraineeList';
@@ -8,94 +9,79 @@ import NoteList from './NoteList';
 import NoteForm from './NoteForm';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
-export type Trainee = {
-  id: number;
-  name: string;
-  email: string;
-};
-
-export type Note = {
-  id: number;
-  content: string;
-  type: 'Trainee' | 'Admin';
-  traineeId?: number;
-  traineeName?: string;
-};
-
-const mockTrainees: Trainee[] = [
-  { id: 1, name: 'John Doe', email: 'john@example.com' },
-  { id: 2, name: 'Jane Smith', email: 'jane@example.com' },
-  { id: 3, name: 'Bob Johnson', email: 'bob@example.com' },
-  { id: 4, name: 'Alice Brown', email: 'alice@example.com' },
-  { id: 5, name: 'Charlie Davis', email: 'charlie@example.com' },
-];
-
-const mockNotes: Note[] = [
-  {
-    id: 1,
-    content: 'Completed React basics course',
-    type: 'Trainee',
-    traineeId: 1,
-    traineeName: 'John Doe',
-  },
-  {
-    id: 2,
-    content: 'Struggling with advanced JavaScript concepts',
-    type: 'Trainee',
-    traineeId: 2,
-    traineeName: 'Jane Smith',
-  },
-  {
-    id: 3,
-    content: 'Excellent progress in Node.js module',
-    type: 'Trainee',
-    traineeId: 3,
-    traineeName: 'Bob Johnson',
-  },
-  {
-    id: 4,
-    content: 'Needs improvement in CSS layouts',
-    type: 'Trainee',
-    traineeId: 4,
-    traineeName: 'Alice Brown',
-  },
-  {
-    id: 5,
-    content: 'Scheduled 1-on-1 session for next week',
-    type: 'Admin',
-  },
-  {
-    id: 6,
-    content: 'Update curriculum for React hooks',
-    type: 'Admin',
-  },
-];
+import { Trainee, Note, Visibility } from '../../../types/Trainee';
 
 export default function NotesPage() {
-  const [notes, setNotes] = useState<Note[]>(mockNotes);
-  const [filter, setFilter] = useState<'All' | 'Trainee' | 'Admin'>('All');
+  const [trainees, setTrainees] = useState<Trainee[]>([]);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [filter, setFilter] = useState<Visibility>('All');
   const [selectedTrainee, setSelectedTrainee] = useState<Trainee | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('trainees');
 
-  const addNote = (newNote: Omit<Note, 'id'>) => {
-    setNotes([...notes, { ...newNote, id: Date.now() }]);
+  // Fetch trainees from API
+  useEffect(() => {
+    const fetchTrainees = async () => {
+      try {
+        const response = await axios.get('http://10.10.103.10:4000/admin/users/TRAINEE');
+        setTrainees(response.data);
+      } catch (error) {
+        console.error('Error fetching trainees:', error);
+      }
+    };
+
+    fetchTrainees();
+  }, []);
+
+  // Fetch notes from API based on filter and graderId
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        if (!refreshToken) {
+          throw new Error('Token not found. Please log in again.');
+        }
+        const decodedToken: { id: string } = JSON.parse(atob(refreshToken.split('.')[1]));
+        const graderId = decodedToken.id;
+
+        let endpoint = `http://10.10.103.10:4000/mentor/notes/${graderId}`;
+        if (filter !== 'All') {
+          endpoint += `/${filter}`;
+        }
+
+        const response = await axios.get(endpoint, {
+          headers: { Authorization: `Bearer ${refreshToken}` },
+        });
+        setNotes(response.data);
+      } catch (error) {
+        console.error('Error fetching notes:', error);
+      }
+    };
+
+    fetchNotes();
+  }, [filter]);
+
+  const addNote = (newNote: Omit<Note, 'id' | 'createdAt' | 'grader' | 'trainee'>) => {
+    setNotes([
+      ...notes,
+      {
+        ...newNote,
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString(),
+        grader: { id: '', fullName: '', nickname: '' },
+        trainee: { id: '', fullName: '', nickname: '' },
+      },
+    ]);
     setIsModalOpen(false);
     setSelectedTrainee(null);
     setActiveTab('notes');
   };
 
-  const filteredNotes = notes.filter((note) => {
-    if (filter === 'All') return true;
-    return note.type === filter;
-  });
-
-  const filteredTrainees = mockTrainees.filter((trainee) => {
+  const filteredTrainees = trainees.filter((trainee) => {
     const searchTermLower = searchTerm.trim().toLowerCase();
     return (
-      trainee.name.toLowerCase().includes(searchTermLower) ||
+      trainee.fullName.toLowerCase().includes(searchTermLower) ||
       trainee.email.toLowerCase().includes(searchTermLower)
     );
   });
@@ -118,15 +104,17 @@ export default function NotesPage() {
                 setIsModalOpen(true);
               }}
             />
-            {filteredTrainees.length === 0 && (
-              <p className="text-gray-500">No trainees found.</p>
-            )}
+            {filteredTrainees.length === 0 && <p className="text-gray-500">No trainees found.</p>}
           </TabsContent>
           <TabsContent value="notes">
-            <NoteList notes={filteredNotes} filter={filter} setFilter={setFilter} />
-            {filteredNotes.length === 0 && (
-              <p className="text-gray-500">No notes found.</p>
-            )}
+          <NoteList
+          notes={notes}
+          filter={filter}
+          setFilter={setFilter}
+          onDelete={(noteId: string) => {
+            setNotes((prevNotes) => prevNotes.filter((note) => note.id !== noteId));
+          }}
+        />
           </TabsContent>
         </Tabs>
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

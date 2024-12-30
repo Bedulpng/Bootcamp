@@ -50,7 +50,7 @@
     useEffect(() => {
       const fetchBatches = async () => {
         try {
-          const response = await axios.get('http://192.168.1.8:4000/admin/batch'); // Replace with your API URL
+          const response = await axios.get('http://10.10.103.10:4000/admin/batch'); // Replace with your API URL
           setBatches(response.data);
         } catch (error) {
           console.error('Error fetching batches:', error);
@@ -69,7 +69,7 @@
           const mentorId = decodedToken.id;
           if (!mentorId) return;
 
-          const response = await axios.get(`http://192.168.1.8:4000/admin/batch/${mentorId}`);
+          const response = await axios.get(`http://10.10.103.10:4000/admin/batch/${mentorId}`);
           const batchNumbers = response.data.map((batch: { batchNum: number }) => batch.batchNum);
           setMyBatch(batchNumbers);
         } catch (error) {
@@ -115,12 +115,12 @@
           const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
     
           // Fetch mentor details
-          const response = await axios.get(`http://192.168.1.8:4000/admin/mentor/${userId}`);
+          const response = await axios.get(`http://10.10.103.10:4000/admin/mentor/${userId}`);
           setMentorName(response.data.fullName);
           setMentorRole(response.data.role);
     
           // Fetch the professional profile image
-          const profileResponse = await axios.get(`http://192.168.1.8:4000/trainee/${userId}/pro`);
+          const profileResponse = await axios.get(`http://10.10.103.10:4000/trainee/${userId}/pro`);
     
           // Check if profile image exists
           if (profileResponse.data.profileImage) {
@@ -300,7 +300,7 @@
                     <div className="text-center flex-1 flex flex-col items-center justify-center">
                     <div className="w-17 h-17 rounded-full border-2 border-gray-200 flex items-center justify-center mb-6">
                     <Avatar className="h-16 w-16 border-gray-800 rounded-full">
-                        <AvatarImage src={`http://192.168.1.8:4000${profileImage}`} alt="Mentor" />
+                        <AvatarImage src={`http://10.10.103.10:4000${profileImage}`} alt="Mentor" />
                           <AvatarFallback>
                             {mentorName
                               ? mentorName

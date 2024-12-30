@@ -59,7 +59,7 @@ export function TraineeModal({ trainee, onClose }: TraineeModalProps) {
             <div className="space-y-8">
                 <div className="flex justify-center">
                 <img
-                    src={`http://10.10.103.10:4000${profileImage}`}
+                    src={`http://192.168.1.36:4000${profileImage}`}
                     alt={trainee.fullName}
                     className="w-40 h-40 rounded-full object-cover border-4 border-blue-200 shadow-xl"
                 />
@@ -86,7 +86,7 @@ export function TraineeModal({ trainee, onClose }: TraineeModalProps) {
                     {trainee.certificates.map((cert, index) => (
                         <div key={cert.id} className="space-y-2">
                         <img
-                            src={`http://10.10.103.10:4000${certificates}`} // Assuming 'id' in this case contains the image URL for the certificate
+                            src={`http://192.168.1.36:4000${certificates}`} // Assuming 'id' in this case contains the image URL for the certificate
                             alt={`Certificate ${index + 1}`}
                             className="w-full rounded-2xl shadow-lg hover:transform hover:scale-105 transition-transform"
                         />

@@ -18,6 +18,7 @@ export interface Certificate {
     email: string;
     github: string;
     confident: string;
+    isLoggedIn: boolean;
     certificates: Certificate[];
     classes: Class[];
     graderNotes?: Note[]; // Notes graded by this user

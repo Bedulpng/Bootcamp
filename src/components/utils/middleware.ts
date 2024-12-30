@@ -49,3 +49,27 @@ export const isVerified = (): boolean => {
     return false;
   }
 };
+
+export const isLoggedIn = (): boolean => {
+  const accessToken = localStorage.getItem('accessToken'); // Replace 'token' with your key for the token
+  if (!accessToken) {
+    console.warn('No token found. User is not logged in.');
+    return false;
+  }
+
+  try {
+    const decoded = jwtDecode<CustomJwtPayload>(accessToken); // Decode the token
+
+    // Check for token expiration (if exp exists)
+    if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+      console.warn('Token has expired.');
+      return false;
+    }
+
+    // If token exists and is valid, the user is logged in
+    return true;
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return false;
+  }
+};

@@ -35,12 +35,12 @@ export default function NavbarMentor() {
         const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
 
         // Fetch mentor details
-        const response = await axios.get(`http://10.10.103.10:4000/admin/mentor/${userId}`);
+        const response = await axios.get(`http://192.168.1.36:4000/admin/mentor/${userId}`);
         setMentorName(response.data.fullName);
         setMentorRole(response.data.role);
 
         // Fetch the professional profile image
-        const profileResponse = await axios.get(`http://10.10.103.10:4000/trainee/${userId}/pro`);
+        const profileResponse = await axios.get(`http://192.168.1.36:4000/trainee/${userId}/pro`);
         if (profileResponse.data && profileResponse.data.profileImage) {
           setProfileImage(profileResponse.data.profileImage); // Store the profile image path
         } else {
@@ -61,22 +61,22 @@ export default function NavbarMentor() {
   ];
 
   const handleLogout = async () => {
-    const refreshToken = localStorage.getItem('refreshToken');
+    const accessToken = localStorage.getItem('accessToken');
 
-    if (!refreshToken) {
-      alert('No refresh token found. Please log in again.');
+    if (!accessToken) {
+      alert('No token found. Please log in again.');
       navigate('/login');
       return;
     }
 
     try {
-      const response = await axios.post('http://10.10.103.10:4000/trainee/logout', {
-        refreshToken,
+      const response = await axios.post('http://192.168.1.36:4000/trainee/logout', {
+        accessToken,
       });
 
       if (response.status === 200) {
         alert('Logout successful');
-        localStorage.removeItem('refreshToken'); // Remove the token from localStorage
+        localStorage.removeItem('accessToken'); // Remove the token from localStorage
         navigate('/'); // Redirect to the login page
       }
     } catch (error: any) {
@@ -130,7 +130,7 @@ export default function NavbarMentor() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 p-1">
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
-                  <AvatarImage src={`http://10.10.103.10:4000${profileImage}`} alt="Mentor" />
+                  <AvatarImage src={`http://192.168.1.36:4000${profileImage}`} alt="Mentor" />
                   <AvatarFallback>
                     {mentorName
                       ? mentorName

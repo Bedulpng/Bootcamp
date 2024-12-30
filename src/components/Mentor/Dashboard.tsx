@@ -27,6 +27,11 @@
     const [batch, setMyBatch] = useState<number[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [classes, setClasses] = useState<any[]>([]);
+    const [chartData, setChartData] = useState([
+      { name: 'Present', value: 0 },
+      { name: 'Not Present', value: 0 },
+    ]);
 
     const handleEditProfile = () => {
       setModalOpen(true)
@@ -39,18 +44,12 @@
       navigate('/dashboard/batch?filter=my-batch')
     }
 
-
-    const data = [
-      { name: 'Present', value: 75 },
-      { name: 'Not Present', value: 25 },
-    ]
-
     const COLORS = ['#FFD700', '#0000FF'] // Bright yellow and solid blue
 
     useEffect(() => {
       const fetchBatches = async () => {
         try {
-          const response = await axios.get('http://10.10.103.10:4000/admin/batch'); // Replace with your API URL
+          const response = await axios.get('http://192.168.1.36:4000/admin/batch'); // Replace with your API URL
           setBatches(response.data);
         } catch (error) {
           console.error('Error fetching batches:', error);
@@ -69,7 +68,7 @@
           const mentorId = decodedToken.id;
           if (!mentorId) return;
 
-          const response = await axios.get(`http://10.10.103.10:4000/admin/batch/${mentorId}`);
+          const response = await axios.get(`http://192.168.1.36:4000/admin/batch/${mentorId}`);
           const batchNumbers = response.data.map((batch: { batchNum: number }) => batch.batchNum);
           setMyBatch(batchNumbers);
         } catch (error) {
@@ -115,12 +114,12 @@
           const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
     
           // Fetch mentor details
-          const response = await axios.get(`http://10.10.103.10:4000/admin/mentor/${userId}`);
+          const response = await axios.get(`http://192.168.1.36:4000/admin/mentor/${userId}`);
           setMentorName(response.data.fullName);
           setMentorRole(response.data.role);
     
           // Fetch the professional profile image
-          const profileResponse = await axios.get(`http://10.10.103.10:4000/trainee/${userId}/pro`);
+          const profileResponse = await axios.get(`http://192.168.1.36:4000/trainee/${userId}/pro`);
     
           // Check if profile image exists
           if (profileResponse.data.profileImage) {
@@ -137,7 +136,53 @@
     
       fetchMentorDetails();
     }, [navigate]);
-    console.log(profileImage);
+
+    useEffect(() => {
+      const fetchClasses = async () => {
+        try {
+          const response = await axios.get('http://192.168.1.36:4000/admin/class'); // Replace with your API URL
+          setClasses(response.data);
+        } catch (error) {
+          console.error('Error fetching classes:', error);
+        }
+      };
+  
+      fetchClasses();
+    }, []);
+
+    const totalChallenges = classes.reduce((total, classItem) => {
+      return total + (classItem.challenges ? classItem.challenges.length : 0);
+    }, 0);
+
+    useEffect(() => {
+      async function loadTrainees() {
+        try {
+          const data = await fetchTrainees();  // fetch trainees using your service
+          setTrainees(data);
+  
+          // 1. Count how many are logged in
+          const presentCount = data.filter((t) => !!t.isLoggedIn === true).length;
+          // 2. Calculate percentage out of total
+          const totalCount = data.length;
+          const presentPercentage = totalCount > 0 
+            ? (presentCount / totalCount) * 100 
+            : 0;
+          const notPresentPercentage = 100 - presentPercentage;
+  
+          // 3. Update the chart data with the calculated percentages
+          setChartData([
+            { name: 'Present', value: presentPercentage },
+            { name: 'Not Present', value: notPresentPercentage },
+          ]);
+        } catch (error) {
+          console.error('Error fetching Trainees:', error);
+        }
+      }
+      loadTrainees();
+    }, []);
+
+    const displayedPresentValue = Math.round(chartData[0].value);
+
     return (
       <div className="min-h-screen flex flex-col">
         <div className="min-h-screen flex flex-col">
@@ -166,8 +211,8 @@
                   <Card className="bg-pink-400 rounded-2xl shadow-lg">
                     <CardContent className="p-6 flex flex-col items-center justify-between h-[180px]">
                       <div className="text-center">
-                        <p className="text-4xl font-bold mb-2">100</p>
-                        <p className="text-sm text-gray-600">Total Challenge</p>
+                        <p className="text-4xl font-bold mb-2">{totalChallenges}</p>
+                        <p className="text-sm text-gray-600">Total Challenges</p>
                       </div>
                       <Link to="/dashboard/batch" className='w-full'>
                       <Button className="w-full bg-white text-black hover:bg-gray-100">
@@ -250,45 +295,54 @@
 
                   {/* Activity Chart Card */}
                   <Card className="bg-white rounded-2xl shadow-lg">
-                    <CardContent className="p-6">
-                      <h3 className="font-bold text-xl mb-1">Trainee login activity</h3>
-                      <p className="text-sm text-gray-500">Trainee Logged in today</p>
-                      <div className="flex items-center justify-between mt-4">
-                        <div className="relative w-[200px] h-[200px]">
-                          <PieChart width={200} height={200}>
-                            <Pie
-                              data={data}
-                              cx={100}
-                              cy={100}
-                              innerRadius={60}
-                              outerRadius={80}
-                              startAngle={90}
-                              endAngle={-270}
-                              dataKey="value"
-                            >
-                              {data.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                              ))}
-                            </Pie>
-                          </PieChart>
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="text-center">
-                              <div className="text-2xl font-bold">75%</div>
-                              <div className="text-sm text-gray-500">Present</div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-3">
-                          {data.map((entry, index) => (
-                            <div key={index} className="flex items-center gap-2">
-                              <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index] }} />
-                              <span className="text-sm">{entry.name}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+      <CardContent className="p-6">
+        <h3 className="font-bold text-xl mb-1">Trainee login activity</h3>
+        <p className="text-sm text-gray-500">Trainee Logged in today</p>
+        <div className="flex items-center justify-between mt-4">
+          {/* Chart Wrapper */}
+          <div className="relative w-[200px] h-[200px]">
+            <PieChart width={200} height={200}>
+              <Pie
+                data={chartData}
+                cx={100}
+                cy={100}
+                innerRadius={60}
+                outerRadius={80}
+                startAngle={90}
+                endAngle={-270}
+                dataKey="value"
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                ))}
+              </Pie>
+            </PieChart>
+            {/* Center text with percentage */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {displayedPresentValue}%
+                </div>
+                <div className="text-sm text-gray-500">Present</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Legend */}
+          <div className="flex flex-col gap-3">
+            {chartData.map((entry, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <div
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: COLORS[index] }}
+                />
+                <span className="text-sm">{entry.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
                 </div>
               </div>
 
@@ -300,7 +354,7 @@
                     <div className="text-center flex-1 flex flex-col items-center justify-center">
                     <div className="w-17 h-17 rounded-full border-2 border-gray-200 flex items-center justify-center mb-6">
                     <Avatar className="h-16 w-16 border-gray-800 rounded-full">
-                        <AvatarImage src={`http://10.10.103.10:4000${profileImage}`} alt="Mentor" />
+                        <AvatarImage src={`http://192.168.1.36:4000${profileImage}`} alt="Mentor" />
                           <AvatarFallback>
                             {mentorName
                               ? mentorName

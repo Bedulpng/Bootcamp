@@ -24,13 +24,17 @@ export function TraineeTable({ trainees, onViewDetails }: TraineeTableProps) {
             <tr key={trainee.id} className="border-b border-blue-100 hover:bg-blue-50/50">
               <td className="px-6 py-4 text-lg text-center">{trainee.fullName || "-" }</td>
               <td className="px-6 py-4 text-lg text-center">{trainee.nickname || "-"}</td>
-              <td className="px-6 py-4 text-lg text-center">{trainee.batch || "-"}</td>
+              <td className="px-6 py-4 text-lg text-center">
+                {trainee.batches && trainee.batches.length > 0
+                  ? trainee.batches.map((batch) => batch.batchNum).join(", ")
+                  : "-"}
+              </td>
               <td className="px-6 py-4 text-lg text-center">{trainee.class || "-"}</td>
               <td className="px-6 py-4 text-center">
                 <Button className="bg-wgs-blue" onClick={() => onViewDetails(trainee)}>
                   Peek 👀
                 </Button>
-              </td>
+              </td> 
             </tr>
           ))}
         </tbody>

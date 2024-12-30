@@ -29,7 +29,12 @@ export function TraineeTable({ trainees, onViewDetails }: TraineeTableProps) {
                   ? trainee.batches.map((batch) => batch.batchNum).join(", ")
                   : "-"}
               </td>
-              <td className="px-6 py-4 text-lg text-center">{trainee.class || "-"}</td>
+              <td className="px-6 py-4 text-lg text-center">
+                {trainee.classes && trainee.classes.length > 0 
+                  ? ` ${trainee.classes.length} ${trainee.classes.length > 1 ? "classes" : "class"}`
+                  : "-"}
+              </td>
+
               <td className="px-6 py-4 text-center">
                 <Button className="bg-wgs-blue" onClick={() => onViewDetails(trainee)}>
                   Peek 👀

@@ -24,7 +24,7 @@ export default function NotesPage() {
   useEffect(() => {
     const fetchTrainees = async () => {
       try {
-        const response = await axios.get('http://192.168.1.36:4000/admin/users/TRAINEE');
+        const response = await axios.get('http://10.10.103.104:4000/admin/users/TRAINEE');
         setTrainees(response.data);
       } catch (error) {
         console.error('Error fetching trainees:', error);
@@ -45,7 +45,7 @@ export default function NotesPage() {
         const decodedToken: { id: string } = JSON.parse(atob(refreshToken.split('.')[1]));
         const graderId = decodedToken.id;
 
-        let endpoint = `http://192.168.1.36:4000/mentor/notes/${graderId}`;
+        let endpoint = `http://10.10.103.104:4000/mentor/notes/${graderId}`;
         if (filter !== 'All') {
           endpoint += `/${filter}`;
         }

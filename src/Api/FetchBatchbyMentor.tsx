@@ -7,7 +7,7 @@ export interface FetchBatchesResponse {
 
 export const fetchBatchesByMentorId = async (mentorId: string): Promise<Batch[]> => {
     try {
-      const response = await axios.get<FetchBatchesResponse>(`http://192.168.1.36:4000/admin/batch/${mentorId}`);
+      const response = await axios.get<FetchBatchesResponse>(`http://10.10.103.104:4000/admin/batch/${mentorId}`);
       return response.data?.batches || []; // Return an empty array if batches is undefined or null
     } catch (error) {
       console.error('Error fetching batches:', error);

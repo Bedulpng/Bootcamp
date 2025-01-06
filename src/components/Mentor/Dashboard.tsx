@@ -32,6 +32,8 @@
       { name: 'Present', value: 0 },
       { name: 'Not Present', value: 0 },
     ]);
+    const [lessonPercentage, setLessonPercentage] = useState(0);
+    const [challengePercentage, setChallengePercentage] = useState(0);
 
     const handleEditProfile = () => {
       setModalOpen(true)
@@ -49,7 +51,7 @@
     useEffect(() => {
       const fetchBatches = async () => {
         try {
-          const response = await axios.get('http://192.168.1.36:4000/admin/batch'); // Replace with your API URL
+          const response = await axios.get('http://10.10.103.104:4000/admin/batch'); // Replace with your API URL
           setBatches(response.data);
         } catch (error) {
           console.error('Error fetching batches:', error);
@@ -68,7 +70,7 @@
           const mentorId = decodedToken.id;
           if (!mentorId) return;
 
-          const response = await axios.get(`http://192.168.1.36:4000/admin/batch/${mentorId}`);
+          const response = await axios.get(`http://10.10.103.104:4000/admin/batch/${mentorId}`);
           const batchNumbers = response.data.map((batch: { batchNum: number }) => batch.batchNum);
           setMyBatch(batchNumbers);
         } catch (error) {
@@ -78,6 +80,31 @@
   
       fetchBatches();
     }, []);
+
+    useEffect(() => {
+      const fetchCompletionPercentages = async () => {
+        try {
+          const refreshToken = localStorage.getItem("refreshToken"); // Retrieve the refresh token from localStorage
+          const response = await axios.get("http://10.10.103.104:4000/mentor/completion-percentage", {
+            headers: {
+              Authorization: `Bearer ${refreshToken}`, // Use Authorization header
+            },
+          });
+    
+          const { wholeClassLessonPercentage, wholeClassChallengePercentage } = response.data;
+    
+          setLessonPercentage(parseFloat(wholeClassLessonPercentage));
+          setChallengePercentage(parseFloat(wholeClassChallengePercentage));
+          console.log("Lesson Percentage:", wholeClassLessonPercentage);
+          console.log("Challenge Percentage:", wholeClassChallengePercentage);
+        } catch (error) {
+          console.error("Failed to fetch completion percentages:", error);
+        }
+      };
+    
+      fetchCompletionPercentages();
+    }, []);
+    
   
     const handleDotClick = (index: number) => {
       setCurrentIndex(index);
@@ -114,12 +141,12 @@
           const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
     
           // Fetch mentor details
-          const response = await axios.get(`http://192.168.1.36:4000/admin/mentor/${userId}`);
+          const response = await axios.get(`http://10.10.103.104:4000/admin/mentor/${userId}`);
           setMentorName(response.data.fullName);
           setMentorRole(response.data.role);
     
           // Fetch the professional profile image
-          const profileResponse = await axios.get(`http://192.168.1.36:4000/trainee/${userId}/pro`);
+          const profileResponse = await axios.get(`http://10.10.103.104:4000/trainee/${userId}/pro`);
     
           // Check if profile image exists
           if (profileResponse.data.profileImage) {
@@ -140,7 +167,7 @@
     useEffect(() => {
       const fetchClasses = async () => {
         try {
-          const response = await axios.get('http://192.168.1.36:4000/admin/class'); // Replace with your API URL
+          const response = await axios.get('http://10.10.103.104:4000/admin/class'); // Replace with your API URL
           setClasses(response.data);
         } catch (error) {
           console.error('Error fetching classes:', error);
@@ -295,54 +322,54 @@
 
                   {/* Activity Chart Card */}
                   <Card className="bg-white rounded-2xl shadow-lg">
-      <CardContent className="p-6">
-        <h3 className="font-bold text-xl mb-1">Trainee login activity</h3>
-        <p className="text-sm text-gray-500">Trainee Logged in today</p>
-        <div className="flex items-center justify-between mt-4">
-          {/* Chart Wrapper */}
-          <div className="relative w-[200px] h-[200px]">
-            <PieChart width={200} height={200}>
-              <Pie
-                data={chartData}
-                cx={100}
-                cy={100}
-                innerRadius={60}
-                outerRadius={80}
-                startAngle={90}
-                endAngle={-270}
-                dataKey="value"
-              >
-                {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                ))}
-              </Pie>
-            </PieChart>
-            {/* Center text with percentage */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-2xl font-bold">
-                  {displayedPresentValue}%
-                </div>
-                <div className="text-sm text-gray-500">Present</div>
-              </div>
-            </div>
-          </div>
+                    <CardContent className="p-6">
+                      <h3 className="font-bold text-xl mb-1">Trainee login activity</h3>
+                      <p className="text-sm text-gray-500">Trainee Logged in today</p>
+                      <div className="flex items-center justify-between mt-4">
+                        {/* Chart Wrapper */}
+                        <div className="relative w-[200px] h-[200px]">
+                          <PieChart width={200} height={200}>
+                            <Pie
+                              data={chartData}
+                              cx={100}
+                              cy={100}
+                              innerRadius={60}
+                              outerRadius={80}
+                              startAngle={90}
+                              endAngle={-270}
+                              dataKey="value"
+                            >
+                              {chartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                              ))}
+                            </Pie>
+                          </PieChart>
+                          {/* Center text with percentage */}
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-center">
+                              <div className="text-2xl font-bold">
+                                {displayedPresentValue}%
+                              </div>
+                              <div className="text-sm text-gray-500">Present</div>
+                            </div>
+                          </div>
+                        </div>
 
-          {/* Legend */}
-          <div className="flex flex-col gap-3">
-            {chartData.map((entry, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: COLORS[index] }}
-                />
-                <span className="text-sm">{entry.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+                        {/* Legend */}
+                        <div className="flex flex-col gap-3">
+                          {chartData.map((entry, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                              <div
+                                className="w-3 h-3 rounded-full"
+                                style={{ backgroundColor: COLORS[index] }}
+                              />
+                              <span className="text-sm">{entry.name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
 
@@ -354,7 +381,7 @@
                     <div className="text-center flex-1 flex flex-col items-center justify-center">
                     <div className="w-17 h-17 rounded-full border-2 border-gray-200 flex items-center justify-center mb-6">
                     <Avatar className="h-16 w-16 border-gray-800 rounded-full">
-                        <AvatarImage src={`http://192.168.1.36:4000${profileImage}`} alt="Mentor" />
+                        <AvatarImage src={`http://10.10.103.104:4000${profileImage}`} alt="Mentor" />
                           <AvatarFallback>
                             {mentorName
                               ? mentorName
@@ -384,25 +411,46 @@
                 {/* Completion Percentage Card */}
                 <Card className="bg-[#0040FF] rounded-3xl shadow-md">
                   <CardContent className="p-6">
+                    <div>
                     <div className="flex items-center gap-2 mb-4">
-                        <div>
-                          <CheckCheck className="w-5 h-5 text-white" />
-                        </div>
+                      <div>
+                        <CheckCheck className="w-5 h-5 text-white" />
+                      </div>
                       <span className="font-medium text-white">Completion Percentage</span>
                     </div>
-                    <div className="bg-white rounded-xl p-4">
-                      <div className="relative w-full h-2 bg-gray-400 rounded-full overflow-hidden">
-                        <div
-                          className="absolute top-0 left-0 h-full bg-[#0040FF] rounded-full"
-                          style={{ width: "69%" }}
-                        />
+                    <div className="bg-white rounded-xl p-4 space-y-4">
+                      {/* Challenge Completion */}
+                      <div className="mb-6">
+                        <div className="relative w-full h-2 bg-gray-400 rounded-full overflow-hidden">
+                          <div
+                            className="absolute top-0 left-0 h-full bg-[#0040FF] rounded-full"
+                            style={{ width: `${challengePercentage}%` }} // Replace with dynamic data for challenge percentage
+                          />
+                        </div>
+                        <div className="mt-2 text-center">
+                          <p className="text-sm">
+                            <span className="font-semibold">{challengePercentage}%</span>
+                            {" Challenge Completed"}
+                          </p>
+                        </div>
                       </div>
-                      <div className="mt-2 text-center">
-                        <p className="text-sm">
-                          <span className="font-semibold">69%</span>
-                          {" Challenge Completed"}
-                        </p>
+
+                      {/* Lesson Completion */}
+                      <div className="mt-6">
+                        <div className="relative w-full h-2 bg-gray-400 rounded-full overflow-hidden">
+                          <div
+                            className="absolute top-0 left-0 h-full bg-[#0040FF] rounded-full"
+                            style={{ width: `${lessonPercentage}%` }} // Replace with dynamic data for lesson percentage
+                          />
+                        </div>
+                        <div className="mt-2 text-center">
+                          <p className="text-sm">
+                            <span className="font-semibold">  {lessonPercentage}%</span>
+                            {" Lesson Completed"}
+                          </p>
+                        </div>
                       </div>
+                    </div>
                     </div>
                   </CardContent>
                 </Card>

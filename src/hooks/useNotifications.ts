@@ -1,13 +1,5 @@
 import { useState, useCallback } from 'react';
-
-export interface Notification {
-  id: number;
-  message: string;
-  description: string;
-  isRead: boolean;
-  icon: string;
-  createdAt: Date;
-}
+import { Notification } from '@/types/Notification';
 
 export function useNotifications(initialNotifications: Notification[] = []) {
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);

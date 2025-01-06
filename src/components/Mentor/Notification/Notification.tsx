@@ -10,7 +10,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { useNotifications, Notification } from '../../../hooks/useNotifications';
+import { useNotifications } from '../../../hooks/useNotifications';
+import { Notification } from '../../../types/Notification';
 
 const iconMap: { [key: string]: React.ReactNode } = {
   Lesson: <BookCheck className="h-4 w-4" />,

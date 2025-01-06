@@ -35,9 +35,7 @@ export function MentorLogin() {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
 
-        alert('Login successful');
         navigate('/dashboard');
-        console.log('Login response:', data);
       } else {
         const errorData = await response.json();
         alert(`Login failed: ${errorData.message}`);

@@ -339,7 +339,7 @@
                               endAngle={-270}
                               dataKey="value"
                             >
-                              {chartData.map((entry, index) => (
+                              {chartData.map((_, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index]} />
                               ))}
                             </Pie>

@@ -70,7 +70,7 @@ export default function NotesPage() {
         id: Date.now().toString(),
         createdAt: new Date().toISOString(),
         grader: { id: '', fullName: '', nickname: '' },
-        trainee: { id: '', fullName: '', nickname: '' },
+        trainee: { id: '', fullName: '', nickname: '', email: ''},
       },
     ]);
     setIsModalOpen(false);

@@ -86,10 +86,20 @@ export default function NoteList({ notes, filter, setFilter, onDelete }: NoteLis
                 </Badge>
               </div>
               {note.visibility === "FOR_TRAINEE" && note.trainee.fullName && (
-                <p className="text-sm text-gray-500 mb-2">Note for: {note.trainee.fullName}</p>
+                <div className="text-sm text-gray-500 mb-2">
+                <p>
+                  Note for : <span className="font-bold">{note.trainee.fullName}</span>
+                </p>
+                <p className="mb-4">{note.trainee.email}</p>
+              </div>
               )}
               {note.visibility === "FOR_GRADER" && note.grader.fullName && (
-                <p className="text-sm text-gray-500 mb-2">Note for: {note.grader.fullName}</p>
+                <div className="text-sm text-gray-500 mb-2">
+                <p>
+                  Note for : <span className="font-bold">{note.trainee.fullName}</span>
+                </p>
+                <p className="mb-4">{note.trainee.email}</p>
+              </div>
               )}
               <p className="text-gray-700">{note.content}</p>
             </CardContent>

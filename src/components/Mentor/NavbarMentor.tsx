@@ -2,7 +2,7 @@
 
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Bell, ChevronDown, LogOut } from 'lucide-react';
+import { ChevronDown, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { jwtDecode } from 'jwt-decode'; // You need to install this package: npm install jwt-decode
 import axios from 'axios'; // You need to install this package: npm install axios
+import { NotificationPopup } from './Notification/Notification';
 
 export default function NavbarMentor() {
   const location = useLocation();
@@ -75,7 +76,6 @@ export default function NavbarMentor() {
       });
 
       if (response.status === 200) {
-        alert('Logout successful');
         localStorage.removeItem('accessToken'); // Remove the token from localStorage
         navigate('/'); // Redirect to the login page
       }
@@ -124,7 +124,7 @@ export default function NavbarMentor() {
         {/* User Menu */}
         <div className="flex-shrink-0 flex items-center gap-4">
           <Button variant="ghost" size="icon" className="h-10 w-10">
-            <Bell className="h-6 w-6" />
+            <NotificationPopup />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

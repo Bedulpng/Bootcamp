@@ -39,6 +39,7 @@ export interface Certificate {
       id: string;
       fullName: string;
       nickname: string;
+      email: string;
     };
   };
 

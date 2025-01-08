@@ -1,5 +1,6 @@
 // src/utils/middleware.ts
 import { jwtDecode, JwtPayload } from 'jwt-decode';
+import axios from 'axios';
 
 // Extend JwtPayload to include custom fields
 interface CustomJwtPayload extends JwtPayload {
@@ -68,8 +69,40 @@ export const isLoggedIn = (): boolean => {
 
     // If token exists and is valid, the user is logged in
     return true;
-  } catch (error) {
+  } catch (error) { 
     console.error('Error decoding token:', error);
     return false;
   }
 };
+
+export const checkTokenValidity = async (): Promise<boolean> => {
+  const accessToken = localStorage.getItem('accessToken'); // Retrieve token from storage
+
+  try {
+    const response = await axios.post(
+      'http://10.10.103.104:4000/api/check-token',
+      {}, 
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`, // Send token in Authorization header
+        },
+      }
+    );
+
+    // If the response is successful, the token is valid
+    console.log('Token is valid:', response.data);
+    return true;
+  } catch (error: any) {
+    if (error.response && error.response.status === 401) {
+      const data = error.response.data;
+      alert(data.message); // Notify user of token expiration and logout
+      localStorage.removeItem('refreshToken'); // Clear token from storage
+    } else {
+      console.error('Unexpected error during token validation:', error);
+    }
+    return false; // Return false for invalid token or other errors
+  }
+};
+
+

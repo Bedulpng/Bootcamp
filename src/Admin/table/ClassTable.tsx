@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
-import type { ClassActivity } from '../types';
+// import type { ClassActivity } from '../types';
     
 interface ClassTableProps {
   classes: ClassActivity[];

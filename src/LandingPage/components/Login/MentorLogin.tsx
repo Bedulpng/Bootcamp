@@ -1,12 +1,49 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Users } from 'lucide-react';
 import { LoginLayout } from './LoginLayout';
 import { LoginForm } from './LoginForm';
 
 export function MentorLogin() {
-  const handleSubmit = (e: React.FormEvent) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+    loginData: { email: string; password: string }
+  ) => {
     e.preventDefault();
-    // Handle mentor login logic here
+
+    const payload = {
+      ...loginData,
+      role: 'MENTOR', // Add default role
+    };
+
+    try {
+      const response = await fetch('http://10.10.103.104:4000/trainee/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const { accessToken, refreshToken } = data;
+
+        // Save tokens to localStorage
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+
+        navigate('/dashboard');
+      } else {
+        const errorData = await response.json();
+        alert(`Login failed: ${errorData.message}`);
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      alert('An unexpected error occurred during login.');
+    }
   };
 
   return (

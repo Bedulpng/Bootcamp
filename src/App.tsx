@@ -1,33 +1,28 @@
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
-
-// Landing Page Components
-import { Navbar } from './LandingPage/Navbar';
-import { Hero } from './LandingPage/Hero';
-import { Testimonial } from './LandingPage/Testimonial';
-import LeadingComp from './LandingPage/LeadingCompanies';
-import ProgramsPage from './LandingPage/Program';
-import { Footer } from './LandingPage/Footer';
-import Contact from './LandingPage/Contact';
-import ContactSect from './LandingPage/Contact-section';
-import RmFs from './LandingPage/ReadMore_Programs/ReadMoreFs';
-import RmQa from './LandingPage/ReadMore_Programs/ReadMoreQa';
-import ScrollTop from './LandingPage/ScrollUp';
-import AboutSection from './LandingPage/About/About';
-
-// Mentor Components
-import MentorDb from './Mentor/components/Mentor/Dashboard';
-import NavbarMentor from './Mentor/components/Mentor/NavbarMentor';
-import FooterMentor from './Mentor/components/Mentor/FooterMentor';
-import NotFound from './LandingPage/NotFound';
-import Batch from './Mentor/components/Mentor/ExploreBatch';
-import Trainee from './Mentor/components/Mentor/Trainee';
-import { NoteRoute } from './Mentor/components/Mentor/Note/NoteRoute';
-import { TraineePage } from './Mentor/components/Mentor/Note/TraineePage';
-
-// Trainee Components
-import LoginPage from './Trainee/firstpage/login';
-import FormPage from './Trainee/firstpage/form';
-import Dashboard from './Trainee/secondpge/Dashboard';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Navbar } from './components/Navbar';
+import { Hero } from './components/Hero';
+import { Testimonial } from './components/Testimonial';
+import LeadingComp from './components/LeadingCompanies';
+import ProgramsPage from './components/Program';
+import { Footer } from './components/Footer';
+import Contact from './components/Contact';
+import ContactSect from './components/Contact-section';
+import RmFs from './components/ReadMore_Programs/ReadMoreFs';
+import RmQa from './components/ReadMore_Programs/ReadMoreQa';
+import ScrollTop from './components/ScrollUp';
+import AboutSection from './components/About/About';
+import MentorDb from './components/Mentor/Dashboard';
+import NavbarMentor from './components/Mentor/NavbarMentor';
+import FooterMentor from './components/Mentor/FooterMentor';
+import NotFound from './components/NotFound';
+import Batch from './components/Mentor/ExploreBatch';
+import { TraineePages } from './components/TraineeManagement/TraineePage';
+import { MentorLogin } from './components/Login/MentorLogin';
+import { TraineeLogin } from './components/Login/TraineeLogin';
+import ProtectedRoute from './components/ProtectedRoute';
+import Rbac from './components/RbacRoute';
+import DashboardPage from './components/Mentor/BatchPage';
+import NotesPage from './components/Mentor/Notes/page';
 
 // Admin Components
 import Dashboarda from './Admin/pages/Dashboard/dashboard';
@@ -73,29 +68,108 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Landing Page Routes */}
-        <Route path="/" element={<Layout><MainContent /></Layout>} />
-        <Route path="/contact" element={<Layout><ContactSect /></Layout>} />
-        <Route path="/programs/fullstack" element={<Layout><RmFs /></Layout>} />
-        <Route path="/programs/qualityassurance" element={<Layout><RmQa /></Layout>} />
-        <Route path="/about" element={<Layout><AboutSection /></Layout>} />
+        {/* Routes that use Layout */}
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <MainContent />
+            </Layout>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <Layout>
+              <ContactSect />
+            </Layout>
+          }
+        />
+        <Route
+          path="/programs/fullstack"
+          element={
+            <Layout>
+              <RmFs />
+            </Layout>
+          }
+        />
+        <Route
+          path="/programs/qualityassurance"
+          element={
+            <Layout>
+              <RmQa />
+            </Layout>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <Layout>
+              <AboutSection />
+            </Layout>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <Rbac allowedRoles={['ADMIN', 'MENTOR']}>
+              <ProtectedRoute>
+                <Layout>
+                  <MentorDb />
+                </Layout>
+              </ProtectedRoute>
+            </Rbac>
+          }
+        />
+        <Route
+          path="/dashboard/batch"
+          element={
+            <Layout>
+              <Batch />
+            </Layout>
+          }
+        />
+        <Route
+          path="/dashboard/trainee"
+          element={
+            <Layout>
+              <TraineePages />
+            </Layout>
+          }
+        />
+        <Route
+          path="/dashboard/note"
+          element={
+            <Layout>
+              <NotesPage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/dashboard/batch/:batchId"
+          element={
+            <Layout>
+              <DashboardPage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/login/mentor"
+          element={
+            
+              <MentorLogin />
+            
+          }
+        />
+        <Route
+          path="/login/trainee"
+          element={
 
-        {/* Mentor Routes */}
-        <Route path="/dashboardm" element={<Layout><MentorDb /></Layout>} />
-        <Route path="/dashboardm/batch" element={<Layout><Batch /></Layout>} />
-        <Route path="/dashboardm/trainee" element={<Layout><Trainee /></Layout>} />
-        <Route path="/dashboardm/note" element={<Layout><NoteRoute /></Layout>} />
-        <Route path="/dashboardm/note/:classId/batch/:batchId" element={<Layout><TraineePage /></Layout>} />
-
-        {/* Trainee Routes */}
-        <Route path="/loginpage" element={<AuthLayout><LoginPage /></AuthLayout>} />
-        <Route path="/form" element={<AuthLayout><FormPage /></AuthLayout>} />
-        <Route path="/dashboard" element={<AuthLayout><Dashboard /></AuthLayout>} />
-
-        {/* Admin Routes */}
-        <Route path="/dashboarda" element={<AuthLayout><Dashboarda /></AuthLayout>} />
-
-        {/* Not Found */}
+              <TraineeLogin />
+            
+          }
+        />
+        {/* Route without Layout */}
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

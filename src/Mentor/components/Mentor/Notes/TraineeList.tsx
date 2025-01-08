@@ -1,5 +1,5 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/LandingPage/ui/card"
+import { Button } from "@/LandingPage/ui/button"
 import { Trainee} from '../../../types/Trainee'
 
 type TraineeListProps = {

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode"; // Install using `npm install jwt-decode`
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Note, Trainee } from "../../../types/Trainee";
+import { jwtDecode } from "jwt-decode";
+import { Button } from "@/LandingPage/ui/button";
+import { Textarea } from "@/LandingPage/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/LandingPage/ui/radio-group";
+import { Label } from "@/LandingPage/ui/label";
+import { Note, Trainee } from "../../../../types/Trainee";
 
 type NoteFormProps = {
   addNote: (note: Note) => void; // Update local notes state after successful API call

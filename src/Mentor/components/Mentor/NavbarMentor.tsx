@@ -3,15 +3,15 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ChevronDown, LogOut } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/LandingPage/ui/avatar';
+import { Button } from '@/LandingPage/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/LandingPage/ui/dropdown-menu';
 import { jwtDecode } from 'jwt-decode'; // You need to install this package: npm install jwt-decode
 import axios from 'axios'; // You need to install this package: npm install axios
 import { NotificationPopup } from './Notification/Notification';

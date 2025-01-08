@@ -3,15 +3,15 @@
 import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Bell, CheckCheck, ChevronDown, ChevronUp, AlertTriangle, Gift, MessageSquare, BookCheck, UserRoundCheck } from 'lucide-react';
-import { Button } from "@/components/ui/button"
+import { Button } from "@/LandingPage/ui/button"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { useNotifications } from '../../../hooks/useNotifications';
-import { Notification } from '../../../types/Notification';
+} from "@/LandingPage/ui/popover"
+import { ScrollArea } from "@/LandingPage/ui/scroll-area"
+import { useNotifications } from '../../../../hooks/useNotifications';
+import { Notification } from '../../../../types/Notification';
 
 const iconMap: { [key: string]: React.ReactNode } = {
   Lesson: <BookCheck className="h-4 w-4" />,

@@ -4,12 +4,12 @@
   import axios from 'axios'
   import { useState, useEffect, useRef} from 'react'
   import { PenLine, CheckCheck } from 'lucide-react'
-  import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-  import { Button } from "@/components/ui/button"
+  import { Avatar, AvatarFallback, AvatarImage } from '@/LandingPage/ui/avatar';
+  import { Button } from "@/LandingPage/ui/button"
   import {
     Card,
     CardContent
-  } from "@/components/ui/card"
+  } from "@/LandingPage/ui/card"
   import { PieChart, Pie, Cell } from "recharts"
   import { Link } from 'react-router-dom'
   import ProfileEditor from './Modal/ProfileEdit'

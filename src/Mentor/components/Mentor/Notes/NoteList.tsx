@@ -1,8 +1,8 @@
 import { Note } from "../../../types/Trainee";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/LandingPage/ui/card";
+import { Badge } from "@/LandingPage/ui/badge";
 import { User, Lock, Trash } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/LandingPage/ui/select";
 import axios from "axios";
 
 type NoteListProps = {

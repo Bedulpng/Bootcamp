@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
+import { Button } from '@/LandingPage/ui/button';
+import { Card, CardContent } from '@/LandingPage/ui/card';
+import { Input } from '@/LandingPage/ui/input';
+import { cn } from '@/LandingPage/lib/utils';
 import { useNavigate, useLocation } from 'react-router-dom'; 
-import { Batch } from '../../types/Trainee';
+import { Batch } from '../../../types/Trainee';
 import { jwtDecode } from 'jwt-decode'
 
 export default function ExploreBatch() {

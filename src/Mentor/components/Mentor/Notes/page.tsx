@@ -7,8 +7,8 @@ import TraineeSearch from './TraineeSearch';
 import TraineeList from './TraineeList';
 import NoteList from './NoteList';
 import NoteForm from './NoteForm';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/LandingPage/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/LandingPage/ui/tabs';
 import { Trainee, Note, Visibility } from '../../../types/Trainee';
 
 export default function NotesPage() {

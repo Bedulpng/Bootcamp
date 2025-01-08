@@ -10,9 +10,8 @@ export const sidebarItems = [
     icon: Users,
     title: 'User',
     subItems: [
-      { title: 'User List', href: '/users' },
-      { title: 'User Roles', href: '/user-roles' },
-      { title: 'User Settings', href: '/user-settings' }
+      { title: 'User Manage', href: '/users' },
+      { title: 'Role Manage', href: '/roles' },
     ]
   },
   {
@@ -27,11 +26,7 @@ export const sidebarItems = [
   {
     icon: FileText,
     title: 'Note',
-    subItems: [
-      { title: 'My Notes', href: '/my-notes' },
-      { title: 'Shared Notes', href: '/shared-notes' },
-      { title: 'Archive', href: '/archived-notes' }
-    ]
+    href: '/notes'
   },
   {
     icon: Award,

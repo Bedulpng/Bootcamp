@@ -3,9 +3,9 @@
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/LandingPage/ui/button";
+import { Input } from "@/LandingPage/ui/input";
+import { Label } from "@/LandingPage/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -13,8 +13,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from "@/LandingPage/ui/dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/LandingPage/ui/avatar";
 import { jwtDecode } from 'jwt-decode';
 
 interface ProfileEditorProps {

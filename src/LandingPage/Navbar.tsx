@@ -26,8 +26,12 @@ export function Navbar() {
   };
 
   const handleTraineeLogin = () => {
-    navigate("/loginpage");
+    navigate("/login/trainee");
   };
+
+  const handleMentorLogin = () => {
+    navigate('/login/mentor');
+  }
 
   return (
     <nav
@@ -176,7 +180,9 @@ export function Navbar() {
             <User2 className="h-5 w-5 mr-2" />
             Trainee
           </button>
-          <button className="flex items-center px-4 py-2 bg-gray-100 rounded-lg border border-gray-300 hover:bg-gray-200">
+          <button 
+            onClick={handleMentorLogin}
+            className="flex items-center px-4 py-2 bg-gray-100 rounded-lg border border-gray-300 hover:bg-gray-200">
             <Presentation className="h-5 w-5 mr-2" />
             Mentor
           </button>

@@ -9,7 +9,7 @@ interface CircularChartProps {
 
 const CircularChart: React.FC<CircularChartProps> = ({ percentage, title }) => {
   return (
-    <div className="bg-white p-4 rounded-lg">
+    <div className="bg-white p-6 rounded-lg shadow-sm">
       <h3 className="text-lg font-semibold mb-4">{title}</h3>
       <div className="w-32 h-32 mx-auto">
         <CircularProgressbar

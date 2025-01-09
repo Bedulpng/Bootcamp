@@ -6,10 +6,11 @@ interface UserTableProps {
   users: UserActivity[];
 }
 
+
 const UserTable: React.FC<UserTableProps> = ({ users }) => {
   return (
     <div className="bg-white p-4 rounded-lg">
-      <h3 className="text-lg font-semibold mb-4">User Activity</h3>
+      <h3 className="text-lg font-semibold mb-4">Registered User</h3>
       <div className="overflow-x-auto">
         <table className="table">
           <thead>
@@ -37,7 +38,9 @@ const UserTable: React.FC<UserTableProps> = ({ users }) => {
           </tbody>
         </table>
       </div>
-      <button className="btn btn-primary mt-4">View More</button>
+      <button 
+      className="btn btn-primary mt-4"
+      >View More</button>
     </div>
   );
 };

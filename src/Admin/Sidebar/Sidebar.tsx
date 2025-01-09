@@ -4,8 +4,8 @@ import { sidebarItems } from './SidebarConfig';
 
 const Sidebar = () => {
   return (
-    <div className="h-[calc(100vh-64px)] w-64 bg-primary text-white bg-[#0020F6] p-4 overflow-y-auto">
-      <nav className="space-y-2">
+    <div className="w-64 bg-white text-[#0020f6] items-[#0020f6] min-h-[calc(100vh-64px)]">
+      <nav className="p-4 space-y-1 items-[#0020F6]">
         {sidebarItems.map((item) => (
           <SidebarItem
             key={item.title}

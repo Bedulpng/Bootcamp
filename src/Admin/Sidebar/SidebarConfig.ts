@@ -4,13 +4,13 @@ export const sidebarItems = [
   {
     icon: LayoutDashboard,
     title: 'Dashboard',
-    href: '/'
+    href: '/dashboardA'
   },
   {
     icon: Users,
     title: 'User',
     subItems: [
-      { title: 'User Manage', href: '/users' },
+      { title: 'User Manage', href: '/usermanage' },
       { title: 'Role Manage', href: '/roles' },
     ]
   },

@@ -11,7 +11,7 @@ const ClassTable: React.FC<ClassTableProps> = ({ classes }) => {
     <div className="bg-white p-4 rounded-lg">
       <h3 className="text-lg font-semibold mb-4">Class Activity</h3>
       <div className="overflow-x-auto">
-        <table className="table">
+        <table className="table items-center">
           <thead>
             <tr>
               <th>Class Name</th>
@@ -45,7 +45,7 @@ const ClassTable: React.FC<ClassTableProps> = ({ classes }) => {
           </tbody>
         </table>
       </div>
-      <button className="btn btn-primary mt-4">View More</button>
+      <button className="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700">View More</button>
     </div>
   );
 };

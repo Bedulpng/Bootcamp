@@ -14,7 +14,7 @@
   import { Link } from 'react-router-dom'
   import ProfileEditor from './Modal/ProfileEdit'
   import { jwtDecode } from 'jwt-decode'
-  import { Batch, Trainee } from '../../types/Trainee'
+  import { Batch, Trainee } from '../../../types/Trainee'
   import { fetchTrainees } from '@/Api/FetchTrainee'
 
   export default function MentorDb() {

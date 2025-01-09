@@ -34,7 +34,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon: Icon, title, subItems, 
           <span>{title}</span>
         </div>
         {hasSubItems && (
-          <div className="text-white">
+          <div className="text-[#0020F6]">
             {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
           </div>
         )}

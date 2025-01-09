@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Bell, LogOut } from 'lucide-react';
 import Logo from '../Layout/Logo';
+
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -27,7 +28,7 @@ const Navbar = () => {
           
           <div className="flex items-center space-x-4">
             <button className="btn btn-ghost btn-circle relative">
-              <Bell size={20} />
+              <Bell size={30} />
               {notifications > 0 && (
                 <span className="absolute -top-1 -right-1 bg-error text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
                   {notifications}
@@ -36,7 +37,7 @@ const Navbar = () => {
             </button>
             
             <button className="btn btn-ghost btn-circle">
-              <LogOut size={20} />
+              <LogOut size={30} />
             </button>
           </div>
         </div>

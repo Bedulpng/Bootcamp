@@ -15,6 +15,8 @@ import ScrollTop from './LandingPage/ScrollUp';
 import AboutSection from './LandingPage/About/About';
 import NotFound from './LandingPage/NotFound';
 import { TraineePages } from './LandingPage/TraineeManagement/TraineePage';
+
+//Login
 import { MentorLogin } from './LandingPage/components/Login/MentorLogin';
 import { TraineeLogin } from './LandingPage/components/Login/TraineeLogin';
 
@@ -24,13 +26,16 @@ import NavbarMentor from './Mentor/components/Mentor/NavbarMentor';
 import FooterMentor from './Mentor/components/Mentor/FooterMentor';
 import Batch from './Mentor/components/Mentor/ExploreBatch';
 
-//Trainee
+//Regis
 import RegisPage from './Trainee/firstpage/Regis';
+
+//Trainee
 import FormPage from './Trainee/firstpage/form';
 import Dashboard from './Trainee/secondpge/Dashboard';
 
 // Admin 
 import DashboardA from './Admin/Pages/Dashboard';
+import UserManage from './Admin/Pages/User/UserManage';
 
 import ProtectedRoute from './LandingPage/ProtectedRoute';
 import Rbac from './LandingPage/RbacRoute';
@@ -42,7 +47,7 @@ function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
 
   const isDashboard = location.pathname.startsWith('/dashboardm');
-  const isAuthPage = location.pathname === '/loginpage' || location.pathname === '/form';
+  const isAuthPage = location.pathname === '/login/trainee' || location.pathname === '/form';
 
   return (
     <div className="min-h-screen bg-white">
@@ -97,6 +102,7 @@ function App() {
 
         {/* Admin Routes */}
         <Route path="/dashboardA" element={<AuthLayout><DashboardA /></AuthLayout>} />
+        <Route path="/usermanage" element={<AuthLayout><UserManage /></AuthLayout>} />
 
         {/* Route without Layout */}
         <Route path="*" element={<NotFound />} />

@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
 
   const confirmLogout = () => {
     setShowModal(false);
-    navigate("/login");
+    navigate("/login/trainee");
   };
 
   const handleLogoClick = () => {

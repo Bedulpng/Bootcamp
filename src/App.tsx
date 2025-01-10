@@ -32,6 +32,7 @@ import RegisPage from './Trainee/firstpage/Regis';
 //Trainee
 import FormPage from './Trainee/firstpage/form';
 import Dashboard from './Trainee/secondpge/Dashboard';
+import Profile from './Trainee/secondpge/top/profile';
 
 // Admin 
 import DashboardA from './Admin/Pages/Dashboard';
@@ -99,6 +100,7 @@ function App() {
         <Route path="/regispage" element={<AuthLayout><RegisPage /></AuthLayout>} />
         <Route path="/form" element={<AuthLayout><FormPage /></AuthLayout>} />
         <Route path="/dashboard" element={<AuthLayout><Dashboard /></AuthLayout>} />
+        <Route path='/profile' element={<AuthLayout><Profile /></AuthLayout>} />
 
         {/* Admin Routes */}
         <Route path="/dashboardA" element={<AuthLayout><DashboardA /></AuthLayout>} />

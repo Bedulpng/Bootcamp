@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
 import Sidebar from '../../Sidebar/Sidebar';
 import Navbar from '../../Header/NavbarA';
 import UserTable from '../../table/UserTabel';
@@ -13,6 +14,8 @@ const UserManage = () => {
     password: '',
     confirmPassword: '',
   });
+    const [showPassword, setShowPassword] = useState(false);
+    const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   const addUser = () => {
     setShowModal(true);
@@ -88,24 +91,50 @@ const UserManage = () => {
                   >
                     <option value="">Role</option>
                     <option value="Admin">Admin</option>
-                    <option value="User">User</option>
+                    <option value="User">Mentor</option>
+                    <option value="User">Exaimer</option>
+                    <option value="User">Supervisor</option>
                   </select>
+                  <div className="relative w-full">
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
                     placeholder="Password"
                     className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 focus:outline-none">
+                    {showPassword ? (
+                    <EyeOff className="w-5 h-5 text-gray-500" />
+                    ) : (
+                    <Eye className="w-5 h-5 text-gray-500" />
+                    )}
+                  </button>
+                  </div>
+                  <div className="relative w-full">
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     placeholder="Confirm Password"
                     className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 focus:outline-none">
+                    {showPassword ? (
+                    <EyeOff className="w-5 h-5 text-gray-500" />
+                    ) : (
+                    <Eye className="w-5 h-5 text-gray-500" />
+                    )}
+                  </button>
+                </div>
                 </div>
                 <button
                   onClick={handleSave}

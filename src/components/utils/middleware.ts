@@ -80,7 +80,7 @@ export const checkTokenValidity = async (): Promise<boolean> => {
 
   try {
     const response = await axios.post(
-      'http://10.10.103.104:4000/api/check-token',
+      'http://10.10.103.6:4000/api/check-token',
       {}, 
       {
         headers: {
@@ -90,8 +90,7 @@ export const checkTokenValidity = async (): Promise<boolean> => {
       }
     );
 
-    // If the response is successful, the token is valid
-    console.log('Token is valid:', response.data);
+    // If the response is successful, the token is valid  
     return true;
   } catch (error: any) {
     if (error.response && error.response.status === 401) {

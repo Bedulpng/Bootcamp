@@ -24,7 +24,6 @@ import Rbac from './components/RbacRoute';
 import DashboardPage from './components/Mentor/BatchPage';
 import NotesPage from './components/Mentor/Notes/page';
 
-// Layout component to handle conditional rendering of Navbar and Footer
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith('/dashboard');
 

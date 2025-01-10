@@ -22,10 +22,7 @@ const iconMap: { [key: string]: React.ReactNode } = {
 };
 
 export function NotificationPopup() {
-  const { notifications, markAsRead, markAllAsRead } = useNotifications([
-    { id: 1, message: "Your student submitted a lesson", description: "John Doe submitted a lesson on class Full stack developer batch 12", isRead: false, icon: "Lesson", createdAt: new Date(Date.now() - 8 * 60 * 60 * 1000) }, // 8 hours ago
-    { id: 2, message: "Your student submitted a challenge", description: "Jane Doe submitted a challenge on class Quality Assurance batch 11", isRead: false, icon: "Challenge", createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000) }, // 1 hour ago
-  ]);
+  const { notifications, markAsRead, markAllAsRead } = useNotifications();
 
   const [showAll, setShowAll] = useState(false);
   const [scrollAreaHeight, setScrollAreaHeight] = useState(300);
@@ -94,7 +91,7 @@ export function NotificationPopup() {
   );
 }
 
-function NotificationItem({ notification, onMarkAsRead }: { notification: Notification; onMarkAsRead: (id: number) => void }) {
+function NotificationItem({ notification, onMarkAsRead }: { notification: Notification; onMarkAsRead: (id: string) => void }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (

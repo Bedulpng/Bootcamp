@@ -95,13 +95,14 @@ function NotificationItem({ notification, onMarkAsRead }: { notification: Notifi
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className={`p-4 rounded bg-white border-b border-gray-200 last:border-b-0`}>
+    <div className="p-4 rounded bg-white border-b border-gray-200 last:border-b-0">
       <div className="flex items-center cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="mr-3 text-blue-500">
           {iconMap[notification.icon]}
         </div>
         <div className="flex-grow">
           <p className="text-sm font-medium">{notification.message}</p>
+          {/* Ensure that createdAt is a valid Date */}
           <p className="text-xs text-gray-500">{formatDistanceToNow(new Date(notification.createdAt))} ago</p>
         </div>
         <Button variant="ghost" size="sm" className="ml-2">

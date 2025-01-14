@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { useState } from 'react';
+import { Toaster } from './components/ui/toaster';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { Testimonial } from './components/Testimonial';
@@ -23,16 +25,75 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Rbac from './components/RbacRoute';
 import DashboardPage from './components/Mentor/BatchPage';
 import NotesPage from './components/Mentor/Notes/page';
+import Dashboard from './components/Trainee/pages/secondpge/Dashboard';
+import SubjectDetail from './components/Trainee/pages/secondpge/subjectdetail';
+import NotificationPage from './components/Trainee/pages/secondpge/top/Notification';
+import Profile from './components/Trainee/pages/secondpge/top/profile';
+import FormPage from './components/Trainee/pages/firstpage/form';
+import RegisPage from './components/Trainee/pages/firstpage/login';
+import DashboardAdmin from './components/Admin/pages/Dashboard';
+import NavbarAdmin from './components/Admin/pages/Navbar';
+import SidebarAdmin from './components/Admin/Modal/Sidebar';
+import BatchAdmin from './components/Admin/pages/Batch';
+import Users from './components/Admin/pages/Users';
+import Classes from './components/Admin/pages/Classes';
+import Certificates from './components/Admin/pages/Certificates';
+import Notes from './components/Admin/pages/Notes';
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith('/dashboard');
+  const isAdmin = window.location.pathname.startsWith('/admin');
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [currentPage, setCurrentPage] = useState('dashboard');
+
+  const renderAdminPage = () => {
+    switch (currentPage) {
+      case 'dashboard':
+        return <DashboardAdmin />;
+      case 'batch':
+        return <BatchAdmin />;
+      case 'users':
+        return <Users />;
+      case 'classes':
+        return <Classes />;
+      case 'certificates':
+        return <Certificates/>;
+      case 'notes':
+        return <Notes />;
+      default:
+        return <DashboardAdmin />;
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-white">
-      {isDashboard ? <NavbarMentor /> : <Navbar />}
-      {children}
+    <div className={`min-h-screen ${isAdmin || isDashboard ? 'bg-gray-100 dark:bg-gray-900' : 'bg-white'}`}>
+      {isAdmin || isDashboard ? (
+        <div className="flex h-screen overflow-hidden">
+          {isAdmin && (
+            <SidebarAdmin
+              isOpen={isSidebarOpen}
+              setIsOpen={setIsSidebarOpen}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+            />
+          )}
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {isAdmin ? <NavbarAdmin /> : <NavbarMentor />}
+            <main className="flex-1 overflow-y-auto p-6 bg-gray-100 dark:bg-gray-900">
+              {isAdmin ? renderAdminPage() : children}
+            </main>
+          </div>
+        </div>
+      ) : (
+        <>
+          <Navbar />
+          {children}
+        </>
+      )}
       <ScrollTop />
-      {isDashboard ? <FooterMentor /> : <Footer />}
+      <Toaster />
+      {isAdmin || isDashboard ? <FooterMentor /> : <Footer />}
     </div>
   );
 }
@@ -152,9 +213,51 @@ function App() {
         <Route
           path="/login/trainee"
           element={
-
-              <TraineeLogin />
-            
+              <TraineeLogin />     
+          }
+        />
+         <Route
+          path="/trainee"
+          element={
+              <Dashboard />     
+          }
+        />
+         <Route
+          path="/subjectdetail:id"
+          element={
+              <SubjectDetail />     
+          }
+        />
+        <Route
+          path="/notification"
+          element={
+              <NotificationPage />     
+          }
+        />
+        <Route
+          path="/profile-trainee"
+          element={
+              <Profile />     
+          }
+        />
+        <Route
+          path="/verify"
+          element={
+              <FormPage />     
+          }
+        />
+        <Route
+          path="/login-trainee"
+          element={
+              <RegisPage />     
+          }
+        />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <Layout>
+              <DashboardAdmin />
+            </Layout>
           }
         />
         {/* Route without Layout */}

@@ -25,7 +25,7 @@ export default function ExploreBatch() {
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const response = await axios.get('http://10.10.103.6:4000/admin/batch'); // Replace with your API URL
+        const response = await axios.get('http://10.10.103.222:4000/admin/batch'); // Replace with your API URL
         setBatches(response.data);
       } catch (error) {
         console.error('Error fetching batches:', error);
@@ -47,7 +47,7 @@ export default function ExploreBatch() {
         
         if (!mentorId) return;
 
-        const response = await axios.get(`http://10.10.103.6:4000/admin/batch/${mentorId}`); // Replace with your API URL
+        const response = await axios.get(`http://10.10.103.222:4000/admin/batch/${mentorId}`); // Replace with your API URL
         setMentorBatches(response.data);
       } catch (error) {
         console.error('Error fetching batches by mentorId:', error);
@@ -228,7 +228,7 @@ export default function ExploreBatch() {
           onClick={async () => {
             try {
               // Fetch the batch data from the API
-              const response = await fetch(`http://10.10.103.6:4000/admin/batchs/${batch.id}`);
+              const response = await fetch(`http://10.10.103.222:4000/admin/batchs/${batch.id}`);
               if (!response.ok) {
                 throw new Error(`Failed to fetch batch with ID: ${batch.id}`);
               }

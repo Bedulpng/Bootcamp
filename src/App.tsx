@@ -89,7 +89,7 @@ function App() {
         <Route path="/about" element={<Layout><AboutSection /></Layout>} />
 
         {/* Mentor Routes */}
-        <Route path="/dashboardm" element={<Rbac allowedRoles={['ADMIN', 'MENTOR']}><ProtectedRoute><Layout><MentorDb /></Layout></ProtectedRoute></Rbac>}/>
+        <Route path="/dashboardm" element={<Layout><MentorDb /></Layout>}/>
         <Route path="/dashboardm/batch" element={<Layout><Batch /></Layout>} />
         <Route path="/dashboardm/trainee" element={<Layout><TraineePages /></Layout>} />
         <Route path="/dashboardm/note" element={<Layout><NotesPage /></Layout>} />

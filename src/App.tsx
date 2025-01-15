@@ -67,9 +67,9 @@ function Layout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className={`min-h-screen ${isAdmin || isDashboard ? 'bg-gray-100 dark:bg-gray-900' : 'bg-white'}`}>
+    <div className={`min-h-screen ${isAdmin || isDashboard ? 'bg-white dark:bg-gray-900' : 'bg-white'}`}>
       {isAdmin || isDashboard ? (
-        <div className="flex h-screen overflow-hidden">
+        <div className="flex h-screen overflow-x-hidden">
           {isAdmin && (
             <SidebarAdmin
               isOpen={isSidebarOpen}
@@ -78,9 +78,9 @@ function Layout({ children }: { children: React.ReactNode }) {
               setCurrentPage={setCurrentPage}
             />
           )}
-          <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 flex flex-col">
             {isAdmin ? <NavbarAdmin /> : <NavbarMentor />}
-            <main className="flex-1 overflow-y-auto p-6 bg-gray-100 dark:bg-gray-900">
+            <main className="flex-1 overflow-y-auto p-6 bg-white dark:bg-gray-900">
               {isAdmin ? renderAdminPage() : children}
             </main>
           </div>
@@ -94,7 +94,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       <ScrollTop />
       <Toaster />
       {isAdmin || isDashboard ? <FooterMentor /> : <Footer />}
-    </div>
+    </div>  
   );
 }
 

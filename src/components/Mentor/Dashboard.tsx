@@ -16,6 +16,14 @@
   import { jwtDecode } from 'jwt-decode'
   import { Batch, Trainee } from '../../types/Trainee'
   import { fetchTrainees } from '@/Api/FetchTrainee'
+  import { format } from 'date-fns'
+  import { ScheduleClassModal } from './Modal/Schedule-Class'
+
+  interface ScheduleItem {
+    date: string
+    start: string
+    end: string
+  }  
 
   export default function MentorDb() {
     const [isModalOpen, setModalOpen] = useState(false)
@@ -34,6 +42,55 @@
     ]);
     const [lessonPercentage, setLessonPercentage] = useState(0);
     const [challengePercentage, setChallengePercentage] = useState(0);
+    const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
+    const [scheduledClasses, setScheduledClasses] = useState<Array<any>>([]); // Initialize as an empty array
+
+   const refreshToken = localStorage.getItem('refreshToken') // Get the token from localStorage
+    const decodedToken: any = jwtDecode(refreshToken as string);
+    const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
+
+    useEffect(() => {
+      const fetchScheduledClasses = async () => {
+        try {
+          const token = localStorage.getItem('refreshToken') // Get the token from localStorage
+          if (!token) {
+            console.error('No token found')
+            return
+          }
+  
+          const response = await fetch('http://10.10.103.222:4000/mentor/schedule', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          })
+  
+          if (!response.ok) {
+            throw new Error('Failed to fetch scheduled classes')
+          }
+  
+          const data = await response.json()
+          setScheduledClasses(data)
+          console.log(data);
+        } catch (error) {
+          console.error('Error fetching data:', error)
+        }
+      }
+  
+      fetchScheduledClasses()
+    }, [])
+  
+    // Handle the click for scheduling a class
+    const handleScheduleClass = () => {
+      setIsScheduleModalOpen(true)
+    }
+  
+    // Handle submit of the scheduled class
+    const handleSubmitSchedule = (newSchedule: any) => {
+      console.log('Schedule submitted:', newSchedule)
+      setIsScheduleModalOpen(false)
+    }
 
     const handleEditProfile = () => {
       setModalOpen(true)
@@ -268,57 +325,82 @@
                 <div className="grid gap-6 md:grid-cols-2">
                   {/* Incoming Class Card */}
                   <Card className="bg-[#ffff80] rounded-2xl shadow-lg w-[440px]">
-                      <CardContent className="p-6">
-                        <div className="flex justify-between">
-                          <div className="flex-1">
-                            <h3 className="font-bold text-xl mb-1">Incoming Class</h3>
-                            <p className="text-sm font-medium mb-4">Friday 1 November 2024</p>
-                            <div className="space-y-2">
-                              <p className="text-lg font-semibold">09:00 - QA</p>
-                              <p className="text-sm font-medium">Tuesday 5 November 2024</p>
-                              <p className="text-lg font-semibold">09:00 - FS DEV</p>
-                            </div>
-                          </div>
-                          <div className="flex flex-col gap-4">
-                            <div className="bg-white rounded-xl w-36 h-48 flex flex-col overflow-hidden">
-                              <div
-                                ref={scrollContainerRef}
-                                className="px-4 pt-4 pb-2 text-center overflow-hidden scrollbar-hide"
-                                style={{
-                                  WebkitOverflowScrolling: 'touch', // Smooth scrolling
-                                  scrollBehavior: 'smooth',
-                                }}
-                              >
-                                <p className="text-xs mb-4 mt-4">My Batch</p>
-                                <div className="font-bold text-5xl text-center">{batch[currentIndex] || 'N/A'}</div>
-                              </div>
-                              {batch.length > 1 && (
-                                <div className="mt-auto px-6 pb-6">
-                                  <div className="flex justify-center gap-2">
-                                    {batch.map((_, index) => (
-                                      <div
-                                        key={index}
-                                        className={`w-2 h-2 rounded-full cursor-pointer ${
-                                          currentIndex === index ? 'bg-black' : 'bg-gray-300'
-                                        }`}
-                                        onClick={() => handleDotClick(index)}
-                                      />
-                                    ))}
-                                  </div>
+                    <CardContent className="p-6">
+                      <div className="flex justify-between">
+                        <div className="flex-1 mr-4">
+                          <h3 className="font-bold text-xl mb-2">Incoming Class</h3>
+                          <div className="space-y-2">
+                            {scheduledClasses && scheduledClasses.length > 0 ? (
+                              scheduledClasses.slice(-2).map((scheduledClass, index) => (
+                                <div key={index} className="mt-6">
+                                  <h4 className="font-black mb-4">{scheduledClass.title}</h4>
+                                  {Array.isArray(scheduledClass.scheduleDays) && scheduledClass.scheduleDays.length > 0 ? (
+                                    scheduledClass.scheduleDays.slice(0, 2).map((item: ScheduleItem, itemIndex: number) => (
+                                      <div key={itemIndex}>
+                                        <p className="text-sm font-semibold">{format(new Date(item.date), 'EEEE d MMMM yyyy')}</p>
+                                        <p className="text-lg font-normal">{`${item.start} - ${item.end}`}</p>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p>No schedule available for this class.</p>
+                                  )}
                                 </div>
-                              )}
-                            </div>
-                            <Button
-                              variant="secondary"
-                              className="bg-white hover:bg-gray-50 w-36"
-                              onClick={handleSeeMore}
-                            >
-                              See More
-                            </Button>
+                              ))
+                            ) : (
+                              <p>No classes scheduled yet.</p>
+                            )}
                           </div>
+                          <Button
+                            variant="secondary"
+                            className="bg-white hover:bg-gray-50 w-full mt-4"
+                            onClick={handleScheduleClass}
+                          >
+                            Schedule Class
+                          </Button>
                         </div>
-                      </CardContent>
-                    </Card>
+                        <div className="flex flex-col gap-4 w-36">
+                          <div className="bg-white rounded-xl h-48 flex flex-col overflow-hidden">
+                            <div
+                              className="px-4 pt-4 pb-2 text-center overflow-hidden scrollbar-hide"
+                              style={{
+                                WebkitOverflowScrolling: 'touch',
+                                scrollBehavior: 'smooth',
+                              }}
+                            >
+                              <p className="text-xs mb-4 mt-4">My Batch</p>
+                              <div className="font-bold text-5xl text-center">{batch[currentIndex] || 'N/A'}</div>
+                            </div>
+                            {batch.length > 1 && (
+                              <div className="mt-auto px-6 pb-6">
+                                <div className="flex justify-center gap-2">
+                                  {batch.map((_, index) => (
+                                    <div
+                                      key={index}
+                                      className={`w-2 h-2 rounded-full cursor-pointer ${currentIndex === index ? 'bg-black' : 'bg-gray-300'}`}
+                                      onClick={() => handleDotClick(index)}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <Button
+                            variant="secondary"
+                            className="bg-white hover:bg-gray-50 w-full"
+                            onClick={handleSeeMore}
+                          >
+                            See More
+                          </Button>
+                        </div>
+                      </div>
+                      <ScheduleClassModal
+                        isOpen={isScheduleModalOpen}
+                        onClose={() => setIsScheduleModalOpen(false)}
+                        onSubmit={handleSubmitSchedule}
+                      />
+                    </CardContent>
+                  </Card>
+
 
                   {/* Activity Chart Card */}
                   <Card className="bg-white rounded-2xl shadow-lg">

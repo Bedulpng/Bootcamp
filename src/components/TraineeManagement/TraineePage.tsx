@@ -47,7 +47,8 @@ export function TraineePages() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-blue-50 to-white p-6">
+    // bg-gradient-to-br from-blue-100 via-blue-50 to-white
+    <div className="min-h-screen p-6"> 
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <h1 className="text-4xl font-bold text-blue-600 tracking-tight">

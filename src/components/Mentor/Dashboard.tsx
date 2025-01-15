@@ -47,7 +47,6 @@
 
    const refreshToken = localStorage.getItem('refreshToken') // Get the token from localStorage
     const decodedToken: any = jwtDecode(refreshToken as string);
-    const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
 
     useEffect(() => {
       const fetchScheduledClasses = async () => {

@@ -45,9 +45,6 @@
     const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false)
     const [scheduledClasses, setScheduledClasses] = useState<Array<any>>([]); // Initialize as an empty array
 
-   const refreshToken = localStorage.getItem('refreshToken') // Get the token from localStorage
-    const decodedToken: any = jwtDecode(refreshToken as string);
-
     useEffect(() => {
       const fetchScheduledClasses = async () => {
         try {

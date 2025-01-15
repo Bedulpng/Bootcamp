@@ -18,8 +18,8 @@ const NavbarAdmin = () => {
       try {
         const refreshToken = localStorage.getItem('refreshToken');
         const decodedToken: any = jwtDecode(refreshToken as string);
-        const userId = "ee555814-903d-4d7a-9d99-f5cd87de005c"; // Assuming the user ID is stored in 'id'
-
+        const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
+        
         // Fetch mentor details
         const response = await axios.get(`http://10.10.103.222:4000/admin/mentor/${userId}`);
         setMentorName(response.data.fullName);

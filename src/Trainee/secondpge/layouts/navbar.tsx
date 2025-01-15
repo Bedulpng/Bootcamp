@@ -21,7 +21,7 @@ const Navbar: React.FC = () => {
     setProfileDropdownOpen(!isProfileDropdownOpen);
 
   const Notification = () => {
-    navigate("/notification");
+    navigate("/notif");
   };
   
   const handleProfileClick = () => {

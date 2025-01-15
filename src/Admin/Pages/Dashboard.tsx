@@ -4,7 +4,8 @@ import Navbar from '../Header/NavbarA';
 import CircularChart from '../Chart/CircularChart';
 import RoleTable from '../table/RoleTable';
 import UserTable from '../table/UserTabel';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom';
+import { Plus } from 'lucide-react';
 
 
 const mockClasses = [
@@ -13,10 +14,13 @@ const mockClasses = [
   { id: 3, name: 'Data Science', batch: 'C', participants: 30, status: 'active' },
 ];
 
-const DashboardA = () => {
+const DashboardA: React.FC = () => {
   const navigate = useNavigate()
 const handleSeeMore = () => {
   navigate ('/usermanage')
+}
+const handleAddRole = () => {
+  navigate ('/addrole')
 }
   return (
     <div className="min-h-screen">
@@ -91,6 +95,12 @@ const handleSeeMore = () => {
             </div>
             <div className="col-span-1">
               <RoleTable />
+              <button
+              onClick={handleAddRole} 
+              className="w-full mt-4 bg-white text-[#0020f6] py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-300">
+          <Plus size={16} />
+          Add Role
+        </button>
             </div>
           </div>
         </main>

@@ -4,7 +4,7 @@ import Sidebar from '../../Sidebar/Sidebar';
 import Navbar from '../../Header/NavbarA';
 import UserTable from '../../table/UserTabel';
 
-const UserManage = () => {
+const UserManage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({

@@ -1,11 +1,12 @@
 import React from 'react';
-import { Plus } from 'lucide-react';
 
-const roles = [
+// Export the roles array
+export const roles = [
   { name: 'Trainee', color: 'bg-yellow-300' },
   { name: 'Mentor', color: 'bg-blue-300' },
   { name: 'Examiner', color: 'bg-purple-300' },
   { name: 'Supervisor', color: 'bg-green-300' },
+  { name: 'Admin', color: 'bg-gray-300' },
 ];
 
 const RoleTable = () => {
@@ -21,10 +22,6 @@ const RoleTable = () => {
             {role.name}
           </div>
         ))}
-        <button className="w-full mt-4 bg-blue-600 text-white py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-blue-700">
-          <Plus size={16} />
-          Add Role
-        </button>
       </div>
     </div>
   );

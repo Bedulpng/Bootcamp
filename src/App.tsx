@@ -33,10 +33,13 @@ import RegisPage from './Trainee/firstpage/Regis';
 import FormPage from './Trainee/firstpage/form';
 import Dashboard from './Trainee/secondpge/Dashboard';
 import Profile from './Trainee/secondpge/top/profile';
+import NotificationPage from './Trainee/secondpge/top/Notification';
 
 // Admin 
 import DashboardA from './Admin/Pages/Dashboard';
 import UserManage from './Admin/Pages/User/UserManage';
+import RolesManage from './Admin/Pages/User/RolesManage';
+import AddRole from './Admin/Pages/User/AddRole';
 
 import ProtectedRoute from './LandingPage/ProtectedRoute';
 import Rbac from './LandingPage/RbacRoute';
@@ -101,10 +104,14 @@ function App() {
         <Route path="/form" element={<AuthLayout><FormPage /></AuthLayout>} />
         <Route path="/dashboard" element={<AuthLayout><Dashboard /></AuthLayout>} />
         <Route path='/profile' element={<AuthLayout><Profile /></AuthLayout>} />
+        <Route path="/notif" element={<AuthLayout><NotificationPage /></AuthLayout>} />
+
 
         {/* Admin Routes */}
         <Route path="/dashboardA" element={<AuthLayout><DashboardA /></AuthLayout>} />
         <Route path="/usermanage" element={<AuthLayout><UserManage /></AuthLayout>} />
+        <Route path='/roles' element={<AuthLayout><RolesManage /></AuthLayout>} />
+        <Route path='/addrole' element={<AuthLayout><AddRole /></AuthLayout>} />
 
         {/* Route without Layout */}
         <Route path="*" element={<NotFound />} />

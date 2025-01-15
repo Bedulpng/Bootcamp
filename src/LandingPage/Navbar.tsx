@@ -156,13 +156,14 @@ export function Navbar() {
       </div>
 
       {/* Login Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        ariaHideApp={false}
-        className="relative bg-white p-8 rounded-xl max-w-md mx-auto shadow-lg z-50"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center"
-      >
+        <Modal
+          isOpen={isModalOpen}
+          onRequestClose={closeModal}
+          ariaHideApp={false}
+          className="relative bg-white p-8 rounded-xl max-w-md mx-auto shadow-lg z-[9999]"
+          overlayClassName="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[9998]"
+        >
+
         <button
           onClick={closeModal}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"

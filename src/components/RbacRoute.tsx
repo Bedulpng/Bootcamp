@@ -10,7 +10,7 @@ interface RoleBasedRouteProps {
 
 const Rbac: React.FC<RoleBasedRouteProps> = ({ children, allowedRoles }) => {
   if (!isAuthenticated()) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/unauthorized" />;
   }
 
   if (!verifyRoles(allowedRoles)) {

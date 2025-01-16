@@ -32,11 +32,12 @@ export function TraineePages() {
 
     loadTrainees();
   }, []);
-
+  
   const filteredTrainees = trainees.filter((trainee) =>
-    trainee.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    trainee.nickname.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    (trainee.fullName?.toLowerCase() ?? "").includes(searchTerm.toLowerCase()) ||
+    (trainee.nickname?.toLowerCase() ?? "").includes(searchTerm.toLowerCase())
+);
+
 
   if (loading) {
     return <div>Loading...</div>;

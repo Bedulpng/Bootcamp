@@ -39,6 +39,8 @@ import Users from './components/Admin/pages/Users';
 import Classes from './components/Admin/pages/Classes';
 import Certificates from './components/Admin/pages/Certificates';
 import Notes from './components/Admin/pages/Notes';
+import { LoginForm } from './components/Login/LoginFormAdmin';
+import NotAuthorized from './components/Unauthorized';
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith('/dashboard');
@@ -255,9 +257,27 @@ function App() {
         <Route
           path="/admin/dashboard"
           element={
-            <Layout>
-              <DashboardAdmin />
-            </Layout>
+            <Rbac allowedRoles={['ADMIN']}>
+              <ProtectedRoute>
+                <Layout>
+                  <DashboardAdmin />
+                </Layout>
+              </ProtectedRoute>
+            </Rbac>
+          }
+        />
+        <Route
+          path="/admin/login"
+          element={
+            <div className="min-h-screen w-full bg-[#111111] flex items-center justify-center">
+              <LoginForm />
+              </div>
+          }
+        />
+         <Route
+          path="/unauthorized"
+          element={
+           <NotAuthorized />
           }
         />
         {/* Route without Layout */}

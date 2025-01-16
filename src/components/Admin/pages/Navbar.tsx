@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BellIcon, LogOut, ChevronDown } from 'lucide-react';
+import { BellIcon, LogOut, ChevronDown, User2Icon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -9,8 +9,8 @@ import axios from 'axios';
 
 const NavbarAdmin = () => {
   const navigate = useNavigate();
-  const [mentorName, setMentorName] = useState('');
-  const [mentorRole, setMentorRole] = useState('');
+  const [AdminName, setAdminName] = useState('');
+  const [AdminRole, setAdminRole] = useState('');
   const [profileImage, setProfileImage] = useState('');
 
   useEffect(() => {
@@ -22,8 +22,8 @@ const NavbarAdmin = () => {
         
         // Fetch mentor details
         const response = await axios.get(`http://10.10.103.222:4000/admin/mentor/${userId}`);
-        setMentorName(response.data.fullName);
-        setMentorRole(response.data.role);
+        setAdminName(response.data.fullName);
+        setAdminRole(response.data.role);
 
         // Fetch the professional profile image
         const profileResponse = await axios.get(`http://10.10.103.222:4000/trainee/${userId}/pro`);
@@ -42,7 +42,7 @@ const NavbarAdmin = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate('/login');
+    navigate('/admin/login');
   };
 
   return (
@@ -62,17 +62,17 @@ const NavbarAdmin = () => {
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
                   <AvatarImage src={`http://10.10.103.222:4000${profileImage}`} alt="Mentor" />
                   <AvatarFallback>
-                    {mentorName
-                      ? mentorName
+                    {AdminName
+                      ? AdminName
                           .split(' ') // Split the name by spaces
                           .map((word) => word.charAt(0).toUpperCase()) // Take the first letter of each word and capitalize it
                           .join('') // Join the initials
-                      : '?'}
+                      : <User2Icon className="h-6 w-6" />}
                   </AvatarFallback>
                 </Avatar>
                 <div className="text-sm text-left">
-                  <div>{mentorName || 'THIS MENTOR NAME'}</div>
-                  <div className="text-xs text-muted-foreground">{mentorRole || 'THIS MENTOR ROLE'}</div>
+                  <div>{AdminName || 'THIS ADMIN NAME'}</div>
+                  <div className="text-xs text-muted-foreground">{AdminRole || 'THIS ADMIN ROLE'}</div>
                 </div>
                 <ChevronDown className="h-4 w-4 ml-2" />
               </Button>

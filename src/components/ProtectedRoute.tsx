@@ -23,7 +23,6 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }, []);
 
   if (isValid === null) {
-    // Render a loading state while checks are being performed
     return <div>Loading...</div>;
   }
 

@@ -4,16 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import UserModalForm from "../Modal/UserModal";
-
-const userData = [
-  { id: 1, name: "John Doe", email: "john@example.com", role: "TRAINEE", status: "VERIFIED" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", role: "MENTOR", status: "VERIFIED" },
-  { id: 3, name: "Mike Johnson", email: "mike@example.com", role: "TRAINEE", status: "UNVERIFIED" },
-  { id: 4, name: "Sarah Wilson", email: "sarah@example.com", role: "EXAMINER", status: "VERIFIED" },
-];
+import { useEffect } from "react";
+import { fetchUsers } from "@/Api/FetchUsers";
+import { Trainee } from "@/types/Trainee";
 
 export default function Users() {
   const [isUserOpen, setIsUserOpen] = useState(false);
+  const [trainees, setTrainees] = useState<Trainee[]>([]);
+
+    useEffect(() => {
+      async function loadTrainees() {
+        try {
+          const data = await fetchUsers(); // Fetch trainees using the service
+          setTrainees(data);
+        } catch (err) {
+        } finally {
+        }
+      }
+  
+      loadTrainees();
+    }, []);
 
   const handleOpenUserModal = () => {
     setIsUserOpen(true);
@@ -36,7 +46,7 @@ export default function Users() {
             <TableHeader>
               <TableRow>
                 <TableHead className="text-center">#</TableHead> {/* New column for numbering */}
-                <TableHead className="text-center">User</TableHead>
+                <TableHead className="text-center">Full Name</TableHead>
                 <TableHead className="text-center">Email</TableHead>
                 <TableHead className="text-center">Role</TableHead>
                 <TableHead className="text-center">Status</TableHead>
@@ -44,11 +54,11 @@ export default function Users() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {userData.map((user, index) => (
+              {trainees.map((user, index) => (
                 <TableRow key={user.id}>
                   <TableCell className="text-center">{index + 1}</TableCell> {/* Auto-increment number */}
                   <TableCell className="text-center flex flex-col items-center gap-2">
-                    {user.name}
+                    {user.fullName || "-  "} 
                   </TableCell>
                   <TableCell className="text-center">{user.email}</TableCell>
                   <TableCell className="text-center">
@@ -61,9 +71,9 @@ export default function Users() {
                   </TableCell>
                   <TableCell className="text-center">
                     <Badge variant={
-                      user.status === "VERIFIED" ? "secondary" : "default"
+                      user.userstatus === "VERIFIED" ? "secondary" : "default"
                     }>
-                      {user.status}
+                      {user.userstatus}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-center">

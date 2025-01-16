@@ -26,11 +26,9 @@ import NavbarMentor from './Mentor/components/Mentor/NavbarMentor';
 import FooterMentor from './Mentor/components/Mentor/FooterMentor';
 import Batch from './Mentor/components/Mentor/ExploreBatch';
 
-//Regis
-import RegisPage from './Trainee/firstpage/Regis';
-
 //Trainee
 import FormPage from './Trainee/firstpage/form';
+import SkillPage from './Trainee/firstpage/skill';
 import Dashboard from './Trainee/secondpge/Dashboard';
 import Profile from './Trainee/secondpge/top/profile';
 import NotificationPage from './Trainee/secondpge/top/Notification';
@@ -100,8 +98,8 @@ function App() {
         <Route path="/login/trainee" element={<TraineeLogin />}/>
 
         {/* Trainee Routes */}
-        <Route path="/regispage" element={<AuthLayout><RegisPage /></AuthLayout>} />
         <Route path="/form" element={<AuthLayout><FormPage /></AuthLayout>} />
+        <Route path="/skill" element={<AuthLayout><SkillPage /></AuthLayout>} />
         <Route path="/dashboard" element={<AuthLayout><Dashboard /></AuthLayout>} />
         <Route path='/profile' element={<AuthLayout><Profile /></AuthLayout>} />
         <Route path="/notif" element={<AuthLayout><NotificationPage /></AuthLayout>} />

@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Batch } from '../../types/Trainee';
+import { Batch } from '../../../types/Trainee';
 
 
 const DashboardPage = () => {

@@ -32,6 +32,7 @@ import SkillPage from './Trainee/firstpage/skill';
 import Dashboard from './Trainee/secondpge/Dashboard';
 import Profile from './Trainee/secondpge/top/profile';
 import NotificationPage from './Trainee/secondpge/top/Notification';
+import SubjectDetail from './Trainee/secondpge/subjectdetail';
 
 // Admin 
 import DashboardA from './Admin/Pages/Dashboard';
@@ -103,6 +104,7 @@ function App() {
         <Route path="/dashboard" element={<AuthLayout><Dashboard /></AuthLayout>} />
         <Route path='/profile' element={<AuthLayout><Profile /></AuthLayout>} />
         <Route path="/notif" element={<AuthLayout><NotificationPage /></AuthLayout>} />
+        <Route path="/subjectdetail/:subjectId" element={<AuthLayout><SubjectDetail /></AuthLayout>} />
 
 
         {/* Admin Routes */}

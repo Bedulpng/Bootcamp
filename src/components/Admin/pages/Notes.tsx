@@ -26,23 +26,23 @@ export default function Notes() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Note ID</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Author</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-center">Note ID</TableHead>
+                <TableHead className="text-center">Title</TableHead>
+                <TableHead className="text-center">Author</TableHead>
+                <TableHead className="text-center">Date</TableHead>
+                <TableHead className="text-center">Category</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {notesData.map((note) => (
                 <TableRow key={note.id}>
-                  <TableCell>{note.id}</TableCell>
-                  <TableCell>{note.title}</TableCell>
-                  <TableCell>{note.author}</TableCell>
-                  <TableCell>{note.date}</TableCell>
-                  <TableCell>{note.category}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">{note.id}</TableCell>
+                  <TableCell className="text-center">{note.title}</TableCell>
+                  <TableCell className="text-center">{note.author}</TableCell>
+                  <TableCell className="text-center">{note.date}</TableCell>
+                  <TableCell className="text-center">{note.category}</TableCell>
+                  <TableCell className="text-center">
                     <Button variant="ghost" size="icon">
                       <Eye className="h-4 w-4" />
                     </Button>

@@ -1,9 +1,19 @@
 // src/types/Trainee.ts
 export interface Certificate {
-    id: string;
-    traineeId: string;
-    issuedAt: string;
-  }
+  id: string;
+  traineeId: string;
+  issuedAt: string;
+  trainee: {
+    fullName: string;
+  };
+  class: {
+    className: string;
+  };
+  batch: {
+    batchNum: number;
+    batchTitle: string;
+  };
+}
 
   export type Visibility = 'All' | 'FOR_TRAINEE' | 'FOR_GRADER'; // Adjust based on the enum in your Prisma schem
   
@@ -52,29 +62,31 @@ export interface Certificate {
     participant: number;
     batchId: string;
     status: string;
+    mentors: Mentor[];
+    certificates: Certificate[];
   }
   
   export interface Mentor {
     id: string;
     fullName: string;
     email: string;
+    role: string;
   }
   
   export interface Batch {
     id: string;
     batchNum: number;
-    batchClass: string;
     batchTitle: string;
     batchDesc: string;
-    mentorId?: string;
     startDate: string;
     endDate: string;
     status: string;
-    mentor: Mentor;
+    mentor: Mentor[];
     participants: any[];
     challenges: any[];
     classes: Class[];
     lessons: any[];
+    certificates: Certificate[];
   }
   
   

@@ -5,7 +5,7 @@ import { TraineeTable } from './TraineeTable';
 import { TraineeModal } from './TraineeModal';
 import { Button } from '../ui/button';
 import { Trainee } from '../../types/Trainee';
-import { fetchTrainees } from '../../Api/FetchTrainee'; // Import the fetchTrainees service
+import { fetchTrainees } from '../../Api/FetchUsersByRole'; // Import the fetchTrainees service
 
 export function TraineePages() {
   const navigate = useNavigate();

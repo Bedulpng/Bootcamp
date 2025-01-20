@@ -1,18 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BatchModal } from "../Modal/BatchModal";
+import { fetchBatches } from "@/Api/FetchingBatches&Classes";
+import { Batch } from "@/types/Trainee";
 
-const batchData = [
-  { id: "B001", name: "Web Development", startDate: "2024-01-15", students: 25, status: "Active" },
-  { id: "B002", name: "Data Science", startDate: "2024-02-01", students: 30, status: "Active" },
-  { id: "B003", name: "UI/UX Design", startDate: "2024-01-10", students: 20, status: "Completed" },
-  { id: "B004", name: "Mobile Development", startDate: "2024-02-15", students: 28, status: "Active" },
-];
 
 export default function BatchAdmin() {
   const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
+  const [fetchedBatch, setFetchedBatch] = useState<Batch[]>([]);
+
+   useEffect(() => {
+      const getBatches = async () => {
+        try {
+          const fetchedBatch = await fetchBatches();
+          setFetchedBatch(fetchedBatch);
+          console.log("Batch Data", fetchedBatch);
+        } catch (error) {
+          console.error("Failed to fetch batch:", error);
+        } finally {
+        }
+      };
+  
+      getBatches();
+    }, []);
 
   const handleOpenBatchModal = () => {
     setIsBatchModalOpen(true);
@@ -25,7 +37,10 @@ export default function BatchAdmin() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold tracking-tight">Batch Management</h2>
-        <Button onClick={handleOpenBatchModal}>Create New Batch</Button>
+        <div className="flex flex-col gap-3">
+          <Button onClick={handleOpenBatchModal}>Create New Batch</Button>
+          <span className="ml-3">Showing {fetchedBatch.length} Batch</span>
+        </div>
         <BatchModal
               isOpen={isBatchModalOpen}
               onClose={handleCloseBatchModal}
@@ -41,23 +56,23 @@ export default function BatchAdmin() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Batch ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>Students</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-center">Batch ID</TableHead>
+                <TableHead className="text-center">Batch Number</TableHead>
+                <TableHead className="text-center">Batch Title</TableHead>
+                <TableHead className="text-center">Participants</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {batchData.map((batch) => (
+              {fetchedBatch.map((batch) => (
                 <TableRow key={batch.id}>
-                  <TableCell>{batch.id}</TableCell>
-                  <TableCell>{batch.name}</TableCell>
-                  <TableCell>{batch.startDate}</TableCell>
-                  <TableCell>{batch.students}</TableCell>
-                  <TableCell>{batch.status}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">{batch.id}</TableCell>
+                  <TableCell className="text-center">{batch.batchNum}</TableCell>
+                  <TableCell className="text-center">{batch.batchTitle}</TableCell>
+                  <TableCell className="text-center">{batch.participants.length}</TableCell>
+                  <TableCell className="text-center">{batch.status}</TableCell>
+                  <TableCell className="text-center">
                     <Button variant="ghost" size="sm">Edit</Button>
                   </TableCell>
                 </TableRow>

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BellIcon, LogOut, ChevronDown, User2Icon } from 'lucide-react';
+import { LogOut, ChevronDown, User2Icon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
+import { NotificationPopup } from '../../Mentor/Notification/Notification';
 
 const NavbarAdmin = () => {
   const navigate = useNavigate();
@@ -21,12 +22,12 @@ const NavbarAdmin = () => {
         const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
         
         // Fetch mentor details
-        const response = await axios.get(`http://10.10.103.222:4000/admin/mentor/${userId}`);
+        const response = await axios.get(`http://10.10.103.25:4000/admin/mentor/${userId}`);
         setAdminName(response.data.fullName);
         setAdminRole(response.data.role);
 
         // Fetch the professional profile image
-        const profileResponse = await axios.get(`http://10.10.103.222:4000/trainee/${userId}/pro`);
+        const profileResponse = await axios.get(`http://10.10.103.25:4000/trainee/${userId}/pro`);
         if (profileResponse.data && profileResponse.data.profileImage) {
           setProfileImage(profileResponse.data.profileImage); // Store the profile image path
         } else {
@@ -52,15 +53,14 @@ const NavbarAdmin = () => {
           Admin Dashboard
         </h1>
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="icon" className="relative">
-            <BellIcon className="h-5 w-5" />
-            <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full" />
-          </Button>
+        <Button variant="ghost" size="icon" className='h-10 w-10 mr-2'>
+          <NotificationPopup />
+        </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 p-1">
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
-                  <AvatarImage src={`http://10.10.103.222:4000${profileImage}`} alt="Mentor" />
+                  <AvatarImage src={`http://10.10.103.25:4000${profileImage}`} alt="Mentor" />
                   <AvatarFallback>
                     {AdminName
                       ? AdminName

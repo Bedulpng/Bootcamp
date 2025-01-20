@@ -40,7 +40,7 @@ export function NotificationPopup() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon" className="relative">
+        <Button variant="outline" size="icon" className="relative rounded-full h-10 w-10">
           <Bell className="h-4 w-4" />
           {unreadNotifications.length > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">

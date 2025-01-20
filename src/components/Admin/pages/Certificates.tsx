@@ -1,21 +1,45 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Download } from "lucide-react";
+import { Certificate } from "@/types/Trainee";
+import { fetchAllCertificates } from "@/Api/FetchCertificate";
+import { CertificateModal } from "../Modal/CertModal";
 
-const certificateData = [
-  { id: "CERT001", student: "John Doe", course: "Web Development", issueDate: "2024-01-15", status: "Issued" },
-  { id: "CERT002", student: "Jane Smith", course: "Data Science", issueDate: "2024-02-01", status: "Pending" },
-  { id: "CERT003", student: "Mike Johnson", course: "UI/UX Design", issueDate: "2024-01-10", status: "Issued" },
-  { id: "CERT004", student: "Sarah Wilson", course: "Mobile Development", issueDate: "2024-02-15", status: "Processing" },
-];
 
 export default function Certificates() {
+  const [certOpen, setIsCertOpen] = useState(false);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+
+
+     useEffect(() => {
+        const getCert = async () => {
+          try {
+            const certificates = await fetchAllCertificates();
+            setCertificates(certificates);
+          } catch (error) {
+            console.error("Failed to fetch batch:", error);
+          } finally {
+          }
+        };
+    
+        getCert();
+      }, []);
+
+  const handleOpenCertModal = () => {
+    setIsCertOpen(true);
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold tracking-tight">Certificate Management</h2>
-        <Button>Issue New Certificate</Button>
+      <h2 className="text-3xl font-bold tracking-tight">Certificate Management</h2>
+      <div className="flex flex-col gap-3">
+        <Button onClick={handleOpenCertModal}>Issue New Certificate</Button>
+        <span className="ml-3">Showing {certificates.length} certificate</span>
+        </div>
+        <CertificateModal isOpen={certOpen} setIsOpen={setIsCertOpen} />
       </div>
 
       <Card>
@@ -26,23 +50,23 @@ export default function Certificates() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Certificate ID</TableHead>
-                <TableHead>Student</TableHead>
-                <TableHead>Course</TableHead>
-                <TableHead>Issue Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-center">#</TableHead>
+                <TableHead className="text-center">Student</TableHead>
+                <TableHead className="text-center">Class</TableHead>
+                <TableHead className="text-center">Batch</TableHead>
+                <TableHead className="text-center">Issued Date</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {certificateData.map((cert) => (
+              {certificates .map((cert, index) => (
                 <TableRow key={cert.id}>
-                  <TableCell>{cert.id}</TableCell>
-                  <TableCell>{cert.student}</TableCell>
-                  <TableCell>{cert.course}</TableCell>
-                  <TableCell>{cert.issueDate}</TableCell>
-                  <TableCell>{cert.status}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">{index + 1}</TableCell>
+                  <TableCell className="text-center">{cert.trainee.fullName}</TableCell>
+                  <TableCell className="text-center">{cert.class.className}</TableCell>
+                  <TableCell className="text-center">{cert.batch.batchTitle}</TableCell>
+                  <TableCell className="text-center">{cert.issuedAt}</TableCell>
+                  <TableCell className="text-center">
                     <Button variant="ghost" size="icon">
                       <Download className="h-4 w-4" />
                     </Button>

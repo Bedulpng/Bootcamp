@@ -1,25 +1,70 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
 import { Users, BookOpen, GraduationCap, Award, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { BatchModal } from "../Modal/BatchModal";
 import { ClassModal } from "../Modal/ClassModal";
 import UserModalForm from "../Modal/UserModal";
+import { Trainee, Batch, Class } from "@/types/Trainee";
+import { fetchBatches, fetchClasses } from "@/Api/FetchingBatches&Classes";
+import { fetchUsers } from "@/Api/FetchUsers";
 
 export default function DashboardAdmin() {
   const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
   const [isClassModalOpen, setIsClassModalOpen] = useState(false);
   const [isUserOpen, setIsUserOpen] = useState(false);
+  const [trainees, setTrainees] = useState<Trainee[]>([]);
+  const [fetchedBatch, setFetchedBatch] = useState<Batch[]>([]);
+  const [fetchedClasses, setFetchedClasses] = useState<Class[]>([]); // Store all classes fetched from the API
+
+
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const trainees = await fetchUsers();
+        setTrainees(trainees);
+      } catch (error) {
+        console.error("Failed to fetch:", error);
+      } finally {
+      }
+    };
+
+    getUsers();
+  }, []);
+
+  useEffect(() => {
+     const getBatches = async () => {
+       try {
+         const fetchedBatch = await fetchBatches();
+         setFetchedBatch(fetchedBatch);
+       } catch (error) {
+         console.error("Failed to fetch batch:", error);
+       } finally {
+       }
+     };
+ 
+     getBatches();
+   }, []);
+
+   useEffect(() => {
+    const getClasses = async () => {
+      try {
+        const fetchedClasses = await fetchClasses();
+        setFetchedClasses(fetchedClasses);
+        console.log('Fetched classes:', fetchedClasses);
+      } catch (error) {
+        console.error('Failed to fetch classes:', error);
+      } finally {
+      }
+    };
+
+    getClasses();
+  }, []);
 
   const handleOpenUserModal = () => {
     setIsUserOpen(true);
-  }
+  };
 
   const handleOpenBatchModal = () => {
     setIsBatchModalOpen(true);
@@ -40,34 +85,26 @@ export default function DashboardAdmin() {
   const stats = [
     {
       title: "Total Users",
-      value: "1,234",
+      value: trainees.length,
       icon: Users,
-      trend: "+12%",
-      trendUp: true,
       color: "bg-blue-500",
     },
     {
       title: "Active Batches",
-      value: "42",
+      value: fetchedBatch.length,
       icon: BookOpen,
-      trend: "+4%",
-      trendUp: true,
       color: "bg-green-500",
     },
     {
-      title: "Classes Today",
-      value: "8",
+      title: "Active Classes",
+      value: fetchedClasses.length,
       icon: GraduationCap,
-      trend: "-2",
-      trendUp: false,
       color: "bg-yellow-500",
     },
     {
       title: "Certificates Issued",
       value: "856",
       icon: Award,
-      trend: "+24%",
-      trendUp: true,
       color: "bg-purple-500",
     },
   ];
@@ -99,25 +136,17 @@ export default function DashboardAdmin() {
             <Card key={index}>
               <CardHeader
                 className={cn(
-                  "flex flex-row items-center justify-between space-y-0 pb-2 text-white",
+                  "flex flex-row items-center justify-center space-y-0 pb-2 text-white",
                   stat.color
                 )}
-              >
+              >   
                 <CardTitle className="text-sm font-medium">
                   {stat.title}
                 </CardTitle>
-                <Icon className="h-4 w-4" />
+                <Icon className="h-4 w-4 ml-2" />
               </CardHeader>
               <CardContent className="flex flex-col items-center justify-center space-y-2">
-                <div className="text-2xl font-bold">{stat.value}</div>
-                <p
-                  className={cn(
-                    "text-xs",
-                    stat.trendUp ? "text-green-600" : "text-red-600"
-                  )}
-                >
-                  {stat.trend} from last month
-                </p>
+                <div className="text-2xl font-bold mt-4">{stat.value}</div>
               </CardContent>
             </Card>
           );
@@ -127,7 +156,9 @@ export default function DashboardAdmin() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card className="col-span-2">
           <CardHeader className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
+            <CardTitle className="text-lg font-semibold">
+              Recent Activity
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -161,33 +192,47 @@ export default function DashboardAdmin() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center space-y-4">
-            <Button className="w-full" variant="outline" onClick={handleOpenBatchModal}>
-              Create New Batch
-            </Button>
-            <BatchModal
-              isOpen={isBatchModalOpen}
-              onClose={handleCloseBatchModal}
-              onSubmit={handleCloseBatchModal}
-            />
-            <Button className="w-full" variant="outline" onClick={handleOpenUserModal}>
-              Add New User
-            </Button>
-            <UserModalForm open={isUserOpen} setOpen={setIsUserOpen} />
-            <Button className="w-full" variant="outline" onClick={handleOpenClassModal}>
-              Schedule Class
-            </Button>
-            <ClassModal
-              isOpen={isClassModalOpen}
-              onClose={handleCloseClassModal}
-              onSubmit={handleCloseClassModal}
-            />
-          </CardContent>
-        </Card>
+        <div>      
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center justify-center space-y-4">
+              <Button
+                className="w-full"
+                variant="outline"
+                onClick={handleOpenBatchModal}
+              >
+                Create New Batch
+              </Button>
+              <BatchModal
+                isOpen={isBatchModalOpen}
+                onClose={handleCloseBatchModal}
+                onSubmit={handleCloseBatchModal}
+              />
+              <Button
+                className="w-full"
+                variant="outline"
+                onClick={handleOpenUserModal}
+              > 
+                Add New User
+              </Button>
+              <UserModalForm open={isUserOpen} setOpen={setIsUserOpen} />
+              <Button
+                className="w-full"
+                variant="outline"
+                onClick={handleOpenClassModal}
+              >
+                Schedule Class
+              </Button>
+              <ClassModal
+                isOpen={isClassModalOpen}
+                onClose={handleCloseClassModal}
+                onSubmit={handleCloseClassModal}
+              />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

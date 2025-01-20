@@ -13,16 +13,17 @@ export default function Users() {
   const [trainees, setTrainees] = useState<Trainee[]>([]);
 
     useEffect(() => {
-      async function loadTrainees() {
+      const getTrainees = async () => {
         try {
-          const data = await fetchUsers(); // Fetch trainees using the service
-          setTrainees(data);
-        } catch (err) {
+          const trainees = await fetchUsers();
+          setTrainees(trainees);
+        } catch (error) {
+          console.error("Failed to fetch trainees:", error);
         } finally {
         }
-      }
+      };
   
-      loadTrainees();
+      getTrainees();
     }, []);
 
   const handleOpenUserModal = () => {
@@ -33,7 +34,10 @@ export default function Users() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold tracking-tight">User Management</h2>
-        <Button onClick={handleOpenUserModal}>Add New User</Button>
+        <div className="flex flex-col gap-3">
+          <Button onClick={handleOpenUserModal}>Create New Batch</Button>
+          <span className="ml-3">Showing {trainees.length} Users</span>
+        </div>
         <UserModalForm open={isUserOpen} setOpen={setIsUserOpen} />
       </div>
 

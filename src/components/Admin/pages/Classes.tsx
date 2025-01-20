@@ -1,19 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ClassModal } from "../Modal/ClassModal";
-
-const classData = [
-  { id: "C001", name: "Introduction to HTML", instructor: "Jane Smith", time: "09:00 AM", status: "Upcoming" },
-  { id: "C002", name: "JavaScript Basics", instructor: "Mike Johnson", time: "11:00 AM", status: "In Progress" },
-  { id: "C003", name: "React Fundamentals", instructor: "Sarah Wilson", time: "02:00 PM", status: "Completed" },
-  { id: "C004", name: "Database Design", instructor: "John Doe", time: "04:00 PM", status: "Upcoming" },
-];
+import { fetchClasses } from "@/Api/FetchingBatches&Classes";
+import { Class } from "@/types/Trainee";
 
 export default function Classes() {
   const [isClassModalOpen, setIsClassModalOpen] = useState(false);
+  const [fetchedClasses, setFetchedClasses] = useState<Class[]>([]); // Store all classes fetched from the API
+
+    useEffect(() => {
+      const getClasses = async () => {
+        try {
+          const fetchedClasses = await fetchClasses();
+          setFetchedClasses(fetchedClasses);
+          console.log('Fetched classes:', fetchedClasses);
+        } catch (error) {
+          console.error('Failed to fetch classes:', error);
+        } finally {
+        }
+      };
+  
+      getClasses();
+    }, []);
 
   const handleOpenClassModal = () => {
     setIsClassModalOpen(true);
@@ -27,7 +38,10 @@ export default function Classes() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold tracking-tight">Class Management</h2>
-        <Button onClick={handleOpenClassModal}>Schedule New Class</Button>
+        <div className="flex flex-col gap-3">
+          <Button onClick={handleOpenClassModal}>Create New Class</Button>
+          <span className="ml-3">Showing {fetchedClasses.length} Class</span>
+        </div>
         <ClassModal
             isOpen={isClassModalOpen}
             onClose={handleCloseClassModal}
@@ -43,30 +57,33 @@ export default function Classes() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Class ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Instructor</TableHead>
-                <TableHead>Time</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead className="text-center">Class ID</TableHead>
+                <TableHead className="text-center">Name</TableHead>
+                <TableHead className="text-center">Participant</TableHead>
+                <TableHead className="text-center">Instructor</TableHead>
+                <TableHead className="text-center">Created At</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {classData.map((class_) => (
+              {fetchedClasses.map((class_) => (
                 <TableRow key={class_.id}>
-                  <TableCell>{class_.id}</TableCell>
-                  <TableCell>{class_.name}</TableCell>
-                  <TableCell>{class_.instructor}</TableCell>
-                  <TableCell>{class_.time}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">{class_.id}</TableCell>
+                  <TableCell className="text-center">{class_.className}</TableCell>
+                  <TableCell className="text-center">{class_.participant}</TableCell>
+                  <TableCell className="text-center">{class_.mentors.length}</TableCell> 
+                  <TableCell className="text-center">{class_.createdAt}</TableCell>
+                  
+                  <TableCell className="text-center">
                     <Badge variant={
-                      class_.status === "Upcoming" ? "secondary" :
-                      class_.status === "In Progress" ? "default" : "outline"
+                      class_.status === "Tba" ? "secondary" :
+                      class_.status === "Ongoing" ? "default" : "outline"
                     }>
                       {class_.status}
                     </Badge>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-center">
                     <Button variant="ghost" size="sm">Edit</Button>
                   </TableCell>
                 </TableRow>

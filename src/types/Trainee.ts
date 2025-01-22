@@ -46,6 +46,7 @@ export interface Certificate {
       id: string;
       fullName: string;
       nickname: string;
+      role: string;
     };
     trainee: {
       id: string;
@@ -69,6 +70,7 @@ export interface Certificate {
   export interface Mentor {
     id: string;
     fullName: string;
+    nickname: string;
     email: string;
     role: string;
   }

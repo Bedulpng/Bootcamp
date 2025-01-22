@@ -11,7 +11,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchBatch = async () => {
       try {
-        const response = await fetch(`http://10.10.103.25:4000/admin/batchs/${batchId}`);
+        const response = await fetch(`http://10.10.103.204:4000/admin/batchs/${batchId}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch batch with ID: ${batchId}`);
         }

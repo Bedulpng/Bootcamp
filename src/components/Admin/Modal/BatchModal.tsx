@@ -98,7 +98,7 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
         status: 'Ongoing',
         mentors,
       };
-      await axios.post('http://10.10.103.25:4000/admin/batch', payload);
+      await axios.post('http://10.10.103.204:4000/admin/batch', payload);
       onClose();
     } catch (error) {
       console.error('Error submitting batch:', error);

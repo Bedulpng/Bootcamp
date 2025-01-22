@@ -38,9 +38,9 @@ import BatchAdmin from './components/Admin/pages/Batch';
 import Users from './components/Admin/pages/Users';
 import Classes from './components/Admin/pages/Classes';
 import Certificates from './components/Admin/pages/Certificates';
-import Notes from './components/Admin/pages/Notes';
 import { LoginForm } from './components/Login/LoginFormAdmin';
 import NotAuthorized from './components/Unauthorized';
+import NotesManagement from './components/Admin/pages/ManageNotes/Notes-Management';
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith('/dashboard');
@@ -62,7 +62,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       case 'certificates':
         return <Certificates/>;
       case 'notes':
-        return <Notes />;
+        return <NotesManagement/>
       default:
         return <DashboardAdmin />;
     }
@@ -230,6 +230,12 @@ function App() {
               <SubjectDetail />     
           }
         />
+        {/* <Route
+          path="/tester"
+          element={
+              <GraderNotes />     
+          }
+        /> */}
         <Route
           path="/notification"
           element={

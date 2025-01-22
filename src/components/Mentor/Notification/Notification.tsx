@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
-import { Bell, CheckCheck, ChevronDown, ChevronUp, AlertTriangle, Gift, MessageSquare, BookCheck, UserRoundCheck } from 'lucide-react';
+import { Bell, CheckCheck, ChevronDown, ChevronUp, BookCheck, UserRoundCheck } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -16,9 +16,6 @@ import { Notification } from '../../../types/Notification';
 const iconMap: { [key: string]: React.ReactNode } = {
   Lesson: <BookCheck className="h-4 w-4" />,
   Challenge: <UserRoundCheck className="h-4 w-4" />,
-  AlertTriangle: <AlertTriangle className="h-4 w-4" />,
-  Gift: <Gift className="h-4 w-4" />,
-  MessageSquare: <MessageSquare className="h-4 w-4" />,
 };
 
 export function NotificationPopup() {
@@ -94,14 +91,18 @@ export function NotificationPopup() {
 function NotificationItem({ notification, onMarkAsRead }: { notification: Notification; onMarkAsRead: (id: string) => void }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const notificationIcon = notification.type === "info" 
+  ? "Lesson" 
+  : "Challenge";
+
   return (
     <div className="p-4 rounded bg-white border-b border-gray-200 last:border-b-0">
       <div className="flex items-center cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="mr-3 text-blue-500">
-          {iconMap[notification.icon]}
+          {iconMap[notificationIcon]}
         </div>
         <div className="flex-grow">
-          <p className="text-sm font-medium">{notification.message}</p>
+          <p className="text-sm font-medium">{notification.title}</p>
           {/* Ensure that createdAt is a valid Date */}
           <p className="text-xs text-gray-500">{formatDistanceToNow(new Date(notification.createdAt))} ago</p>
         </div>

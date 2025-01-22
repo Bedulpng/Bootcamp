@@ -60,7 +60,7 @@ export default function Users() {
             <TableBody>
               {trainees.map((user, index) => (
                 <TableRow key={user.id}>
-                  <TableCell className="text-center">{index + 1}</TableCell> {/* Auto-increment number */}
+                  <TableCell className="text-center">{index + 1}</TableCell>
                   <TableCell className="text-center flex flex-col items-center gap-2">
                     {user.fullName || "-  "} 
                   </TableCell>

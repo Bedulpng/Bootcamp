@@ -12,7 +12,12 @@ export function useNotifications(initialNotifications: Notification[] = []) {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get('http://10.10.103.25:4000/mentor/notifications'); // Replace with your API endpoint
+        const refreshToken = localStorage.getItem('refreshToken');
+        const response = await axios.get('http://10.10.103.204:4000/mentor/notifications', {
+          headers: {
+            Authorization: `Bearer ${refreshToken}`, // Add Authorization header
+          },
+        }); // Replace with your API endpoint
         const unreadNotifications = response.data.notifications.filter((notif: Notification) => !notif.isRead);
         setNotifications(unreadNotifications); // Only set unread notifications
       } catch (error) {
@@ -25,7 +30,7 @@ export function useNotifications(initialNotifications: Notification[] = []) {
     const decodedToken = jwtDecode<{ id: string }>(refreshToken);
 
     // Set up Socket.IO connection using WebSocket only
-    const socket = io('http://10.10.103.25:4000', {
+    const socket = io('http://10.10.103.204:4000', {
       transports: ['websocket'], // Force WebSocket transport
     }); // Replace with your backend's WebSocket URL
 
@@ -59,7 +64,7 @@ export function useNotifications(initialNotifications: Notification[] = []) {
 
   const markAsRead = useCallback(async (id: string) => {
     try {
-      await axios.put(`http://10.10.103.25:4000/mentor/notification/${id}/read`);
+      await axios.put(`http://10.10.103.204:4000/mentor/notification/${id}/read`);
       setNotifications((prev) => prev.filter((notif) => notif.id !== id));
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
@@ -74,7 +79,7 @@ export function useNotifications(initialNotifications: Notification[] = []) {
       const decoded = jwtDecode<{ id: string }>(token); // Decode the token to get mentorId
       const mentorId = decoded.id;
 
-      await axios.put('http://10.10.103.25:4000/mentor/notifications/read-all');
+      await axios.put('http://10.10.103.204:4000/mentor/notifications/read-all');
 
       setNotifications((prev) =>
         prev.filter((notif) => notif.userId !== mentorId) // Remove all unread notifications

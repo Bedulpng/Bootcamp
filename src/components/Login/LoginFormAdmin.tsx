@@ -21,7 +21,7 @@ export function LoginForm() {
     };
 
     try {
-      const response = await axios.post('http://10.10.103.25:4000/trainee/login', payload);
+      const response = await axios.post('http://10.10.103.204:4000/trainee/login', payload);
       const { accessToken, refreshToken } = response.data;
 
       localStorage.setItem('accessToken', accessToken);

@@ -1,14 +1,21 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
-import { Users, BookOpen, GraduationCap, Award, Activity } from "lucide-react";
+import { Users, BookOpen, GraduationCap, Award, BookCheck, UserRoundCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { BatchModal } from "../Modal/BatchModal";
 import { ClassModal } from "../Modal/ClassModal";
 import UserModalForm from "../Modal/UserModal";
-import { Trainee, Batch, Class } from "@/types/Trainee";
+import { Trainee, Batch, Class, Certificate } from "@/types/Trainee";
 import { fetchBatches, fetchClasses } from "@/Api/FetchingBatches&Classes";
 import { fetchUsers } from "@/Api/FetchUsers";
+import { fetchAllCertificates } from "@/Api/FetchCertificate";
+import { useNotifications } from "@/hooks/useNotifications";
+
+const iconMap: { [key: string]: React.ReactNode } = {
+  Lesson: <BookCheck className="h-4 w-4" />,
+  Challenge: <UserRoundCheck className="h-4 w-4" />,
+};
 
 export default function DashboardAdmin() {
   const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
@@ -16,8 +23,9 @@ export default function DashboardAdmin() {
   const [isUserOpen, setIsUserOpen] = useState(false);
   const [trainees, setTrainees] = useState<Trainee[]>([]);
   const [fetchedBatch, setFetchedBatch] = useState<Batch[]>([]);
-  const [fetchedClasses, setFetchedClasses] = useState<Class[]>([]); // Store all classes fetched from the API
-
+  const [fetchedClasses, setFetchedClasses] = useState<Class[]>([]);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const { notifications } = useNotifications();
 
   useEffect(() => {
     const getUsers = async () => {
@@ -34,32 +42,46 @@ export default function DashboardAdmin() {
   }, []);
 
   useEffect(() => {
-     const getBatches = async () => {
-       try {
-         const fetchedBatch = await fetchBatches();
-         setFetchedBatch(fetchedBatch);
-       } catch (error) {
-         console.error("Failed to fetch batch:", error);
-       } finally {
-       }
-     };
- 
-     getBatches();
-   }, []);
+    const getBatches = async () => {
+      try {
+        const fetchedBatch = await fetchBatches();
+        setFetchedBatch(fetchedBatch);
+      } catch (error) {
+        console.error("Failed to fetch batch:", error);
+      } finally {
+      }
+    };
 
-   useEffect(() => {
+    getBatches();
+  }, []);
+
+  useEffect(() => {
     const getClasses = async () => {
       try {
         const fetchedClasses = await fetchClasses();
         setFetchedClasses(fetchedClasses);
-        console.log('Fetched classes:', fetchedClasses);
+        console.log("Fetched classes:", fetchedClasses);
       } catch (error) {
-        console.error('Failed to fetch classes:', error);
+        console.error("Failed to fetch classes:", error);
       } finally {
       }
     };
 
     getClasses();
+  }, []);
+
+  useEffect(() => {
+    const getCert = async () => {
+      try {
+        const certificates = await fetchAllCertificates();
+        setCertificates(certificates);
+      } catch (error) {
+        console.error("Failed to fetch batch:", error);
+      } finally {
+      }
+    };
+
+    getCert();
   }, []);
 
   const handleOpenUserModal = () => {
@@ -103,27 +125,9 @@ export default function DashboardAdmin() {
     },
     {
       title: "Certificates Issued",
-      value: "856",
+      value: certificates.length,
       icon: Award,
       color: "bg-purple-500",
-    },
-  ];
-
-  const activities = [
-    {
-      icon: BookOpen,
-      title: "New batch created: Web Development",
-      time: "2 hours ago",
-    },
-    {
-      icon: Award,
-      title: "Certificate issued to John Doe",
-      time: "3 hours ago",
-    },
-    {
-      icon: Activity,
-      title: "Class scheduled: React Basics",
-      time: "1 day ago",
     },
   ];
 
@@ -139,7 +143,7 @@ export default function DashboardAdmin() {
                   "flex flex-row items-center justify-center space-y-0 pb-2 text-white",
                   stat.color
                 )}
-              >   
+              >
                 <CardTitle className="text-sm font-medium">
                   {stat.title}
                 </CardTitle>
@@ -161,38 +165,42 @@ export default function DashboardAdmin() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {activities.map((activity, index) => {
-                const Icon = activity.icon;
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center p-3 border rounded-lg hover:shadow-md transition-shadow"
-                  >
-                    <div className="p-2 bg-gray-100 rounded-full">
-                      <Icon className="h-5 w-5 text-blue-500" />
-                    </div>
-                    <div className="ml-4">
-                      <p className="text-sm font-medium">{activity.title}</p>
-                      <p className="text-xs text-gray-500">{activity.time}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex justify-center mt-4">
-              <Button
-                variant="outline"
-                className="w-1/2"
-                onClick={() => (window.location.href = "/notification")}
+      <div className="space-y-4">
+        {notifications.length > 0 ? (
+          notifications.map((notif) => {
+            const notificationIcon = notif.type === "info" ? "Lesson" : "Challenge";
+            return (
+              <div
+                key={notif.id}
+                className="flex items-center p-3 border rounded-lg hover:shadow-md transition-shadow"
               >
-                Show More
-              </Button>
-            </div>
-          </CardContent>
+                <div className=" text-blue-500">
+                {iconMap[notificationIcon]}
+                </div>
+                <div className="ml-4  flex-cols items-center justify-center ">
+                  <p className="text-sm font-medium">{notif.title}</p>
+                  <p className="text-xs text-gray-500">{notif.description}</p>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <p className="text-center text-gray-500">No notifications available.</p>
+        )}
+      </div>
+      <div className="flex justify-center mt-4">
+        <Button
+          variant="outline"
+          className="w-1/2"
+          onClick={() => (window.location.href = "/notification")}
+        >
+          Show More
+        </Button>
+      </div>
+    </CardContent>
         </Card>
 
-        <div>      
+        <div>
           <Card>
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
@@ -214,7 +222,7 @@ export default function DashboardAdmin() {
                 className="w-full"
                 variant="outline"
                 onClick={handleOpenUserModal}
-              > 
+              >
                 Add New User
               </Button>
               <UserModalForm open={isUserOpen} setOpen={setIsUserOpen} />

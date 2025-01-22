@@ -22,7 +22,7 @@ export default function NoteList({ notes, filter, setFilter, onDelete }: NoteLis
       }
 
       // Make the delete API request
-      await axios.delete(`http://10.10.103.25:4000/mentor/notes/${noteId}`, {
+      await axios.delete(`http://10.10.103.204:4000/mentor/notes/${noteId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

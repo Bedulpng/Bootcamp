@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import axios from "axios";
 import {
   Dialog,
   DialogContent,
@@ -19,10 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { fetchUsers } from "@/Api/FetchUsers";
+import { fetchTrainees } from "@/Api/FetchUsersByRole";
 import { fetchCB } from "@/Api/FetchingBatches&Classes";
 import { Trainee, Batch, Class } from "@/types/Trainee";
-import { jwtDecode } from "jwt-decode";
 
 type CertificateFormData = {
   traineeId: string;
@@ -38,18 +38,14 @@ interface CertificateModalProps {
 
 export function CertificateModal({ isOpen, setIsOpen }: CertificateModalProps) {
   const [trainees, setTrainees] = useState<Trainee[]>([]);
+  const [traineeId, setTraineeId] = useState<string>("");
   const [classes, setClasses] = useState<Class[]>([]); // Initialize classes as an empty array
   const [batches, setBatches] = useState<Batch[]>([]);
-
-  const refreshToken = localStorage.getItem("refreshToken");
-  const decodedToken: any = jwtDecode(refreshToken as string);
-  const userId = decodedToken.id;
-
 
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const trainees = await fetchUsers();
+        const trainees = await fetchTrainees();
         setTrainees(trainees);
       } catch (error) {
         console.error("Failed to fetch trainees:", error);
@@ -60,23 +56,32 @@ export function CertificateModal({ isOpen, setIsOpen }: CertificateModalProps) {
     getUsers();
   }, []);
 
+  const handleSelectTrainee = (id: string) => {
+    setTraineeId(id);
+    console.log("Selected Trainee ID:", id); // Optional: log for debugging
+  };
+
   useEffect(() => {
-    if (userId) {
+    if (traineeId) {
       const fetchData = async () => {
         try {
-          const data = await fetchCB(userId);
+          const data = await fetchCB(traineeId);
           setClasses(data.classes); // Set fetched classes
-          setBatches(data.batches); // Set fetched batches
+          setBatches(data.batches);
         } catch (error) {
-          console.error('Error fetching classes and batches:', error);
+          console.error("Error fetching classes and batches:", error);
         }
       };
 
       fetchData();
+    } else {
+      setClasses([]); // Reset classes to an empty array
+      setBatches([]);
     }
-  }, [userId]);
+  }, [traineeId]);
 
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
@@ -85,19 +90,22 @@ export function CertificateModal({ isOpen, setIsOpen }: CertificateModalProps) {
 
   const onSubmit = async (data: CertificateFormData) => {
     try {
+      console.log("data: ", data);
       const formData = new FormData();
       formData.append("traineeId", data.traineeId);
       formData.append("classId", data.classId);
       formData.append("batchId", data.batchId);
-      formData.append("file", data.file[0]);
+      formData.append("certificate", data.file[0]);
 
-      // Replace this with your actual API endpoint
-      const response = await fetch("/api/certificates", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await axios.post(
+        "http://10.10.103.204:4000/uploads/certificate",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
-      if (response.ok) {
+      if (response.status === 200 || response.status === 201) {
         console.log("Certificate posted successfully");
         setIsOpen(false);
         reset();
@@ -117,75 +125,116 @@ export function CertificateModal({ isOpen, setIsOpen }: CertificateModalProps) {
           <DialogTitle>Post New Certificate</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Trainee Field */}
           <div className="space-y-2">
             <Label htmlFor="traineeId">Trainee</Label>
-            <Select
-              onValueChange={(value) =>
-                register("traineeId").onChange({ target: { value } })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select trainee" />
-              </SelectTrigger>
-              <SelectContent>
-                {trainees.map((trainee) => (
-                  <SelectItem key={trainee.id} value={trainee.id}>
-                    {trainee.fullName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="traineeId"
+              control={control}
+              rules={{ required: "Trainee is required" }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    handleSelectTrainee(value);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select trainee" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {trainees.map((trainee) => (
+                      <SelectItem key={trainee.id} value={trainee.id}>
+                        {trainee.fullName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
             {errors.traineeId && (
-              <p className="text-red-500 text-sm">Trainee is required</p>
+              <p className="text-red-500 text-sm">{errors.traineeId.message}</p>
             )}
           </div>
 
+          {/* Class Field */}
           <div className="space-y-2">
             <Label htmlFor="classId">Class</Label>
-            <Select
-              onValueChange={(value) =>
-                register("classId").onChange({ target: { value } })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select class" />
-              </SelectTrigger>
-              <SelectContent>
-                {classes.map((cls) => (
-                  <SelectItem key={cls.id} value={cls.id}>
-                    {cls.className}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="classId"
+              control={control}
+              rules={{ required: "Class is required" }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {classes.length > 0 ? (
+                      classes.map((cls) => (
+                        <SelectItem key={cls.id} value={cls.id}>
+                          {cls.className}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-sm px-4 py-2">
+                        This trainee doesn't have a class yet
+                      </p>
+                    )}
+                  </SelectContent>
+                </Select>
+              )}
+            />
             {errors.classId && (
-              <p className="text-red-500 text-sm">Class is required</p>
+              <p className="text-red-500 text-sm">{errors.classId.message}</p>
             )}
           </div>
 
+          {/* Batch Field */}
           <div className="space-y-2">
             <Label htmlFor="batchId">Batch</Label>
-            <Select
-              onValueChange={(value) =>
-                register("batchId").onChange({ target: { value } })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select batch" />
-              </SelectTrigger>
-              <SelectContent>
-                {batches.map((batch) => (
-                  <SelectItem key={batch.id} value={batch.id}>
-                    {`${batch.batchNum} - ${batch.batchTitle}`}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Controller
+              name="batchId"
+              control={control}
+              rules={{ required: "Batch is required" }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select batch" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {batches.length > 0 ? (
+                      batches.map((batch) => (
+                        <SelectItem key={batch.id} value={batch.id}>
+                          {`${batch.batchNum} - ${batch.batchTitle}`}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-sm px-4 py-2">
+                        This trainee doesn't have a batch yet
+                      </p>
+                    )}
+                  </SelectContent>
+                </Select>
+              )}
+            />
             {errors.batchId && (
-              <p className="text-red-500 text-sm">Batch is required</p>
+              <p className="text-red-500 text-sm">{errors.batchId.message}</p>
             )}
           </div>
 
+          {/* Certificate File Field */}
           <div className="space-y-2">
             <Label htmlFor="file">Certificate File</Label>
             <Input

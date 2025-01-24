@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, ChevronDown, User2Icon } from 'lucide-react';
+import { LogOut, ChevronDown, User2Icon, UserCog2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { NotificationPopup } from '../../Mentor/Notification/Notification';
+import ProfileEditor from '@/components/Mentor/Modal/ProfileEdit';
 
 const NavbarAdmin = () => {
   const navigate = useNavigate();
   const [AdminName, setAdminName] = useState('');
   const [AdminRole, setAdminRole] = useState('');
   const [profileImage, setProfileImage] = useState('');
+  const [isEdit, setIsEdit] = useState(false);
 
   useEffect(() => {
     const fetchMentorDetails = async () => {
@@ -46,6 +48,11 @@ const NavbarAdmin = () => {
     navigate('/admin/login');
   };
 
+  const handleEditProfile = () => {
+    setIsEdit(true);
+  };
+
+
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm">
       <div className="flex items-center justify-between px-6 py-4">
@@ -78,6 +85,10 @@ const NavbarAdmin = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem onClick={handleEditProfile}>
+                <UserCog2 className="mr-2 h-4 w-4" />
+                Edit Profile
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
@@ -85,6 +96,7 @@ const NavbarAdmin = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <ProfileEditor open={isEdit} onOpenChange={setIsEdit} />
         </div>
       </div>
     </header>

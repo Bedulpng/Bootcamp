@@ -70,6 +70,7 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
 
   const handleRemoveImage = () => {
     setImagePreview(null);
+    setProfileImage(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -128,9 +129,12 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
         payload.profileImage = imageUrl;
       }
 
+      const token = localStorage.getItem('refreshToken');
+      const decodedToken: any = jwtDecode(token as string);
+      const id = decodedToken.id; // Assuming the user ID is stored in 'id'
       // Send the updated profile data
       const response = await axios.put(
-        'http://10.10.103.204:4000/trainee/edit',
+        `http://10.10.103.204:4000/trainee/edit/${id}`,
         payload,
         {
           headers: {
@@ -162,7 +166,7 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
           return; // Exit the function early if profile image already exists
         }
 
-  
+
         // Fetch the professional profile image
         const profileResponse = await axios.get(`http://10.10.103.204:4000/trainee/${userId}/pro`);
   
@@ -240,12 +244,12 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
                 <Avatar className="h-24 w-24">
                     {profileImage ? (
                       // If profileImage exists, render it
-                      <AvatarImage src={`http://10.10.103.204:4000${profileImage}`} alt="Mentor" />
+                      <AvatarImage src={`http://10.10.103.204:4000${profileImage}`} alt="Image" />
                     ) : (
                        // If profileImage doesn't exist, render imagePreview
-                      <AvatarImage src={imagePreview || undefined} alt="Mentor Preview" />
+                      <AvatarImage src={imagePreview || undefined} alt="Image Preview" />
                     )}
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarFallback>Edit Profile</AvatarFallback>
                   </Avatar>
                 <div className="flex gap-2">
                   <Button
@@ -279,7 +283,7 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit">Save changes</Button>
+            <Button onClick={handleSubmit} type="submit">Save changes</Button>
           </DialogFooter>
         </form>
       </DialogContent>

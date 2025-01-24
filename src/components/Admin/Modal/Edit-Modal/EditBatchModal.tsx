@@ -1,130 +1,133 @@
 import React, { useState, useEffect } from "react";
 import { X, Search, UserPlus, Users, GraduationCap } from "lucide-react";
-import { Mentor, Trainee, Batch } from "@/types/Trainee";
-import { fetchBatches } from "@/Api/FetchingBatches&Classes";
-import { fetchTrainees, fetchMentors } from "@/Api/FetchUsersByRole";
-import axios from "axios";
+import {
+  fetchClasses
+} from "@/Api/FetchingBatches&Classes";
+import { fetchMentors, fetchTrainees } from "@/Api/FetchUsersByRole";
+import { Class, Mentor } from "@/types/Trainee";
+import  axios  from "axios";
 
-interface ClassModalProps {
+interface BatchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: {
-    className: string;
-    batch: Batch[];
-    mentors: Mentor[];
-    participants: Trainee[];
-  }) => void;
+  batchId: string;
+  batchTitles: string;
+  // Optional batch ID for editing existing batches
 }
 
-export const ClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) => {
-  const [className, setClassName] = useState("");
-  const [fetchedBatch, setFetchedBatch] = useState<Batch[]>([]);
-  const [selectedBatch, setselectedBatch] = useState<Batch[]>([]);
-  const [batchSearch, setBatchSearch] = useState("");
+export const BatchEdit: React.FC<BatchModalProps> = ({
+  isOpen,
+  onClose,
+  batchId,
+  batchTitles: title,
+}) => {
+  const [batchNum, setBatchNum] = useState<number>(0);
+  const [batchTitle, setBatchTitle] = useState("");
+  const [batchDesc, setBatchDesc] = useState("");
+  const [classSearch, setClassSearch] = useState("");
+  const [fetchedClasses, setFetchedClasses] = useState<Class[]>([]);
+  const [selectedClasses, setSelectedClasses] = useState<Class[]>([]);
   const [mentors, setMentors] = useState<Mentor[]>([]);
-  const [fetchedTrainees, setFetchedTrainees] = useState<Trainee[]>([]);
   const [fetchedMentors, setFetchedMentors] = useState<Mentor[]>([]);
-  const [participants, setParticipants] = useState<Trainee[]>([]);
   const [mentorSearch, setMentorSearch] = useState("");
-  const [participantSearch, setParticipantSearch] = useState("");
+  const [participants, setParticipants] = useState<Mentor[]>([]);
+  const [fetchedParticipant, setFetchedParticipant] = useState<Mentor[]>([]);
+  const [participantSearch, setParticipantSearch] = useState('');
 
   useEffect(() => {
-    const getBatches = async () => {
+    const getClasses = async () => {
       try {
-        const fetchedBatch = await fetchBatches();
-        setFetchedBatch(fetchedBatch);
-        console.log("Batch Data", fetchedBatch);
+        const fetchedClasses = await fetchClasses();
+        setFetchedClasses(fetchedClasses);
       } catch (error) {
-        console.error("Failed to fetch batch:", error);
-      } finally {
+        console.error("Failed to fetch classes:", error);
       }
     };
 
-    getBatches();
-  }, []);
-
-  useEffect(() => {
-    const getTrainees = async () => {
-      try {
-        const fetchedTrainees = await fetchTrainees();
-        setFetchedTrainees(fetchedTrainees);
-      } catch (error) {
-        console.error("Failed to fetch trainees:", error);
-      } finally {
-      }
-    };
-
-    getTrainees();
-  }, []);
-
-  useEffect(() => {
     const getMentors = async () => {
       try {
         const fetchedMentors = await fetchMentors();
         setFetchedMentors(fetchedMentors);
       } catch (error) {
-        console.error("Failed to fetch Mentors: ", error);
-      } finally {
+        console.error("Failed to fetch mentors:", error);
       }
     };
 
+    const getUsers = async () => {
+      try {
+        const fetchedTrainees = await fetchTrainees();
+        setFetchedParticipant(fetchedTrainees);
+      } catch (error) {
+        console.error("Failed to fetch users:", error);
+      }
+    };
+
+    getClasses();
     getMentors();
+    getUsers();
   }, []);
 
   if (!isOpen) return null;
 
-  const filteredBatches = batchSearch
-  ? fetchedBatch.filter((b) =>
-      b.batchTitle.toLowerCase().includes(batchSearch.toLowerCase())
-    )
-  : [];
+  const filteredClasses = classSearch
+    ? fetchedClasses.filter((c) =>
+        c.className.toLowerCase().includes(classSearch.toLowerCase())
+      )
+    : [];
 
-const filteredMentors = mentorSearch
-  ? fetchedMentors.filter((person) =>
-      (person.fullName ?? "No Name")
-        .toLowerCase()
-        .includes(mentorSearch.toLowerCase())
-    )
-  : [];
+    const filteredMentors = mentorSearch
+    ? fetchedMentors.filter((person) =>
+        (person.fullName ?? "No Name")
+          .toLowerCase()
+          .includes(mentorSearch.toLowerCase())
+      )
+    : [];
 
-const filteredParticipants = participantSearch
-  ? fetchedTrainees.filter((person) =>
-      (person.fullName ?? "No Name")
-        .toLowerCase()
-        .includes(participantSearch.toLowerCase())
-    )
-  : [];
+    const filteredParticipants = participantSearch
+    ? fetchedParticipant.filter((person) =>
+        (person.fullName ?? "No Name")
+          .toLowerCase()
+          .includes(participantSearch.toLowerCase())
+      )
+    : [];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const payload = {
-        className,
-        batchId: selectedBatch.map((b) => b.id),
-        mentors: mentors.map((m) => m.id),
-        users: participants.map((p) => p.id),
-      };
-      await axios.post("http://10.10.103.204:4000/admin/class", payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
-        }
-      });
-      onClose();
-      console.log("participants", participants.map((p) => p.id));
-      console.log("mentors", mentors.map((m) => m.id));
-      console.log("batchId", selectedBatch.map((b) => b.id));
-    } catch (error) {
-      console.error("Error submitting class:", error);
-    }
-  };
 
-  const removeMentor = (id: string) => {
-    setMentors(mentors.filter((m) => m.id !== id));
-  };
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        // Construct the payload with conditional inclusion of fields
+        const payload: Record<string, any> = {};
+    
+        if (batchNum) payload.batchNum = batchNum;
+        if (batchTitle) payload.batchTitle = batchTitle;
+        if (batchDesc) payload.batchDesc = batchDesc;
+        if (selectedClasses.length > 0)
+          payload.batchClass = selectedClasses.map((cls) => cls.id); // Include only if there are selected classes
+        if (mentors.length > 0) payload.mentors = mentors.map((mentor) => mentor.id); // Include only if there are mentors
+        if (participants.length > 0)
+          payload.participants = participants.map((participant) => participant.id); // Include only if there are participants
+    
+        // Make the API request
+        await axios.put(`http://10.10.103.204:4000/admin/batch/${batchId}`, payload, {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("refreshToken"),
+          },
+        });
+    
+        console.log("Batch successfully edited:", payload);
+        onClose();
+      } catch (error) {
+        console.error("Error submitting batch:", error);
+      }
+    };    
 
-  const removeParticipant = (id: string) => {
-    setParticipants(participants.filter((p) => p.id !== id));
-  };
+    const removeMentor = (id: string) => {
+      setMentors(mentors.filter(m => m.id !== id));
+    };
+
+    const removeUsers = (id: string) => {
+      setMentors(mentors.filter(m => m.id !== id));
+    };
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -132,7 +135,7 @@ const filteredParticipants = participantSearch
         <form onSubmit={handleSubmit}>
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <h2 className="text-2xl font-bold text-gray-900">
-              Create New Class
+              Edit Batch for {title}
             </h2>
             <button
               type="button"
@@ -143,79 +146,109 @@ const filteredParticipants = participantSearch
             </button>
           </div>
 
-          <div className="p-6 space-y-6">
-            <div className="flex gap-6">
-              {/* Class Name */}
-              <div className="flex-1">
+          <div className="p-6 space-y-6 flex flex-wrap gap-6">
+            {/* Left Column */}
+            <div className="flex-1 space-y-4">
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Class Name
+                  Batch Num
                 </label>
                 <input
-                  type="text"
-                  value={className}
-                  onChange={(e) => setClassName(e.target.value)}
+                  type="number"
+                  value={batchNum}
+                  onChange={(e) => setBatchNum(parseInt(e.target.value) || 0)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
                 />
               </div>
 
-              {/* Batch Search */}
-              <div className="flex-1">
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Batch
+                  Batch Title
+                </label>
+                <input
+                  type="text"
+                  value={batchTitle}
+                  onChange={(e) => setBatchTitle(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Batch Description
+                </label>
+                <textarea
+                  value={batchDesc}
+                  onChange={(e) => setBatchDesc(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            {/* Right Column */}
+            <div className="flex-1 space-y-4">
+              {/* Classes */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Class
                 </label>
                 <div className="relative">
                   <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Search for a batch..."
-                    value={batchSearch}
-                    onChange={(e) => setBatchSearch(e.target.value)}
+                    placeholder="Search for a class..."
+                    value={classSearch}
+                    onChange={(e) => setClassSearch(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-                {batchSearch && (
+                {classSearch && (
                   <div className="mt-2 max-h-32 overflow-y-auto border border-gray-200 rounded-lg">
-                    {filteredBatches.map((batchItem) => (
+                    {filteredClasses.map((classItem) => (
                       <button
-                        key={batchItem.id}
+                        key={classItem.id}
                         type="button"
                         onClick={() => {
                           if (
-                            !selectedBatch.some((b) => b.id === batchItem.id)
+                            !selectedClasses.some(
+                              (cls) => cls.id === classItem.id
+                            )
                           ) {
-                            setselectedBatch([...selectedBatch, batchItem]);
+                            setSelectedClasses([...selectedClasses, classItem]);
                           }
-                          setBatchSearch("");
+                          setClassSearch("");
                         }}
                         className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2"
                       >
                         <GraduationCap className="w-4 h-4 text-gray-400" />
                         <div>
                           <div className="font-medium">
-                            {batchItem.batchNum}
+                            {classItem.className}
                           </div>
-                          <div className="text-sm text-gray-500">
-                            {batchItem.batchTitle}
-                          </div>
+                          {Array.isArray(classItem.mentors)
+                            ? classItem.mentors.join(" - ")
+                            : "No mentors available"}
                         </div>
                       </button>
                     ))}
                   </div>
                 )}
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {selectedBatch.map((batchItem) => (
+                  {selectedClasses.map((classItem) => (
                     <span
-                      key={batchItem.id}
+                      key={classItem.id}
                       className="inline-flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-lg text-sm"
                     >
                       <GraduationCap className="w-4 h-4" />
-                      <span>{batchItem.batchTitle}</span>
+                      <span>{classItem.className}</span>
                       <button
                         type="button"
                         onClick={() =>
-                          setselectedBatch(
-                            selectedBatch.filter((b) => b.id !== batchItem.id)
+                          setSelectedClasses(
+                            selectedClasses.filter(
+                              (cls) => cls.id !== classItem.id
+                            )
                           )
                         }
                         className="hover:bg-blue-200 rounded-full p-0.5"
@@ -226,12 +259,9 @@ const filteredParticipants = participantSearch
                   ))}
                 </div>
               </div>
-            </div>
 
-            {/* Mentors and Participants */}
-            <div className="flex gap-6">
               {/* Mentors */}
-              <div className="flex-1">
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Mentors
                 </label>
@@ -288,7 +318,7 @@ const filteredParticipants = participantSearch
               </div>
 
               {/* Participants */}
-              <div className="flex-1">
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Participants
                 </label>
@@ -296,7 +326,7 @@ const filteredParticipants = participantSearch
                   <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Search participants..."
+                    placeholder="Search Participants..."
                     value={participantSearch}
                     onChange={(e) => setParticipantSearch(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -318,7 +348,7 @@ const filteredParticipants = participantSearch
                         <div>
                           <div className="font-medium">{person.fullName}</div>
                           <div className="text-sm text-gray-500">
-                            {person.email}
+                            {person.role} - {person.email}
                           </div>
                         </div>
                       </button>
@@ -326,16 +356,16 @@ const filteredParticipants = participantSearch
                   </div>
                 )}
                 <div className="mt-2 flex flex-wrap gap-2">
-                  {participants.map((participant) => (
+                  {participants.map((user) => (
                     <span
-                      key={participant.id}
-                      className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm"
+                      key={user.id}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
                     >
-                      {participant.fullName}
+                      {user.fullName}
                       <button
                         type="button"
-                        onClick={() => removeParticipant(participant.id)}
-                        className="hover:bg-green-200 rounded-full p-0.5"
+                        onClick={() => removeUsers(user.id)}
+                        className="hover:bg-yellow-200 rounded-full p-0.5"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -356,11 +386,11 @@ const filteredParticipants = participantSearch
             </button>
             <button
               type="submit"
-              disabled={!selectedBatch}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300 font-medium flex items-center gap-2"
+              disabled={!selectedClasses}
+              className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:bg-yellow-300 font-medium flex items-center gap-2"
             >
               <Users className="w-5 h-5" />
-              Create Class
+              Edit Batch
             </button>
           </div>
         </form>

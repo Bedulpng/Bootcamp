@@ -46,6 +46,7 @@ export default function DashboardAdmin() {
       try {
         const fetchedBatch = await fetchBatches();
         setFetchedBatch(fetchedBatch);
+        console.log("Fetched batch:", fetchedBatch);
       } catch (error) {
         console.error("Failed to fetch batch:", error);
       } finally {

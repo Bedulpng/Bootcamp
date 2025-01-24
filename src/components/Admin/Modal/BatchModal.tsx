@@ -1,23 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { X, Search, UserPlus, Users, GraduationCap } from 'lucide-react';
 import { fetchClasses } from '@/Api/FetchingBatches&Classes';
-import { fetchMentors } from '@/Api/FetchUsersByRole';
+import { fetchMentors, fetchTrainees } from '@/Api/FetchUsersByRole';
 import { Class, Mentor } from '@/types/Trainee';
 import axios from 'axios';
-
-interface BatchModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: {
-    batchNum: number;
-    batchTitle: string;
-    batchDesc: string;
-    startDate: Date;
-    endDate: Date | null;
-    class: Class[];
-    mentors: Mentor[];
-  }) => void;
-}
 
 interface BatchModalProps {
   isOpen: boolean;
@@ -36,8 +22,10 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [fetchedMentors, setFetchedMentors] = useState<Mentor[]>([]);
   const [mentorSearch, setMentorSearch] = useState('');
+  const [participants, setParticipants] = useState<Mentor[]>([]);
+  const [fetchedParticipant, setFetchedParticipant] = useState<Mentor[]>([]);
+  const [participantSearch, setParticipantSearch] = useState('');
 
-  //get class
   useEffect(() => {
     const getClasses = async () => {
       try {
@@ -53,7 +41,6 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
     getClasses();
   }, []);
 
-//get mentors
   useEffect(() => {
     const getMentors = async () => {
       try {
@@ -69,6 +56,19 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
     getMentors();
   }, []);
 
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const fetchedUsers = await fetchTrainees();
+        setFetchedParticipant(fetchedUsers);
+      } catch (error) {
+        console.error('Failed to fetch Users: ', error);
+      } finally {
+      }
+    };
+
+    getUsers();
+  }, []);
 
   if (!isOpen) return null;
 
@@ -78,11 +78,21 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
       )
     : [];
 
-  const filteredMentors = fetchedMentors.filter(
-    person => 
-      person.fullName.toLowerCase().includes(mentorSearch.toLowerCase()) &&
-      !mentors.find(m => m.id === person.id)
-  );
+    const filteredMentors = mentorSearch
+    ? fetchedMentors.filter((person) =>
+        (person.fullName ?? "No Name")
+          .toLowerCase()
+          .includes(mentorSearch.toLowerCase())
+      )
+    : [];
+
+    const filteredParticipants = participantSearch
+    ? fetchedParticipant.filter((person) =>
+        (person.fullName ?? "No Name")
+          .toLowerCase()
+          .includes(participantSearch.toLowerCase())
+      )
+    : [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,14 +101,21 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
         batchNum,
         batchTitle,
         batchDesc,
-        batchClass: selectedClasses.map(cls => cls.id),
-        mentorIds: mentors.map(mentor => mentor.id), // Extract mentor IDs
+        batchClass: selectedClasses.map((cls) => cls.id), // Extract class IDs
+        mentorIds: mentors.map((mentor) => mentor.id), // Extract mentor IDs
+        participantIds: participants.map((participant) => participant.id), // Extract participant IDs
         startDate: startDate.toISOString(),
-        endDate,
-        status: 'Ongoing',
-        mentors,
+        endDate: endDate ? new Date(endDate).toISOString() : null, // Ensure nullability
+        status: 'Ongoing', // Update the batch status if needed
       };
-      await axios.post('http://10.10.103.204:4000/admin/batch', payload);
+  
+      await axios.post('http://10.10.103.204:4000/admin/batch', payload, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('refreshToken'),
+        },
+      });
+  
+      console.log('Batch successfully created:', payload);
       onClose();
     } catch (error) {
       console.error('Error submitting batch:', error);
@@ -106,7 +123,11 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
   };
 
   const removeMentor = (id: string) => {
-    setMentors(mentors.filter(m => m.id !== id));
+    setMentors(mentors.filter((m) => m.id !== id));
+  };
+
+  const removeParticipant = (id: string) => {
+    setParticipants(participants.filter((p) => p.id !== id));
   };
 
   return (
@@ -276,6 +297,60 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
                         type="button"
                         onClick={() => removeMentor(mentor.id)}
                         className="hover:bg-blue-200 rounded-full p-0.5"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Participants
+                </label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search Participants..."
+                    value={participantSearch}
+                    onChange={(e) => setParticipantSearch(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                {participantSearch && (
+                  <div className="mt-2 max-h-32 overflow-y-auto border border-gray-200 rounded-lg">
+                    {filteredParticipants.map((person) => (
+                      <button
+                        key={person.id}
+                        type="button"
+                        onClick={() => {
+                          setParticipants([...participants, person]);
+                          setParticipantSearch('');
+                        }}
+                        className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-2"
+                      >
+                        <UserPlus className="w-4 h-4 text-gray-400" />
+                        <div>
+                          <div className="font-medium">{person.fullName}</div>
+                          <div className="text-sm text-gray-500">{person.role} - {person.email}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {participants.map((user) => (
+                    <span
+                      key={user.id}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
+                    >
+                      {user.fullName}
+                      <button
+                        type="button"
+                        onClick={() => removeParticipant(user.id)}
+                        className="hover:bg-yellow-200 rounded-full p-0.5"
                       >
                         <X className="w-4 h-4" />
                       </button>

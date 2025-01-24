@@ -14,9 +14,11 @@ interface ClassModalProps {
     mentors: Mentor[];
     participants: Trainee[];
   }) => void;
+  // id: string;
+  // fullName: string;
 }
 
-export const ClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) => {
+export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) => {
   const [className, setClassName] = useState("");
   const [fetchedBatch, setFetchedBatch] = useState<Batch[]>([]);
   const [selectedBatch, setselectedBatch] = useState<Batch[]>([]);
@@ -74,26 +76,26 @@ export const ClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const filteredBatches = batchSearch
-  ? fetchedBatch.filter((b) =>
-      b.batchTitle.toLowerCase().includes(batchSearch.toLowerCase())
-    )
-  : [];
+    ? fetchedBatch.filter((b) =>
+        b.batchTitle.toLowerCase().includes(batchSearch.toLowerCase())
+      )
+    : [];
 
-const filteredMentors = mentorSearch
-  ? fetchedMentors.filter((person) =>
+  const filteredMentors = fetchedMentors.filter(
+    (person) =>
       (person.fullName ?? "No Name")
         .toLowerCase()
-        .includes(mentorSearch.toLowerCase())
-    )
-  : [];
+        .includes(mentorSearch.toLowerCase()) &&
+      !mentors.find((m) => m.id === person.id)
+  );
 
-const filteredParticipants = participantSearch
-  ? fetchedTrainees.filter((person) =>
+  const filteredParticipants = fetchedTrainees.filter(
+    (person) =>
       (person.fullName ?? "No Name")
         .toLowerCase()
-        .includes(participantSearch.toLowerCase())
-    )
-  : [];
+        .includes(participantSearch.toLowerCase()) &&
+      !participants.find((p) => p.id === person.id)
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,8 +103,7 @@ const filteredParticipants = participantSearch
       const payload = {
         className,
         batchId: selectedBatch.map((b) => b.id),
-        mentors: mentors.map((m) => m.id),
-        users: participants.map((p) => p.id),
+        participants: participants.map((p) => p.id),
       };
       await axios.post("http://10.10.103.204:4000/admin/class", payload, {
         headers: {
@@ -110,9 +111,6 @@ const filteredParticipants = participantSearch
         }
       });
       onClose();
-      console.log("participants", participants.map((p) => p.id));
-      console.log("mentors", mentors.map((m) => m.id));
-      console.log("batchId", selectedBatch.map((b) => b.id));
     } catch (error) {
       console.error("Error submitting class:", error);
     }
@@ -132,7 +130,7 @@ const filteredParticipants = participantSearch
         <form onSubmit={handleSubmit}>
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <h2 className="text-2xl font-bold text-gray-900">
-              Create New Class
+              Edit Class
             </h2>
             <button
               type="button"

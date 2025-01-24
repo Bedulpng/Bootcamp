@@ -69,7 +69,7 @@ export default function NotesPage() {
         ...newNote,
         id: Date.now().toString(),
         createdAt: new Date().toISOString(),
-        grader: { id: '', fullName: '', nickname: '' },
+        grader: { id: '', fullName: '', nickname: '', role: '' },
         trainee: { id: '', fullName: '', nickname: '', email: ''},
       },
     ]);

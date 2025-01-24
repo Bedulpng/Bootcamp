@@ -30,7 +30,7 @@ import SubjectDetail from './components/Trainee/pages/secondpge/subjectdetail';
 import NotificationPage from './components/Trainee/pages/secondpge/top/Notification';
 import Profile from './components/Trainee/pages/secondpge/top/profile';
 import FormPage from './components/Trainee/pages/firstpage/form';
-import RegisPage from './components/Trainee/pages/firstpage/login';
+import RegisPage from './components/Trainee/pages/firstpage/skill';
 import DashboardAdmin from './components/Admin/pages/Dashboard';
 import NavbarAdmin from './components/Admin/pages/Navbar';
 import SidebarAdmin from './components/Admin/Modal/Sidebar';
@@ -41,6 +41,7 @@ import Certificates from './components/Admin/pages/Certificates';
 import { LoginForm } from './components/Login/LoginFormAdmin';
 import NotAuthorized from './components/Unauthorized';
 import NotesManagement from './components/Admin/pages/ManageNotes/Notes-Management';
+import SkillPage from './components/Trainee/pages/firstpage/skill';
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith('/dashboard');
@@ -251,7 +252,7 @@ function App() {
         <Route
           path="/verify"
           element={
-              <FormPage />     
+              <SkillPage />     
           }
         />
         <Route

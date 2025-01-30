@@ -95,7 +95,7 @@ export function ScheduleClassModal({ isOpen, onClose, onSubmit }: { isOpen: bool
   
     try {
       const response = await axios.post(
-        'http://10.10.103.204:4000/mentor/schedule',
+        'http://10.10.103.127:4000/mentor/schedule',
         newSchedule,
         {
           headers: {

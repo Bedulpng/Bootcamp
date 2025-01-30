@@ -104,7 +104,7 @@ const filteredParticipants = participantSearch
         mentors: mentors.map((m) => m.id),
         users: participants.map((p) => p.id),
       };
-      await axios.post("http://10.10.103.204:4000/admin/class", payload, {
+      await axios.post("http://10.10.103.127:4000/admin/class", payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
         }

@@ -58,7 +58,7 @@ export default function NoteForm({
 
       // Make the API request
       const response = await axios.post(
-        "http://10.10.103.204:4000/mentor/note/add",
+        "http://10.10.103.127:4000/mentor/note/add",
         {
           content,
           visibility,

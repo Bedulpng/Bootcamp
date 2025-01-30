@@ -39,7 +39,7 @@ export default function NotesManagement() {
               <h2 className="text-3xl font-bold tracking-tight">
                 Notes Management
               </h2>
-              <Button>Create New Note</Button>
+              {/* <Button>Create New Note</Button> */}
             </div>
             <Notes onViewGraderNotes={handleViewGraderNotes} />
           </div>

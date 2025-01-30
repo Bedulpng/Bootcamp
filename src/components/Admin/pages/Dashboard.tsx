@@ -26,6 +26,9 @@ export default function DashboardAdmin() {
   const [fetchedClasses, setFetchedClasses] = useState<Class[]>([]);
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const { notifications } = useNotifications();
+  const [visibleCount, setVisibleCount] = useState(5);
+  const [isExpanded, setIsExpanded] = useState(false); // Track whether the section is expanded
+  // Start with showing 5 notifications
 
   useEffect(() => {
     const getUsers = async () => {
@@ -105,6 +108,17 @@ export default function DashboardAdmin() {
     setIsClassModalOpen(false);
   };
 
+  const handleToggleShowMore = () => {
+    if (isExpanded) {
+      // Collapse to the initial 5 notifications
+      setVisibleCount(5);
+    } else {
+      // Show all notifications
+      setVisibleCount(notifications.length);
+    }
+    setIsExpanded(!isExpanded); // Toggle the expanded state
+  };
+
   const stats = [
     {
       title: "Total Users",
@@ -159,90 +173,75 @@ export default function DashboardAdmin() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="col-span-2">
-          <CardHeader className="flex items-center justify-between">
-            <CardTitle className="text-lg font-semibold">
-              Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-      <div className="space-y-4">
-        {notifications.length > 0 ? (
-          notifications.map((notif) => {
-            const notificationIcon = notif.type === "info" ? "Lesson" : "Challenge";
-            return (
-              <div
-                key={notif.id}
-                className="flex items-center p-3 border rounded-lg hover:shadow-md transition-shadow"
-              >
-                <div className=" text-blue-500">
-                {iconMap[notificationIcon]}
-                </div>
-                <div className="ml-4  flex-cols items-center justify-center ">
-                  <p className="text-sm font-medium">{notif.title}</p>
-                  <p className="text-xs text-gray-500">{notif.description}</p>
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <p className="text-center text-gray-500">No notifications available.</p>
-        )}
-      </div>
-      <div className="flex justify-center mt-4">
-        <Button
-          variant="outline"
-          className="w-1/2"
-          onClick={() => (window.location.href = "/notification")}
-        >
-          Show More
-        </Button>
-      </div>
-    </CardContent>
-        </Card>
+      {/* Recent Activity Card */}
+      <Card className="col-span-2">
+        <CardHeader className="flex items-center justify-between">
+          <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {notifications.length > 0 ? (
+              notifications
+                .slice(0, visibleCount) // Show notifications based on the current visible count
+                .map((notif) => {
+                  const notificationIcon = notif.type === "info" ? "Lesson" : "Challenge";
+                  return (
+                    <div
+                      key={notif.id}
+                      className="flex items-center p-3 border rounded-lg hover:shadow-md transition-shadow"
+                    >
+                      <div className="text-blue-500">{iconMap[notificationIcon]}</div>
+                      <div className="ml-4 flex-cols items-center justify-center">
+                        <p className="text-sm font-medium">{notif.title}</p>
+                        <p className="text-xs text-gray-500">{notif.description}</p>
+                      </div>
+                    </div>
+                  );
+                })
+            ) : (
+              <p className="text-center text-gray-500">No notifications available.</p>
+            )}
+          </div>
+          {/* Show More / Show Less Button */}
+          <div className="flex justify-center mt-4">
+            <Button
+              variant="outline"
+              className="w-1/2"
+              onClick={handleToggleShowMore}
+            >
+              {isExpanded ? "Show Less" : "Show More"} {/* Change label dynamically */}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center justify-center space-y-4">
-              <Button
-                className="w-full"
-                variant="outline"
-                onClick={handleOpenBatchModal}
-              >
-                Create New Batch
-              </Button>
-              <BatchModal
-                isOpen={isBatchModalOpen}
-                onClose={handleCloseBatchModal}
-                onSubmit={handleCloseBatchModal}
-              />
-              <Button
-                className="w-full"
-                variant="outline"
-                onClick={handleOpenUserModal}
-              >
-                Add New User
-              </Button>
-              <UserModalForm open={isUserOpen} setOpen={setIsUserOpen} />
-              <Button
-                className="w-full"
-                variant="outline"
-                onClick={handleOpenClassModal}
-              >
-                Schedule Class
-              </Button>
-              <ClassModal
-                isOpen={isClassModalOpen}
-                onClose={handleCloseClassModal}
-                onSubmit={handleCloseClassModal}
-              />
-            </CardContent>
-          </Card>
-        </div>
+      {/* Quick Actions Card */}
+      <div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center justify-center space-y-4">
+            <Button className="w-full" variant="outline" onClick={handleOpenBatchModal}>
+              Create New Batch
+            </Button>
+            <BatchModal isOpen={isBatchModalOpen} onClose={handleCloseBatchModal} />
+            <Button className="w-full" variant="outline" onClick={handleOpenUserModal}>
+              Add New User
+            </Button>
+            <UserModalForm open={isUserOpen} setOpen={setIsUserOpen} />
+            <Button className="w-full" variant="outline" onClick={handleOpenClassModal}>
+              Schedule Class
+            </Button>
+            <ClassModal
+              isOpen={isClassModalOpen}
+              onClose={handleCloseClassModal}
+              onSubmit={handleCloseClassModal}
+            />
+          </CardContent>
+        </Card>
       </div>
+    </div>
     </div>
   );
 }

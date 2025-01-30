@@ -80,7 +80,7 @@ export const checkTokenValidity = async (): Promise<boolean> => {
 
   try {
     const response = await axios.post(
-      'http://10.10.103.204:4000/api/check-token',
+      'http://10.10.103.127:4000/api/check-token',
       {}, 
       {
         headers: {

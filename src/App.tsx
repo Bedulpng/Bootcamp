@@ -29,7 +29,6 @@ import Dashboard from './components/Trainee/pages/secondpge/Dashboard';
 import SubjectDetail from './components/Trainee/pages/secondpge/subjectdetail';
 import NotificationPage from './components/Trainee/pages/secondpge/top/Notification';
 import Profile from './components/Trainee/pages/secondpge/top/profile';
-import FormPage from './components/Trainee/pages/firstpage/form';
 import RegisPage from './components/Trainee/pages/firstpage/skill';
 import DashboardAdmin from './components/Admin/pages/Dashboard';
 import NavbarAdmin from './components/Admin/pages/Navbar';
@@ -42,6 +41,7 @@ import { LoginForm } from './components/Login/LoginFormAdmin';
 import NotAuthorized from './components/Unauthorized';
 import NotesManagement from './components/Admin/pages/ManageNotes/Notes-Management';
 import SkillPage from './components/Trainee/pages/firstpage/skill';
+import ClassDetails from './components/Mentor/ClassPage';
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith('/dashboard');
@@ -206,6 +206,14 @@ function App() {
           }
         />
         <Route
+          path="/dashboard/class/:classId"
+          element={
+            <Layout> 
+              <ClassDetails />
+           </Layout>
+          }
+        />
+        <Route
           path="/login/mentor"
           element={
             
@@ -231,12 +239,6 @@ function App() {
               <SubjectDetail />     
           }
         />
-        {/* <Route
-          path="/tester"
-          element={
-              <GraderNotes />     
-          }
-        /> */}
         <Route
           path="/notification"
           element={

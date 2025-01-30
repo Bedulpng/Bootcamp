@@ -18,8 +18,8 @@ export default function BatchAdmin() {
   useEffect(() => {
     const getBatches = async () => {
       try {
-        const fetchedBatch = await fetchBatches();
-        setFetchedBatch(fetchedBatch);
+        const fetchedBatchs = await fetchBatches();
+        setFetchedBatch(fetchedBatchs);
         console.log("Batch Data", fetchedBatch);
       } catch (error) {
         console.error("Failed to fetch batch:", error);

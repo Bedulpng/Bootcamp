@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../layouts/navbar";
 import { Eye, EyeOff, ChevronLeft, ChevronRight } from "lucide-react";
 import ImageUpload from "../layouts/imageupload";
+import FooterMentor from "@/components/Mentor/FooterMentor";
 
 const Profile: React.FC = () => {
   const [showPassword, setShowPassword] = useState({
@@ -74,7 +75,7 @@ const Profile: React.FC = () => {
       <Navbar />
 
       {/* Header Card */}
-      <div className="h-[40hv] w-[80vw] justify-center items-center mt-8">
+      <div className="h-[40hv] w-[80vw] justify-center items-center mt-8 mb-12">
         <div className="relative overflow-hidden rounded-lg bg-gradient-to-br from-blue-950 to-blue-800">
           <div className="absolute inset-0 bg-[url('/image/bg.png')] opacity-20"></div>
           <div className="relative p-8 flex justify-between items-start">
@@ -270,6 +271,7 @@ const Profile: React.FC = () => {
           </div>
         </div>
       </div>
+      <FooterMentor />
     </div>
   );
 };

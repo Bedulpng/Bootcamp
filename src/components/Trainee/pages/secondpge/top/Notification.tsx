@@ -10,7 +10,7 @@ const NotificationPage: React.FC = () => {
   ]);
   const [filter, setFilter] = useState<string>("all");
   const [showModal, setShowModal] = useState(false);
-  const [selectedNotification, setSelectedNotification] = useState<null | { id: number; message: string; d}>(null);
+  const [selectedNotification, setSelectedNotification] = useState<null | { id: number; message: string; detail: string; title: string;}>(null);
 
   const markAllAsRead = () => {
     setNotifications(notifications.map((notif) => ({ ...notif, read: true })));
@@ -38,7 +38,6 @@ const NotificationPage: React.FC = () => {
   };
 
   const openNotification = (notification: { id: number; title: string; detail: string; read: boolean }) => {
-    setSelectedNotification(notification);
     setShowModal(true);
     setNotifications((prev) =>
       prev.map((notif) => (notif.id === notification.id ? { ...notif, read: true } : notif))

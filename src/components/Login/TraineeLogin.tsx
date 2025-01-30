@@ -3,6 +3,7 @@ import axios from 'axios';
 import { GraduationCap } from 'lucide-react';
 import { LoginLayout } from './LoginLayout';
 import { LoginForm } from './LoginForm';
+import { useNavigate } from 'react-router-dom';
 
 // Tipe untuk login data
 type LoginData = {
@@ -11,6 +12,7 @@ type LoginData = {
 };
 
 export function TraineeLogin() {
+  const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -32,8 +34,7 @@ export function TraineeLogin() {
       localStorage.setItem('refreshToken', refreshToken);
 
       // Redirect atau log pesan sukses
-      console.log('Login successful:', response.data);
-      alert('Login successful');
+      navigate('/trainee');
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message =

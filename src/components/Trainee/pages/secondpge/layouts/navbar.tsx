@@ -1,22 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { User } from 'lucide-react';
+import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { UserCog2, LogOut, ChevronDown } from 'lucide-react';
+import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { NotificationPopup } from "@/components/Mentor/Notification/Notification";
+import LogoutModal from "../../Modal/Logout";
+import { jwtDecode } from 'jwt-decode'; 
+import axios from 'axios';
 
 const Navbar: React.FC = () => {
-  const [isProfileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [traineeName, setTraineeName] = useState('');
+  const [traineeRole, setTraineeRole] = useState('');
+  const [profileImage, setProfileImage] = useState('');
 
-  const toggleProfileDropdown = () => 
-    setProfileDropdownOpen(!isProfileDropdownOpen);
+  useEffect(() => {
+    const fetchMentorDetails = async () => {
+      try {
+        const refreshToken = localStorage.getItem('refreshToken');
+        const decodedToken: any = jwtDecode(refreshToken as string);
+        const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
 
-  const Notification = () => {
-    navigate("/notification");
-  };
+        // Fetch mentor details
+        const response = await axios.get(`http://10.10.103.127:4000/admin/mentor/${userId}`);
+        setTraineeName(response.data.fullName);
+        setTraineeRole(response.data.role);
+
+        // Fetch the professional profile image
+        const profileResponse = await axios.get(`http://10.10.103.127:4000/trainee/${userId}/pro`);
+        if (profileResponse.data && profileResponse.data.profileImage) {
+          setProfileImage(profileResponse.data.profileImage); // Store the profile image path
+        } else {
+          setProfileImage('path/to/default-image.jpg'); // Set a default image path
+        }
+        console.log(profileResponse.data.profileImage);
+      } catch (error) {
+        console.error('Error fetching mentor details:', error);
+      }
+    };
+
+    fetchMentorDetails();
+  }, [navigate]);
   
   const handleProfileClick = () => {
-    navigate("/profile-trainee");
+    navigate("/trainee/profile");
   };
 
   const logoutClick = () => {
@@ -27,16 +58,36 @@ const Navbar: React.FC = () => {
     setShowModal(false);
   };
 
-  const confirmLogout = () => {
-    setShowModal(false);
-    navigate("/login");
+  const confirmLogout = async () => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    if (!accessToken) {
+      alert('No token found. Please log in again.');
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://10.10.103.127:4000/trainee/logout', {
+        accessToken,
+      });
+
+      if (response.status === 200) {
+        localStorage.removeItem('accessToken'); // Remove the token from localStorage
+        navigate('/login/trainee'); // Redirect to the login page
+      }
+    } catch (error: any) {
+      console.error('Error during logout:', error);
+      const errorMessage = error.response?.data?.message || 'An error occurred while logging out.';
+      alert(`Logout failed: ${errorMessage}`);
+    }
   };
 
   const handleLogoClick = () => {
-    if (location.pathname === "/dashboard") {
+    if (location.pathname === "/trainee") {
       window.location.reload();
     } else {
-      navigate("/dashboard");
+      navigate("/trainee");
     }
   };
 
@@ -44,76 +95,54 @@ const Navbar: React.FC = () => {
     <nav className="flex items-center justify-between text-black bg-white shadow-lg sm:px-6 md:-mx-44 lg:px-8 xl:-mx-56">
       <div className="flex items-center h-16">
         <img
-          src="/logo/WGS.png"
+          src="/lil_black.png"
           alt="Logo"
-          className="w-48 cursor-pointer"
+          className="w-12 h-12 cursor-pointer"
           onClick={handleLogoClick}
         />
       </div>
 
       <div className="flex items-center space-x-6">
-        <div>
-          <img
-            src="https://img.icons8.com/ios-glyphs/30/000000/bell.png"
-            alt="Notification Icon"
-            className="w-9 h-9 cursor-pointer"
-            onClick={Notification}
-          />
-        </div>
+      <Button variant="ghost" size="icon" className='h-10 w-10 '>
+        <NotificationPopup />
+      </Button>
 
-        <div className="relative">
-          <div className="flex items-center space-x-3 bg-gray-100 rounded-full px-4 py-2 cursor-pointer" onClick={toggleProfileDropdown}>
-            <span className="text-sm">
-              <div>TRAINEE NAME</div>
-              <div className="text-xs text-gray-500">THIS IS TRAINEE EMAIL</div>
-            </span>
-            <div className="bg-gray-200 rounded-full p-2">
-              <User className="h-5 w-5 text-gray-600" />
-            </div>
-          </div>
-
-          {isProfileDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-40 py-2 bg-[#0020F6]/75 text-white rounded-lg shadow-md z-10">
-              <button
-                className="block w-full px-4 py-2 text-left hover:bg-[#0020F6]/50"
-                onClick={handleProfileClick}
-              >
-                Profile
-              </button>
-              <button
-                className="block w-full px-4 py-2 text-left hover:bg-[#0020F6]/50"
-                onClick={logoutClick}
-              >
-                Logout
-              </button>
-            </div>
-          )}
-        </div>
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="flex items-center gap-2 p-1">
+              <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
+                  <AvatarImage src={`http://10.10.103.127:4000${profileImage}`} alt="Mentor" />
+                  <AvatarFallback>
+                    {traineeName
+                      ? traineeName
+                          .split(' ') // Split the name by spaces
+                          .map((word) => word.charAt(0).toUpperCase()) // Take the first letter of each word and capitalize it
+                          .join('') // Join the initials
+                      : '?'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="text-sm text-left">
+                  <div>{traineeName || 'THIS TRAINEE NAME'}</div>
+                  <div className="text-xs text-muted-foreground">{traineeRole || 'THIS TRAINEE ROLE'}</div>
+                </div>
+                <ChevronDown className="h-4 w-4 ml-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem onClick={handleProfileClick}>
+                <UserCog2 className="mr-2 h-4 w-4" />
+                Edit Profile
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={logoutClick}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <LogoutModal isOpen={showModal} onClose={handleCloseModal} onConfirm={confirmLogout} />
       </div>
-
-      {/* Modal untuk konfirmasi logout */}
-      {showModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-90 text-center relative">
-            <h2 className="text-lg font-semibold mb-4">ARE YOU SURE WANT TO LEAVE?</h2>
-            <hr className="border-t-2 border-blue-500 " />
-            <div className="flex justify-around mt-6">
-              <button
-                onClick={handleCloseModal}
-                className="bg-blue-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-blue-600"
-              >
-                BACK
-              </button>
-              <button
-                onClick={confirmLogout}
-                className="bg-red-500 text-white font-semibold px-6 py-2 rounded-full hover:bg-red-600"
-              >
-                YES
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      
     </nav>
   );
 };

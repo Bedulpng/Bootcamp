@@ -12,6 +12,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useNotifications } from '../../../hooks/useNotifications';
 import { Notification } from '../../../types/Notification';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const iconMap: { [key: string]: React.ReactNode } = {
   Lesson: <BookCheck className="h-4 w-4" />,
@@ -20,9 +21,18 @@ const iconMap: { [key: string]: React.ReactNode } = {
 
 export function NotificationPopup() {
   const { notifications, markAsRead, markAllAsRead } = useNotifications();
-
   const [showAll, setShowAll] = useState(false);
   const [scrollAreaHeight, setScrollAreaHeight] = useState(300);
+  const location = useLocation(); // Hook to get the current pathname
+  const navigate = useNavigate(); // Hook to programmatically navigate
+
+  const handleButtonClick = () => {
+    if (location.pathname.startsWith('/trainee')) {
+      navigate('/trainee/notification');
+    } else {
+      setShowAll(!showAll);
+    }
+  };
 
   // Filter out read notifications
   const unreadNotifications = notifications.filter((notif) => !notif.isRead);
@@ -78,10 +88,9 @@ export function NotificationPopup() {
           <Button 
             variant="outline" 
             className="w-full" 
-            onClick={() => setShowAll(!showAll)}
+            onClick={handleButtonClick}
           >
-            {showAll ? 'Show Less' : 'See More'}
-          </Button>
+          {location.pathname === '/trainee' ? 'See More' : showAll ? 'Show Less' : 'See More'}          </Button>
         </div>
       </PopoverContent>
     </Popover>

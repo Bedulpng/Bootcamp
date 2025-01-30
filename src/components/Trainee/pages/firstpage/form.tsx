@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check } from "lucide-react";
+// import { Check } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 interface InputFieldProps {
@@ -14,7 +14,7 @@ interface InputFieldProps {
 
 const FormPage: React.FC = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
+  // const [step, setStep] = useState(1);
   const [isInCollege, setIsInCollege] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({

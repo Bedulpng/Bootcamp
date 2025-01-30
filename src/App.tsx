@@ -25,7 +25,6 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Rbac from './components/RbacRoute';
 import DashboardPage from './components/Mentor/BatchPage';
 import NotesPage from './components/Mentor/Notes/page';
-import Dashboard from './components/Trainee/pages/secondpge/Dashboard';
 import SubjectDetail from './components/Trainee/pages/secondpge/subjectdetail';
 import NotificationPage from './components/Trainee/pages/secondpge/top/Notification';
 import Profile from './components/Trainee/pages/secondpge/top/profile';
@@ -42,6 +41,7 @@ import NotAuthorized from './components/Unauthorized';
 import NotesManagement from './components/Admin/pages/ManageNotes/Notes-Management';
 import SkillPage from './components/Trainee/pages/firstpage/skill';
 import ClassDetails from './components/Mentor/ClassPage';
+import TraineeMain from './components/Trainee/pages/secondpge/Dashboard';
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith('/dashboard');
@@ -120,7 +120,6 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Routes that use Layout */}
         <Route
           path="/"
           element={
@@ -216,9 +215,7 @@ function App() {
         <Route
           path="/login/mentor"
           element={
-            
-              <MentorLogin />
-            
+              <MentorLogin />  
           }
         />
         <Route
@@ -230,23 +227,27 @@ function App() {
          <Route
           path="/trainee"
           element={
-              <Dashboard />     
+            <Rbac allowedRoles={['ADMIN','TRAINEE']}>
+              <ProtectedRoute>
+                <TraineeMain /> 
+              </ProtectedRoute>
+            </Rbac>    
           }
         />
          <Route
-          path="/subjectdetail:id"
+          path="/trainee/subjectdetail/:id"
           element={
               <SubjectDetail />     
           }
         />
         <Route
-          path="/notification"
+          path="/trainee/notification"
           element={
               <NotificationPage />     
           }
         />
         <Route
-          path="/profile-trainee"
+          path="/trainee/profile"
           element={
               <Profile />     
           }

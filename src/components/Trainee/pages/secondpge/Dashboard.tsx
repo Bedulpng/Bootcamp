@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { FileText } from 'lucide-react'
 import Navbar from './layouts/navbar';
+import FooterMentor from '@/components/Mentor/FooterMentor';
 
 interface Item {
     id: number;
@@ -10,7 +11,7 @@ interface Item {
     description: string;
 }
 
-const Dashboard: React.FC = () => {
+const TraineeMain: React.FC = () => {
     const [isFilterDropdownOpen, setFilterDropdownOpen] = useState(false);
     const [filterOption, setFilterOption] = useState<string>('Featured');
     const navigate = useNavigate();
@@ -54,7 +55,7 @@ const Dashboard: React.FC = () => {
     <div className="bg-white overflow-hidden min-h-screen md:px-44 lg:px-10 xl:px-56">
 
             <Navbar />
-            <div className="flex justify-center items-center h-[40vh] w-[80vw] bg-black rounded-lg shadow-lg mt-8">
+            <div className="flex justify-center items-center h-[40vh] w-[80] bg-black rounded-lg shadow-lg mt-8">
                 <h2 className="text-[96px] font-extrabold text-white">Class Name</h2>
             </div>
 
@@ -109,7 +110,7 @@ const Dashboard: React.FC = () => {
                 </div>
             </div>
 
-            <div className="mt-8 space-y-4">
+            <div className="mt-8 space-y-4 mb-16">
                 {activeTab === 'subject' && sortedItems(subjects).map((subject) => (
                     <div
                         key={subject.id}
@@ -152,8 +153,9 @@ const Dashboard: React.FC = () => {
                     </div>
                 </div>
             )}
+            <FooterMentor />
         </div>
     );
 };
 
-export default Dashboard;
+export default TraineeMain;

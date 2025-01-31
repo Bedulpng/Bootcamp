@@ -96,12 +96,19 @@ export interface Note {
   };
 }
 
+export interface BatchesClasses {
+  id: string;
+  batchId: string;
+  classId: string; 
+  batch: Batch[];
+}
+
 export interface Class {
   id: string;
   className: string;
   createdAt: string;
   participant: number;
-  batchId: string;
+  batches: BatchesClasses[];
   status: string;
   mentors: Mentor[];
   certificates: Certificate[];
@@ -116,6 +123,7 @@ export interface Mentor {
   nickname: string;
   email: string;
   role: string;
+  profiles: Profile[];
 }
 
 export interface Batch {

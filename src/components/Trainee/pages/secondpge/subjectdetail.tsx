@@ -1,7 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { FileText } from 'lucide-react';
-import Navbar from './layouts/navbar';
 
 interface FileItem {
   name: string;
@@ -26,7 +25,6 @@ const SubjectDetail: React.FC = () => {
 
   return (
     <div className="bg-white overflow-hidden min-h-screen md:px-44 lg:px-10 xl:px-56">
-      <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white">
           {/* Subject Header */}

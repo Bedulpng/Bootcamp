@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { UserCog2, LogOut, ChevronDown } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
@@ -10,10 +10,9 @@ import LogoutModal from "../../Modal/Logout";
 import { jwtDecode } from 'jwt-decode'; 
 import axios from 'axios';
 
-const Navbar: React.FC = () => {
+const NavbarTrainee: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const [traineeName, setTraineeName] = useState('');
   const [traineeRole, setTraineeRole] = useState('');
   const [profileImage, setProfileImage] = useState('');
@@ -83,41 +82,43 @@ const Navbar: React.FC = () => {
     }
   };
 
-  const handleLogoClick = () => {
-    if (location.pathname === "/trainee") {
-      window.location.reload();
-    } else {
-      navigate("/trainee");
-    }
-  };
+  // const handleLogoClick = () => {
+  //   if (location.pathname === "/trainee") {
+  //     window.location.reload();
+  //   } else {
+  //     navigate("/trainee");
+  //   }
+  // };
 
   return (
-    <nav className="flex items-center justify-between text-black bg-white shadow-lg sm:px-6 md:-mx-44 lg:px-8 xl:-mx-56">
-      <div className="flex items-center h-16">
-        <img
-          src="/lil_black.png"
-          alt="Logo"
-          className="w-12 h-12 cursor-pointer"
-          onClick={handleLogoClick}
-        />
-      </div>
-
-      <div className="flex items-center space-x-6">
-      <Button variant="ghost" size="icon" className='h-10 w-10 '>
-        <NotificationPopup />
-      </Button>
-
-        <DropdownMenu>
+    <header className="border-b bg-white shadow">
+      <div className="container relative flex h-16 items-center px-8 justify-between">
+        {/* Logo */}
+        <div className="flex-shrink-0">
+          {/* <img
+            src="/lil_black.png"
+            alt="Logo"
+            className="w-12 h-12 cursor-pointer rounded md:block hidden"
+            onClick={handleLogoClick}
+          /> */}
+        </div>
+  
+        {/* User Menu */}
+        <div className="flex-shrink-0 flex items-center gap-4">
+          <Button variant="ghost" size="icon" className="h-10 w-10">
+            <NotificationPopup />
+          </Button>
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 p-1">
-              <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
-                  <AvatarImage src={`http://10.10.103.127:4000${profileImage}`} alt="Mentor" />
+                <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
+                  <AvatarImage src={`http://10.10.103.127:4000${profileImage}`} alt="Trainee" />
                   <AvatarFallback>
                     {traineeName
                       ? traineeName
-                          .split(' ') // Split the name by spaces
-                          .map((word) => word.charAt(0).toUpperCase()) // Take the first letter of each word and capitalize it
-                          .join('') // Join the initials
+                          .split(' ')
+                          .map((word) => word.charAt(0).toUpperCase())
+                          .join('')
                       : '?'}
                   </AvatarFallback>
                 </Avatar>
@@ -129,7 +130,7 @@ const Navbar: React.FC = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuItem onClick={handleProfileClick}>
+              <DropdownMenuItem onClick={handleProfileClick}>
                 <UserCog2 className="mr-2 h-4 w-4" />
                 Edit Profile
               </DropdownMenuItem>
@@ -141,10 +142,11 @@ const Navbar: React.FC = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           <LogoutModal isOpen={showModal} onClose={handleCloseModal} onConfirm={confirmLogout} />
+        </div>
       </div>
-      
-    </nav>
+    </header>
   );
+  
 };
 
-export default Navbar;
+export default NavbarTrainee;

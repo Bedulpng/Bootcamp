@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Navbar from "../layouts/navbar";
 import { Bell } from "lucide-react";
 
 const NotificationPage: React.FC = () => {
@@ -51,7 +50,6 @@ const NotificationPage: React.FC = () => {
 
   return (
     <div className="bg-white min-h-screen overflow-hidden md:px-44 lg:px-10 xl:px-56">
-      <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex gap-8">
           <div className="w-64 bg-gray-50 p-6 rounded-lg h-fit">

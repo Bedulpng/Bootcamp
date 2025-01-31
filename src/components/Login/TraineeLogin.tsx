@@ -34,7 +34,7 @@ export function TraineeLogin() {
       localStorage.setItem('refreshToken', refreshToken);
 
       // Redirect atau log pesan sukses
-      navigate('/trainee');
+      navigate('/trainee/dashboard');
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const message =

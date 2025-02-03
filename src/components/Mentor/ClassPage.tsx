@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { Class, File } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
+import LessonModal from "./Modal/LessonUpload";
+import ChallengeModal from "./Modal/ChallengeUpload";
 
 interface ItemDetails {
   title: string;
@@ -181,7 +183,7 @@ export default function ClassDetails() {
                                       "Filepath:",
                                       user.profiles[0].filepath
                                     ),
-                                    `http://10.10.103.127:4000${user.profiles[0].filepath
+                                    `http://10.10.103.160:4000${user.profiles[0].filepath
                                       .replace(/\\/g, "/")
                                       .replace("public", "")}`)
                                   : "/placeholder.svg"
@@ -207,107 +209,117 @@ export default function ClassDetails() {
               </div>
             )}
             {(activeTab === "challenges" || activeTab === "lessons") && (
-              <motion.div
-                variants={expandVariants}
-                initial="collapsed"
-                animate={selectedItem ? "expanded" : "collapsed"}
-                className="grid gap-4"
-              >
-                <ScrollArea className="h-[calc(100vh-200px)]">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-4">
-                    {classes.length === 0 ||
-                    (activeTab === "challenges" &&
-                      classes.every(
-                        (classItem) => classItem.challenges.length === 0
-                      )) ||
-                    (activeTab === "lessons" &&
-                      classes.every(
-                        (classItem) => classItem.lessons.length === 0
-                      )) ? (
-                      <p className="text-gray-600 text-center">
-                        No {activeTab} yet
-                      </p>
-                    ) : (
-                      classes
-                        .flatMap((classItem) =>
-                          activeTab === "challenges"
-                            ? classItem.challenges
-                            : classItem.lessons
-                        )
-                        .map((item, index) => (
-                          <motion.div
-                            key={index}
-                            variants={cardVariants}
-                            initial="hidden"
-                            animate="visible"
-                            exit="exit"
-                          >
-                            <Card
-                              className={`overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 ${
-                                selectedItem === item
-                                  ? "ring-2 ring-blue-500"
-                                  : ""
-                              }`}
-                              onClick={() => handleItemClick(item)}
-                            >
-                              <CardHeader>
-                                <CardTitle>{item.title}</CardTitle>
-                              </CardHeader>
-                              <CardContent>
-                                <p className="text-sm text-gray-600 truncate">
-                                  {item.description}
-                                </p>
-                              </CardContent>
-                            </Card>
-                          </motion.div>
-                        ))
-                    )}
-                  </div>
-                </ScrollArea>
-                <AnimatePresence>
-                  {selectedItem && (
-                    <motion.div
-                      initial={{ opacity: 0, x: 50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 50 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg shadow-lg p-6 border border-blue-200"
-                    >
-                      <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-2xl font-bold text-blue-800">
-                          {selectedItem.title}
-                        </h2>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={closeExpanded}
-                        >
-                          <X className="h-6 w-6" />
-                          <span className="sr-only">Close details</span>
-                        </Button>
-                      </div>
-                      <p className="text-gray-700 mb-4">
-                        {selectedItem.description}
-                      </p>
-                      {selectedItem.files &&
-                        selectedItem.files.length > 0 &&
-                        selectedItem.files.map((file) => (
-                          <p
-                            className="text-sm font-semibold text-blue-600 mb-2"
-                          >
-                            File: {file.filename}
-                          </p>
-                        ))}
-                      {selectedItem.deadline && (
-                        <p className="text-sm font-semibold text-blue-600">
-                          Deadline:{" "}
-                          {new Date(selectedItem.deadline).toLocaleString()}
-                        </p>
-                      )}
-                    </motion.div>
+              <div className="relative">
+                {/* Upload Form Positioned on Top Right */}
+                <div className="absolute top-4 right-4 z-50 ">
+                  {activeTab === "challenges" ? (
+                    <ChallengeModal />
+                  ) : (
+                    <LessonModal />
                   )}
-                </AnimatePresence>
-              </motion.div>
+                </div>
+
+                <motion.div
+                  variants={expandVariants}
+                  initial="collapsed"
+                  animate={selectedItem ? "expanded" : "collapsed"}
+                  className="grid gap-4"
+                >
+                  <ScrollArea className="h-[calc(100vh-200px)]">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-4">
+                      {classes.length === 0 ||
+                      (activeTab === "challenges" &&
+                        classes.every(
+                          (classItem) => classItem.challenges.length === 0
+                        )) ||
+                      (activeTab === "lessons" &&
+                        classes.every(
+                          (classItem) => classItem.lessons.length === 0
+                        )) ? (
+                        <p className="text-gray-600 text-center">
+                          No {activeTab} yet
+                        </p>
+                      ) : (
+                        classes
+                          .flatMap((classItem) =>
+                            activeTab === "challenges"
+                              ? classItem.challenges
+                              : classItem.lessons
+                          )
+                          .map((item, index) => (
+                            <motion.div
+                              key={index}
+                              variants={cardVariants}
+                              initial="hidden"
+                              animate="visible"
+                              exit="exit"
+                            >
+                              <Card
+                                className={`overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 ${
+                                  selectedItem === item
+                                    ? "ring-2 ring-blue-500"
+                                    : ""
+                                }`}
+                                onClick={() => handleItemClick(item)}
+                              >
+                                <CardHeader>
+                                  <CardTitle>{item.title}</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                  <p className="text-sm text-gray-600 truncate">
+                                    {item.description}
+                                  </p>
+                                </CardContent>
+                              </Card>
+                            </motion.div>
+                          ))
+                      )}
+                    </div>
+                  </ScrollArea>
+
+                  <AnimatePresence>
+                    {selectedItem && (
+                      <motion.div
+                        initial={{ opacity: 0, x: 50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 50 }}
+                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg shadow-lg p-6 border border-blue-200"
+                      >
+                        <div className="flex justify-between items-center mb-4">
+                          <h2 className="text-2xl font-bold text-blue-800">
+                            {selectedItem.title}
+                          </h2>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={closeExpanded}
+                          >
+                            <X className="h-6 w-6" />
+                            <span className="sr-only">Close details</span>
+                          </Button>
+                        </div>
+                        <p className="text-gray-700 mb-4">
+                          {selectedItem.description}
+                        </p>
+                        {selectedItem.files &&
+                          selectedItem.files.length > 0 &&
+                          selectedItem.files.map((file) => (
+                            <p className="text-sm font-semibold text-blue-600 mb-2">
+                              File: {file.filename}
+                            </p>
+                          ))}
+                        {selectedItem.deadline && (
+                          <p className="text-sm font-semibold text-blue-600">
+                            Deadline:{" "}
+                            {new Date(selectedItem.deadline).toLocaleString()}
+                          </p>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              </div>
             )}
           </motion.div>
         </AnimatePresence>

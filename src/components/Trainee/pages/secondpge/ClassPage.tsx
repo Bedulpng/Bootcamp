@@ -4,6 +4,7 @@ import { ClassCard } from "./ClassCard";
 import { Class } from "../../../../types/Trainee";
 import { fetchClassesByUserId } from "@/Api/FetchUsers";
 import { jwtDecode } from "jwt-decode";
+import ClassesPageSkeleton from "../../Skeleton/ClassPage";
 
 export default function ClassesPage() {
   const navigate = useNavigate();
@@ -35,19 +36,14 @@ export default function ClassesPage() {
 
   // Handle navigation to class details
   const handleClassClick = (classId: string) => {
-    console.log(`Navigating to class with id: ${classId}`);
     navigate(`/trainee/class/${classId}`);
   };
 
   // Transform class data for the ClassCard component
   const transformClassData = (cls: Class) => {
-    // Log the entire `cls` object to inspect its structure
     console.log("Class object:", cls);
-  
-    // Log `cls.batches` to inspect its structure
     console.log("Batches:", cls.batches);
-  
-    // Transform class data
+
     const transformedData = {
       id: cls.id,
       classNames: cls.className,
@@ -57,15 +53,16 @@ export default function ClassesPage() {
           .flatMap((mentor) => mentor.profiles.map((p) => p.filepath))
           .join(", ") || "path/to/default-image.jpg", 
     };
-  
-    // Log the final transformed data
+
     console.log("Transformed class data:", transformedData);
-  
+
     return transformedData;
   };
 
   if (loading) {
-    return <div>Loading classes...</div>;
+    return (
+      <ClassesPageSkeleton />
+    );
   }
 
   if (error) {
@@ -81,7 +78,8 @@ export default function ClassesPage() {
             <ClassCard
               key={cls.id}
               {...transformedClass}
-              onClick={() => handleClassClick(cls.id)}
+              onClick={() => handleClassClick(cls.id)
+              }
             />
           );
         })}

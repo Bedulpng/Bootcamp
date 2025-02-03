@@ -31,7 +31,7 @@ export function ClassCard({
 
         {/* Profile Picture */}
         <Avatar className="absolute -bottom-10 right-4 h-20 w-20 border-4 border-white shadow-lg">
-          <AvatarImage src={`http://10.10.103.127:4000${mentorProfile.replace(/\\/g, "/").replace("public", "")}`} alt={mentorName} />
+          <AvatarImage src={`http://10.10.103.160:4000${mentorProfile.replace(/\\/g, "/").replace("public", "")}`} alt={mentorName} />
           <AvatarFallback className="text-lg font-bold">
             {mentorName
               .split(" ")

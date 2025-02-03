@@ -45,6 +45,8 @@ import TraineeMain from "./components/Trainee/pages/secondpge/Dashboard";
 import ClassesPage from "./components/Trainee/pages/secondpge/ClassPage";
 import { SidebarTrainee } from "./components/Trainee/pages/secondpge/SideBarTrainee";
 import NavbarTrainee from "./components/Trainee/pages/secondpge/layouts/navbar";
+import LessonsPage from "./components/Trainee/pages/secondpge/Lesson-Challenge/LessonPage";
+import ChallengesPage from "./components/Trainee/pages/secondpge/Challenge/ChallengePage";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith("/dashboard");
@@ -253,7 +255,7 @@ function App() {
         <Route path="/login/mentor" element={<MentorLogin />} />
         <Route path="/login/trainee" element={<TraineeLogin />} />
         <Route
-          path="/trainee/class/:id"
+          path="/trainee/class/:classId"
           element={
             <Rbac allowedRoles={["ADMIN", "TRAINEE"]}>
               <ProtectedRoute>
@@ -269,6 +271,22 @@ function App() {
           element={
             <Layout>
               <SubjectDetail />
+            </Layout>
+          }
+        />
+        <Route
+          path="/trainee/lesson"
+          element={
+            <Layout>
+              <LessonsPage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/trainee/challenge"
+          element={
+            <Layout>
+              <ChallengesPage />
             </Layout>
           }
         />

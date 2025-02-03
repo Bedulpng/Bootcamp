@@ -109,7 +109,7 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
         status: 'Ongoing', // Update the batch status if needed
       };
   
-      await axios.post('http://10.10.103.127:4000/admin/batch', payload, {
+      await axios.post('http://10.10.103.160:4000/admin/batch', payload, {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('refreshToken'),
         },

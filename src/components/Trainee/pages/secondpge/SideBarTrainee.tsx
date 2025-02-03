@@ -30,7 +30,7 @@ export function SidebarTrainee({ isOpen, setIsOpen }: { isOpen: boolean; setIsOp
     }
 
     try {
-      const response = await axios.post("http://10.10.103.127:4000/trainee/logout", {
+      const response = await axios.post("http://10.10.103.160:4000/trainee/logout", {
         accessToken,
       });
 
@@ -63,8 +63,8 @@ export function SidebarTrainee({ isOpen, setIsOpen }: { isOpen: boolean; setIsOp
       <ScrollArea className="flex-1 px-3 py-4">
         <nav className="space-y-2">
           <NavItem icon={Home} label="Dashboard" to="/trainee/dashboard" isOpen={isOpen} />
-          <NavItem icon={BookOpen} label="Lessons" to="/trainee/dashboard" isOpen={isOpen} />
-          <NavItem icon={ListChecks} label="Challenges" to="/trainee/dashboard" isOpen={isOpen} />
+          <NavItem icon={BookOpen} label="Lessons" to="/trainee/lesson" isOpen={isOpen} />
+          <NavItem icon={ListChecks} label="Challenges" to="/trainee/challenge" isOpen={isOpen} />
           <NavItem icon={Settings} label="Settings" to="/trainee/profile" isOpen={isOpen} />
         </nav>
       </ScrollArea>

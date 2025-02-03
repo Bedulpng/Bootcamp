@@ -39,6 +39,7 @@ export interface Challenge {
   class: Class[];
   batch: Batch[];
   files: File[];
+  mentor: Mentor;
 }
 
 export interface Lesson {

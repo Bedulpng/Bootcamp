@@ -7,7 +7,7 @@ import { LessonCard } from "./LessonCard"
 import { LessonSkeleton } from "../../../Skeleton/LessonSkeleton"
 import { FileText } from "lucide-react"
 
-function NoLessons() {
+export function NoLessons() {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -115,9 +115,8 @@ export default function LessonsPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>("all")
   const [filteredLessons, setFilteredLessons] = useState<Lesson[]>([])
 
-  // Simulate loading
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1500)
+    const timer = setTimeout(() => setLoading(false), 1000)
     return () => clearTimeout(timer)
   }, [])
 

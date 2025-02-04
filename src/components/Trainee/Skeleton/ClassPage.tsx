@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function ClassesPageSkeleton() {
   return (
-    <div className="space-y-4 p-4">
+    <div className="grid gap-6 p-4">
       {[...Array(6)].map((_, i) => (
         <motion.div
           key={i}
@@ -10,13 +10,32 @@ export default function ClassesPageSkeleton() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3, delay: i * 0.3 }}
-          className="flex animate-pulse items-start gap-4 rounded-lg border p-4"
+          className="w-80 rounded-lg border bg-white shadow-md"
         >
-          <div className="h-24 w-24 rounded-full bg-gray-200" />
-          <div className="flex-1 space-y-3">
-            <div className="h-6 w-3/4 rounded bg-gray-200" />
-            <div className="h-4 w-1/2 rounded bg-gray-200" />
-            <div className="h-4 w-1/4 rounded bg-gray-200" />
+          {/* Header */}
+          <div className="h-16 rounded-t-lg bg-gray-200" />
+
+          {/* Content */}
+          <div className="p-4">
+            <div className="flex items-center gap-4">
+              {/* Avatar */}
+              <div className="h-12 w-12 rounded-full bg-gray-200" />
+
+              {/* Title and Subtitle */}
+              <div className="flex flex-col space-y-2">
+                <div className="h-6 w-36 rounded bg-gray-200" />
+                <div className="h-4 w-24 rounded bg-gray-200" />
+              </div>
+            </div>
+
+            {/* Additional Info */}
+            <div className="mt-4 h-6 w-1/2 rounded bg-gray-200" />
+          </div>
+
+          {/* Actions */}
+          <div className="flex justify-between border-t p-4">
+            <div className="h-6 w-10 rounded bg-gray-200" />
+            <div className="h-6 w-10 rounded bg-gray-200" />
           </div>
         </motion.div>
       ))}

@@ -9,8 +9,14 @@ import ClassesPageSkeleton from "../../Skeleton/ClassPage";
 export default function ClassesPage() {
   const navigate = useNavigate();
   const [classes, setClasses] = useState<Class[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [delay,setDelay] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDelay(false), 1000)
+    return () => clearTimeout(timer)
+  }, [])
 
   // Decode the token to get the user ID
   const token = localStorage.getItem("refreshToken");
@@ -59,7 +65,7 @@ export default function ClassesPage() {
     return transformedData;
   };
 
-  if (loading) {
+  if (delay) {
     return (
       <ClassesPageSkeleton />
     );

@@ -1,24 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FileText } from "lucide-react";
-import { Class } from "@/types/Trainee";
+import { Class, Note } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
-interface Item {
-  id: number;
-  title: string;
-  mentor: string;
-  description: string;
-}
+import axios from "axios";
 
 export default function TraineeMain() {
   const { classId } = useParams<{ classId: string }>();
   const [isFilterDropdownOpen, setFilterDropdownOpen] = useState(false);
   const [filterOption, setFilterOption] = useState<string>("Featured");
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"subject" | "note">("subject");
-  const [showModal, setShowModal] = useState(false);
-  const [selectedNote, setSelectedNote] = useState<Item | null>(null);
+  const [activeTab, setActiveTab] = useState<"lesson" | "challenge" | "note">(
+    "lesson"
+  );
   const [classes, setClasses] = useState<Class[]>([]);
+  const [notese, setNotes] = useState<Note[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -34,43 +32,46 @@ export default function TraineeMain() {
     fetchData();
   }, []);
 
-  const notes: Item[] = [
-    {
-      id: 1,
-      mentor: "Mentor name",
-      title: " ",
-      description: "Detailed notes on quadratic equations",
-    },
-    {
-      id: 2,
-      mentor: "Mentor name",
-      title: " ",
-      description: "Summary of Newton's laws of motion",
-    },
-  ];
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const refreshToken = localStorage.getItem("refreshToken");
+      try {
+        const notesData = await axios.get(
+          `http://10.10.103.160:4000/trainee/note/class/${classId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${refreshToken}`, // Add Authorization header
+            },
+          }
+        );
+        console.log("Notes data:", notesData);
+        setNotes(notesData.data);
+      } catch (error) {
+        console.error("Failed to fetch class:", error);
+      }
+    };
+
+    fetchNotes();
+  }, []);
 
   const toggleFilterDropdown = () =>
     setFilterDropdownOpen(!isFilterDropdownOpen);
 
-  const handleTabClick = (tab: "subject" | "note") => setActiveTab(tab);
+  const handleTabClick = (tab: "lesson" | "challenge" | "note") =>
+    setActiveTab(tab);
 
-  const handleNoteClick = (note: Item) => {
-    setSelectedNote(note);
-    setShowModal(true);
+  const handleChallenge = (id: string) => navigate(`/trainee/challenge/${id}`);
+
+  const handleLesson = (id: string) => navigate(`/trainee/lesson/${id}`);
+
+  const handleNoteClick = (note: Note) => {
+    setSelectedNote(note); // Set the selected note to display in the modal
+    setShowModal(true); // Show the modal
   };
 
   const handleCloseModal = () => {
-    setShowModal(false);
-    setSelectedNote(null);
-  };
-
-  const handleSubjectClick = (id: string) =>
-    navigate(`/trainee/subjectdetail/${id}`);
-
-  const sortedItems = (items: Item[]) => {
-    return filterOption === "Newest"
-      ? items.slice().sort((a, b) => b.id - a.id)
-      : items.slice().sort((a, b) => a.id - b.id);
+    setShowModal(false); // Hide the modal
+    setSelectedNote(null); // Clear the selected note
   };
 
   return (
@@ -82,16 +83,26 @@ export default function TraineeMain() {
       </div>
 
       <div className="flex justify-between mt-8">
-        <div className="flex space-x-4">
+        <div className="flex space-x-3">
           <button
             className={`px-4 py-2 font-bold rounded-lg ${
-              activeTab === "subject"
+              activeTab === "lesson"
                 ? "bg-blue-700 text-white"
                 : "bg-gray-200 text-gray-600"
             }`}
-            onClick={() => handleTabClick("subject")}
+            onClick={() => handleTabClick("lesson")}
           >
-            Subject
+            Lesson
+          </button>
+          <button
+            className={`px-4 py-2 font-bold rounded-lg ${
+              activeTab === "challenge"
+                ? "bg-blue-700 text-white"
+                : "bg-gray-200 text-gray-600"
+            }`}
+            onClick={() => handleTabClick("challenge")}
+          >
+            Challenge
           </button>
           <button
             className={`px-4 py-2 font-bold rounded-lg ${
@@ -152,13 +163,35 @@ export default function TraineeMain() {
       </div>
 
       <div className="mt-8 space-y-4 mb-16">
-        {activeTab === "subject" &&
+        {activeTab === "lesson" &&
+          classes.map((classItem) =>
+            classItem.lessons.map((lesson) => (
+              <div
+                key={lesson.id}
+                className="p-4 bg-gray-100 border-black border text-black rounded-lg shadow-md cursor-pointer"
+                onClick={() => handleLesson(lesson.id)}
+              >
+                <div className="flex items-start space-x-4 mb-8">
+                  <div className="bg-white border border-black rounded-lg p-4">
+                    <FileText className="h-8 w-8 text-black" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold">{lesson.title}</h3>
+                    <p className="text-sm font-semibold text-black-500">
+                      {lesson.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        {activeTab === "challenge" &&
           classes.map((classItem) =>
             classItem.challenges.map((challenge) => (
               <div
                 key={challenge.id}
                 className="p-4 bg-gray-100 border-black border text-black rounded-lg shadow-md cursor-pointer"
-                onClick={() => handleSubjectClick(challenge.id)}
+                onClick={() => handleChallenge(challenge.id)}
               >
                 <div className="flex items-start space-x-4 mb-8">
                   <div className="bg-white border border-black rounded-lg p-4">
@@ -176,14 +209,23 @@ export default function TraineeMain() {
           )}
 
         {activeTab === "note" &&
-          sortedItems(notes).map((note) => (
+          notese.map((note) => (
             <div
               key={note.id}
               className="p-4 bg-gray-100  border-black border text-black rounded-lg shadow-md cursor-pointer"
               onClick={() => handleNoteClick(note)}
             >
-              <h3 className="text-xl font-bold">{note.mentor}</h3>
-              <p className="text-sm text-gray-500">{note.description}</p>
+              <h3 className="text-xl">
+                Note From : {" "}
+                <span className="font-bold">{note.grader.fullName}</span>
+              </h3>{" "}
+              <p className="text-sm text-gray-500">
+                {new Date(note.createdAt).toLocaleDateString("en-GB", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </p>
             </div>
           ))}
       </div>
@@ -193,14 +235,20 @@ export default function TraineeMain() {
           <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl text-black font-bold">
-                {selectedNote.mentor}
+                {selectedNote.grader.fullName}
               </h2>
               <button onClick={handleCloseModal} className="text-xl font-bold">
                 ×
               </button>
             </div>
-            <p className="mt-4 text-gray-600">{selectedNote.description}</p>
-            <p className="mt-4 text-sm text-gray-400">Date uploaded</p>
+            <p className="mt-4 text-gray-600">{selectedNote.content}</p>
+            <p className="mt-4 text-sm text-gray-400">
+              {new Date(selectedNote.createdAt).toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+              })}
+            </p>
           </div>
         </div>
       )}

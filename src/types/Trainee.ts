@@ -53,6 +53,7 @@ export interface Lesson {
   class: Class[];
   batch: Batch[];
   files: File[];
+  mentor: Mentor;
 }
 
 export type Visibility = "All" | "FOR_TRAINEE" | "FOR_GRADER"; // Adjust based on the enum in your Prisma schem
@@ -95,6 +96,10 @@ export interface Note {
     nickname: string;
     email: string;
   };
+  class: {
+    id: string;
+    className: string;
+  }
 }
 
 export interface BatchesClasses {

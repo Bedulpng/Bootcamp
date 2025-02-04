@@ -5,6 +5,7 @@ import ImageUpload from "../layouts/imageupload";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import SkeletonProfile from "@/components/Trainee/Skeleton/ProfileSkeleton";
 
 const Profile: React.FC = () => {
   const [name, setName] = useState("");
@@ -13,6 +14,13 @@ const Profile: React.FC = () => {
   const [github, setGit] = useState("");
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [casProfile, setCasProfile] = useState<string | null>(null);
+  const [delay,setDelay] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDelay(false), 1000)
+    return () => clearTimeout(timer)
+  }, [])
+
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -210,6 +218,12 @@ const Profile: React.FC = () => {
     }
   };
 
+    if (delay) {
+      return (
+        <SkeletonProfile />
+      );
+    }
+  
   return (
     <div className="bg-white overflow-hidden min-h-screen flex flex-col items-center px-4 sm:px-6 lg:px-8">
       {/* Header Card */}
@@ -337,7 +351,7 @@ const Profile: React.FC = () => {
                 }
               />
               <ImageUpload
-                label="Informal Photo"
+                label="Casual Photo"
                 onImageChange={handlePhotoChange("informal")}
                 previewUrl={
                   photos.informal

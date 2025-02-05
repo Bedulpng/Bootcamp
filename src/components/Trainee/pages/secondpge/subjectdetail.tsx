@@ -4,6 +4,7 @@ import { FileText } from "lucide-react";
 import { Challenge, Lesson } from "@/types/Trainee";
 import { NoLessons } from "./Lesson-Challenge/LessonPage";
 import axios from "axios";
+import TaskCompletion from "./CompletionButton";
 
 export default function SubjectDetail() {
   const { id } = useParams<{ id: string }>();
@@ -46,40 +47,44 @@ export default function SubjectDetail() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white">
           {/* Subject Header */}
-          <div className="flex items-start space-x-4 mb-8">
-            <div className="bg-blue-600 rounded-full p-4">
+          <div className="flex items-center space-x-4 mb-8">
+            {/* Icon */}
+            <div className="bg-blue-600 rounded-full p-4 flex-shrink-0 flex items-center justify-center">
               <FileText className="h-8 w-8 text-white" />
             </div>
-            <div className="flex-1">
+
+            {/* Title and Details */}
+            <div className="flex-1 flex items-center justify-between">
               <h1 className="text-2xl font-bold text-gray-900">
                 {challenges?.title || lessons?.title || "No Title Available"}
               </h1>
-              <p className="text-sm text-gray-600 mt-1">
-                {challenges?.mentor.fullName ||
-                  lessons?.mentor.fullName ||
-                  "No Mentor Available"}
-              </p>
-              <div className="text-right">
-                <p className="text-sm font-bold text-gray-800 mt-1">
-                  {challenges?.createdAt
-                    ? new Date(challenges.createdAt).toLocaleDateString(
-                        "en-GB",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        }
-                      )
-                    : lessons?.createdAt
-                    ? new Date(lessons.createdAt).toLocaleDateString("en-GB", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                      })
-                    : "No Date Available"}
-                </p>
+              <div className="ml-auto sm:ml-0 w-full sm:w-auto flex justify-end sm:justify-start">
+                <TaskCompletion Id={id}/>
               </div>
             </div>
+          </div>
+
+          <div className="mb-8">
+            <p className="text-sm font-bold text-gray-800 mt-1">
+              {challenges?.createdAt
+                ? new Date(challenges.createdAt).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
+                : lessons?.createdAt
+                ? new Date(lessons.createdAt).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
+                : "No Date Available"}
+            </p>
+            <p className="text-sm text-gray-600 mt-1">
+              {challenges?.mentor.fullName ||
+                lessons?.mentor.fullName ||
+                "No Mentor Available"}
+            </p>
           </div>
 
           {/* Subject Description */}

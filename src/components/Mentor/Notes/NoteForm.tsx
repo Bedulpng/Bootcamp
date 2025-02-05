@@ -31,7 +31,7 @@ export default function NoteForm({ addNote, selectedTrainee, onCancel }: NoteFor
         const mentorId = decodedToken.id;
         if (!mentorId) return;
 
-        const response = await axios.get(`http://10.10.103.160:4000/trainee/class/mentor/${mentorId}`);
+        const response = await axios.get(`http://192.168.181.104:4000/trainee/class/mentor/${mentorId}`);
         setClasses(response.data);
       } catch (error) {
         console.error("Error fetching batches by mentorId:", error);
@@ -68,7 +68,7 @@ export default function NoteForm({ addNote, selectedTrainee, onCancel }: NoteFor
       }
 
       const response = await axios.post(
-        "http://10.10.103.160:4000/mentor/note/add",
+        "http://192.168.181.104:4000/mentor/note/add",
         {
           content,
           visibility,

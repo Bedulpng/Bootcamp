@@ -98,7 +98,7 @@ export function CertificateModal({ isOpen, setIsOpen }: CertificateModalProps) {
       formData.append("certificate", data.file[0]);
 
       const response = await axios.post(
-        "http://10.10.103.160:4000/uploads/certificate",
+        "http://192.168.181.104:4000/uploads/certificate",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

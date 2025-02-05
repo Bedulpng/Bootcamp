@@ -71,23 +71,9 @@ export default function ClassDetails() {
   };
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-    exit: {
-      opacity: 0,
-      y: -20,
-      transition: {
-        duration: 0.3,
-        ease: "easeIn",
-      },
-    },
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 50 },
   };
 
   const navItems = [
@@ -183,7 +169,7 @@ export default function ClassDetails() {
                                       "Filepath:",
                                       user.profiles[0].filepath
                                     ),
-                                    `http://10.10.103.160:4000${user.profiles[0].filepath
+                                    `http://192.168.181.104:4000${user.profiles[0].filepath
                                       .replace(/\\/g, "/")
                                       .replace("public", "")}`)
                                   : "/placeholder.svg"
@@ -303,9 +289,11 @@ export default function ClassDetails() {
                           {selectedItem.description}
                         </p>
                         {selectedItem.files &&
-                          selectedItem.files.length > 0 &&
-                          selectedItem.files.map((file) => (
-                            <p className="text-sm font-semibold text-blue-600 mb-2">
+                          selectedItem.files.map((file, index) => (
+                            <p
+                              key={index}
+                              className="text-sm font-semibold text-blue-600 mb-2"
+                            >
                               File: {file.filename}
                             </p>
                           ))}
@@ -315,6 +303,51 @@ export default function ClassDetails() {
                             {new Date(selectedItem.deadline).toLocaleString()}
                           </p>
                         )}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          {Array.isArray(classes) && classes.length > 0 ? (
+                            classes.map((classItem) =>
+                              classItem.users.map((user) => (
+                                <motion.div
+                                  key={user.id} // Assuming `user.id` is unique
+                                  variants={cardVariants}
+                                  initial="hidden"
+                                  animate="visible"
+                                  exit="exit"
+                                >
+                                  <Card className="overflow-hidden shadow-lg hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300">
+                                    <CardContent className="p-6 flex items-center space-x-4">
+                                      <img
+                                        src={
+                                          user.profiles?.[0]?.filepath
+                                            ? `http://192.168.181.104:4000${user.profiles[0].filepath
+                                                .replace(/\\/g, "/")
+                                                .replace("public", "")}`
+                                            : "/placeholder.svg"
+                                        }
+                                        alt={user.fullName || "No userName"}
+                                        width={60}
+                                        height={60}
+                                        className="rounded-full border-2 border-blue-300"
+                                      />
+                                      <div>
+                                        <h3 className="text-lg font-bold text-gray-800">
+                                          {user.fullName || "No userName"}
+                                        </h3>
+                                        <p className="text-sm text-blue-600">
+                                          {user.role || "Student"}
+                                        </p>
+                                      </div>
+                                    </CardContent>
+                                  </Card>
+                                </motion.div>
+                              ))
+                            )
+                          ) : (
+                            <p className="text-center col-span-full text-gray-600">
+                              No users found in the classes.
+                            </p>
+                          )}
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>

@@ -15,7 +15,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchBatch = async () => {
       try {
-        const response = await fetch(`http://10.10.103.160:4000/admin/batchs/${batchId}`);
+        const response = await fetch(`http://192.168.181.104:4000/admin/batchs/${batchId}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch batch with ID: ${batchId}`);
         }
@@ -33,7 +33,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const response = await fetch(`http://10.10.103.160:4000/admin/class/${batchId}`);
+        const response = await fetch(`http://192.168.181.104:4000/admin/class/${batchId}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch classes for batch with ID: ${batchId}`);
         }
@@ -89,7 +89,7 @@ const DashboardPage = () => {
                 </div>
               </CardContent>
               <CardFooter className="bg-gray-50 px-6 py-4">
-                <Link to={`/dashboard/class/${classData.id}`} className="w-full">
+                <Link to={`/dashboard/c/${classData.id}/b/${batchId}`} className="w-full">
                   <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
                     View Class Details
                   </Button>

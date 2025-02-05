@@ -261,7 +261,7 @@ function App() {
           }
         />
         <Route
-          path="/dashboard/class/:classId"
+          path="/dashboard/c/:classId/b/:batchId"
           element={
             <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
               <ProtectedRoute>

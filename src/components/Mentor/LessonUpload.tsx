@@ -7,19 +7,35 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, Upload } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
+import { jwtDecode } from "jwt-decode"
 
 interface LessonUploadFormProps {
   onSuccess: () => void
+  classId: string | undefined;
+  batchId: string | undefined;
 }
 
-export default function UploadForm({ onSuccess }: LessonUploadFormProps) {
+export default function UploadForm({ onSuccess, classId, batchId }: LessonUploadFormProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
+  const [deadline, setDeadline] = useState<Date | null>(null)
   const [files, setFiles] = useState<File[]>([])
   const [error, setError] = useState<string | null>(null)
 
   const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "application/zip"]
   const maxFiles = 3
+  const refreshToken = localStorage.getItem('refreshToken')
+    let userId: string = "";
+    if (refreshToken) {
+      try {
+        const decoded: any = jwtDecode(refreshToken);
+        userId = decoded.id;
+      } catch (err) {
+        console.error("Failed to decode token:", err);
+      }
+    }
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || [])
@@ -39,29 +55,63 @@ export default function UploadForm({ onSuccess }: LessonUploadFormProps) {
     setError(null)
   }
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-
-    if (!title || !description || files.length === 0) {
-      setError("Please fill in all fields and upload at least one file.")
-      return
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+  
+    if (!title || !description || files.length === 0 || !deadline) {
+      setError("Please fill in all fields, select a deadline, and upload at least one file.");
+      return;
     }
-
-    // Here you would typically send the data to your server
-    console.log("Submitting:", { title, description, files })
-
-    // Reset form after submission
-    setTitle("")
-    setDescription("")
-    setFiles([])
-    setError(null)
-
-    // Call the onSuccess callback to close the modal
-    onSuccess()
-
-    // Show success message (in a real app, you'd want to handle this more robustly)
-    alert("Lesson/Challenge uploaded successfully!")
-  }
+  
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("deadline", deadline.toISOString());
+    formData.append("mentorId", userId); // Replace with actual mentor ID
+  
+    if (batchId) {
+      formData.append("batchId", batchId);
+    }
+    if (classId) {
+      formData.append("classId", classId);
+    }
+  
+    files.forEach((file) => formData.append("files", file));
+  
+    try {
+      const response = await fetch("http://192.168.181.104:4000/uploads/lesson", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${refreshToken}`, 
+        },
+        body: formData,
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.error || "Failed to upload the lesson.");
+        return;
+      }
+  
+      const data = await response.json();
+      console.log("Upload successful:", data);
+  
+      // Reset form after submission
+      setTitle("");
+      setDescription("");
+      setFiles([]);
+      setDeadline(null);
+      setError(null);
+  
+      // Call the onSuccess callback to close the modal
+      onSuccess();
+  
+      alert("Lesson/Challenge uploaded successfully!");
+    } catch (error) {
+      console.error("Error uploading challenge:", error);
+      setError("An unexpected error occurred. Please try again later.");
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -86,6 +136,20 @@ export default function UploadForm({ onSuccess }: LessonUploadFormProps) {
           required
         />
       </div>
+
+           <div className="space-y-2">
+              <Label htmlFor="deadline">Deadline</Label>
+              <DatePicker
+                id="deadline"
+                selected={deadline}
+                onChange={(date: Date | null) => setDeadline(date)}
+                showTimeSelect
+                dateFormat="Pp"
+                placeholderText="Select deadline"
+                className="w-full px-3 py-2 border rounded-md text-gray-700"
+                required
+              />
+            </div>
 
       <div className="space-y-2">
         <Label htmlFor="files">Upload Files (Max 3)</Label>

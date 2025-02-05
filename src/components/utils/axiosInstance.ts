@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Create Axios instance
 const axiosInstance = axios.create({
-  baseURL: 'http://10.10.103.160:4000', // Replace with your backend URL
+  baseURL: 'http://192.168.181.104:4000', // Replace with your backend URL
 });
 
 // Request interceptor to include Authorization header

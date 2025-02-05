@@ -15,7 +15,7 @@ export default function SubjectDetail() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://10.10.103.160:4000/trainee/challenge/${id}`
+          `http://192.168.181.104:4000/trainee/challenge/${id}`
         ); // API endpoint for challenges
         setChallenges(response.data); // Set challenges state with the response data
         console.log("Challenge data:", response.data);
@@ -26,7 +26,7 @@ export default function SubjectDetail() {
           );
           try {
             const lessonResponse = await axios.get(
-              `http://10.10.103.160:4000/trainee/lesson/${id}`
+              `http://192.168.181.104:4000/trainee/lesson/${id}`
             ); // API endpoint for lessons
             setLesson(lessonResponse.data); // Set challenges state with lesson data
             console.log("Lesson data:", lessonResponse.data);

@@ -105,7 +105,7 @@ export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) =
         batchId: selectedBatch.map((b) => b.id),
         participants: participants.map((p) => p.id),
       };
-      await axios.post("http://192.168.181.104:4000/admin/class", payload, {
+      await axios.post("http://192.168.1.6:4000/admin/class", payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
         }

@@ -23,7 +23,7 @@ import {
     const onConfirm = async () => {
         try {
           // Send DELETE request to the backend to delete the user
-          const response = await axios.delete(`http://192.168.181.104:4000/admin/user/${id}`);
+          const response = await axios.delete(`http://192.168.1.6:4000/admin/user/${id}`);
       
           console.log("User deleted successfully:", response.data);
           onClose(); // Close the modal after successful deletion

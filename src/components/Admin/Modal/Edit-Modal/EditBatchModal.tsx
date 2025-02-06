@@ -108,7 +108,7 @@ export const BatchEdit: React.FC<BatchModalProps> = ({
           payload.participants = participants.map((participant) => participant.id); // Include only if there are participants
     
         // Make the API request
-        await axios.put(`http://192.168.181.104:4000/admin/batch/${batchId}`, payload, {
+        await axios.put(`http://192.168.1.6:4000/admin/batch/${batchId}`, payload, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("refreshToken"),
           },

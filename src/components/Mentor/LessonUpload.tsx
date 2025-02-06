@@ -79,7 +79,7 @@ export default function UploadForm({ onSuccess, classId, batchId }: LessonUpload
     files.forEach((file) => formData.append("files", file));
   
     try {
-      const response = await fetch("http://192.168.181.104:4000/uploads/lesson", {
+      const response = await fetch("http://192.168.1.6:4000/uploads/lesson", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${refreshToken}`, 

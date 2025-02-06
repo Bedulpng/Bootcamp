@@ -3,7 +3,7 @@ import { Batch, Class } from '../types/Trainee';
 
 export const fetchBatches = async (): Promise<Batch[]> => {
     try {
-      const response = await axios.get(`http://192.168.181.104:4000/admin/batch`);
+      const response = await axios.get(`http://192.168.1.6:4000/admin/batch`);
       return response.data;
     } catch (error) {
       console.error('Error fetching batches:', error);
@@ -13,7 +13,7 @@ export const fetchBatches = async (): Promise<Batch[]> => {
 
   export const fetchBatchesById = async (batchId : string): Promise<Batch[]> => {
     try {
-      const response = await axios.get(`http://192.168.181.104:4000/admin/batch/${batchId}`);
+      const response = await axios.get(`http://192.168.1.6:4000/admin/batch/${batchId}`);
       return response.data;
     } catch (error) {
       console.error('Error fetching batches:', error);
@@ -32,7 +32,7 @@ export const fetchBatches = async (): Promise<Batch[]> => {
   ): Promise<Batch> => {
     try {
       const response = await axios.put(
-        `http://192.168.181.104:4000/admin/batch/${id}`,
+        `http://192.168.1.6:4000/admin/batch/${id}`,
         batchPayload
       );
       return response.data;
@@ -48,7 +48,7 @@ export const fetchBatches = async (): Promise<Batch[]> => {
   ): Promise<Batch> => {
     try {
       const response = await axios.put(
-        `http://192.168.181.104:4000/admin/batch/${batchId}/participants`,
+        `http://192.168.1.6:4000/admin/batch/${batchId}/participants`,
         { participants }
       );
       return response.data;
@@ -60,7 +60,7 @@ export const fetchBatches = async (): Promise<Batch[]> => {
 
 export const fetchClasses = async (): Promise<Class[]> => {
   try {
-      const response = await axios.get('http://192.168.181.104:4000/admin/class');
+      const response = await axios.get('http://192.168.1.6:4000/admin/class');
       return response.data;
     } catch (error) {
       console.error("Error fetching classes:", error);
@@ -70,7 +70,7 @@ export const fetchClasses = async (): Promise<Class[]> => {
 
   export const fetchCB = async (userId: string): Promise<{ classes: Class[], batches: Batch[] }> => {
     try {
-      const response = await axios.get(`http://192.168.181.104:4000/trainee/${userId}/cb`);
+      const response = await axios.get(`http://192.168.1.6:4000/trainee/${userId}/cb`);
       return response.data;
     } catch (error) {
       console.error("Error fetching classes and batches:", error);

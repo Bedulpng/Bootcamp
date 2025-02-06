@@ -15,7 +15,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchBatch = async () => {
       try {
-        const response = await fetch(`http://192.168.181.104:4000/admin/batchs/${batchId}`);
+        const response = await fetch(`http://192.168.1.6:4000/admin/batchs/${batchId}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch batch with ID: ${batchId}`);
         }
@@ -33,7 +33,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const response = await fetch(`http://192.168.181.104:4000/admin/class/${batchId}`);
+        const response = await fetch(`http://192.168.1.6:4000/admin/class/${batchId}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch classes for batch with ID: ${batchId}`);
         }

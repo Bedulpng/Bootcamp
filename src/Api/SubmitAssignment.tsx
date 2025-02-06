@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://192.168.1.6:4000";
+const API_URL = "http://192.168.181.104:4000";
 
 export async function submitLessonCompletion(
   userId: string,
@@ -82,9 +82,9 @@ export async function submitChallengeCompletion(
   }
 }
 
-export const getLessonStatus = async (lessonId: string) => {
+export const getLessonStatus = async (lessonId: string, userId: string) => {
   try {
-    const response = await axios.get(`${API_URL}/complete/lesson/${lessonId}/status`);
+    const response = await axios.get(`${API_URL}/complete/lesson/${lessonId}/${userId}/status`);
     return response.data; // Expected response: { status: "SUBMITTED" | "NOTSUBMITTED" }
   } catch (error: any) {
     if (error.response?.status === 404) {
@@ -96,9 +96,9 @@ export const getLessonStatus = async (lessonId: string) => {
   }
 };
 
-export const getChallengeStatus = async (challengeId: string) => {
+export const getChallengeStatus = async (challengeId: string, userId: string) => {
   try {
-    const response = await axios.get(`${API_URL}/complete/challenge/${challengeId}/status`);
+    const response = await axios.get(`${API_URL}/complete/challenge/${challengeId}/${userId}/status`);
     return response.data; // Expected response: { status: "SUBMITTED" | "NOTSUBMITTED" }
   } catch (error: any) {
     if (error.response?.status === 404) {

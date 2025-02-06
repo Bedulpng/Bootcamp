@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Note, Trainee, Class } from "../../../types/Trainee";
+import { Note, Trainee, Class, Mock } from "../../../types/Trainee";
 import AnimatedDropdown from "./AnimatedDropdown";
 
 type NoteFormProps = {
   addNote: (note: Note) => void;
-  selectedTrainee: Trainee | null;
+  selectedTrainee: Mock | null;
   onCancel: () => void;
 };
 

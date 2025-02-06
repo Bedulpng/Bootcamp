@@ -19,7 +19,22 @@ export interface Profile {
   filepath: string;
 }
 
+export interface Mock {
+  id: string;
+  fullName: string;
+  email: string;
+}
+
 export interface File {
+  id: string;
+  filename: string;
+  filepath: string;
+  mimetype: string;
+  challengeId?: string;
+  lessonId?: string;
+}
+
+export interface Files {
   id: string;
   filename: string;
   filepath: string;
@@ -40,6 +55,12 @@ export interface Challenge {
   batch: Batch[];
   files: File[];
   mentor: Mentor;
+}
+
+
+export interface Completions {
+  id: string;
+  completions: any[];
 }
 
 export interface Lesson {

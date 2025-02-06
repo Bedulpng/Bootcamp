@@ -14,11 +14,10 @@ interface ClassModalProps {
     mentors: Mentor[];
     participants: Trainee[];
   }) => void;
-  // id: string;
-  // fullName: string;
+  selectedClassId: string | null;
 }
 
-export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) => {
+export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose, selectedClassId }) => {
   const [className, setClassName] = useState("");
   const [fetchedBatch, setFetchedBatch] = useState<Batch[]>([]);
   const [selectedBatch, setselectedBatch] = useState<Batch[]>([]);
@@ -105,7 +104,7 @@ export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) =
         batchId: selectedBatch.map((b) => b.id),
         participants: participants.map((p) => p.id),
       };
-      await axios.post("http://192.168.1.6:4000/admin/class", payload, {
+      await axios.put(`http://192.168.1.6:4000/admin/class/${selectedClassId}`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
         }
@@ -153,7 +152,7 @@ export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) =
                   value={className}
                   onChange={(e) => setClassName(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
+                  
                 />
               </div>
 
@@ -358,7 +357,7 @@ export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) =
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300 font-medium flex items-center gap-2"
             >
               <Users className="w-5 h-5" />
-              Create Class
+              Edit Class
             </button>
           </div>
         </form>

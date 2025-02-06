@@ -13,21 +13,22 @@ export default function Classes() {
   const [isClassModalOpen, setIsClassModalOpen] = useState(false);
   const [isEditClassOpen, setIsEditClassOpen] = useState(false);
   const [fetchedClasses, setFetchedClasses] = useState<Class[]>([]); // Store all classes fetched from the API
+  const [selectedClassId, setSelectedClassId] = useState<string | null>(null); // Track the selected class ID
 
-    useEffect(() => {
-      const getClasses = async () => {
-        try {
-          const fetchedClasses = await fetchClasses();
-          setFetchedClasses(fetchedClasses);
-          console.log('Fetched classes:', fetchedClasses);
-        } catch (error) {
-          console.error('Failed to fetch classes:', error);
-        } finally {
-        }
-      };
-  
-      getClasses();
-    }, []);
+  useEffect(() => {
+    const getClasses = async () => {
+      try {
+        const fetchedClasses = await fetchClasses();
+        setFetchedClasses(fetchedClasses);
+        console.log('Fetched classes:', fetchedClasses);
+      } catch (error) {
+        console.error('Failed to fetch classes:', error);
+      } finally {
+      }
+    };
+
+    getClasses();
+  }, []);
 
   const handleOpenClassModal = () => {
     setIsClassModalOpen(true);
@@ -37,12 +38,14 @@ export default function Classes() {
     setIsClassModalOpen(false);
   };
 
-  const handleOpenEdit = () => {
+  const handleOpenEdit = (classId: string) => {
+    setSelectedClassId(classId); // Set the selected class ID
     setIsEditClassOpen(true);
   };
 
   const handleCloseEdit = () => {
     setIsEditClassOpen(false);
+    setSelectedClassId(null); // Clear the selected class ID when closing
   };
 
   return (
@@ -54,14 +57,15 @@ export default function Classes() {
           <span className="ml-3">Showing {fetchedClasses.length} Class</span>
         </div>
         <ClassModal
-            isOpen={isClassModalOpen}
-            onClose={handleCloseClassModal}
-            onSubmit={handleCloseClassModal}
+          isOpen={isClassModalOpen}
+          onClose={handleCloseClassModal}
+          onSubmit={handleCloseClassModal}
         />
         <EditClassModal
-            isOpen={isEditClassOpen}
-            onClose={handleCloseEdit}
-            onSubmit={handleCloseEdit}
+          isOpen={isEditClassOpen}
+          onClose={handleCloseEdit}
+          onSubmit={handleCloseEdit}
+          selectedClassId={selectedClassId} // Pass the selected class ID here
         />
       </div>
 
@@ -88,29 +92,34 @@ export default function Classes() {
                   <TableCell className="text-center">{index + 1}</TableCell>
                   <TableCell className="text-center">{class_.className}</TableCell>
                   <TableCell className="text-center">{class_.participant}</TableCell>
-                  <TableCell className="text-center">{class_.mentors.length}</TableCell> 
+                  <TableCell className="text-center">{class_.mentors.length}</TableCell>
                   <TableCell className="text-center">
-                  {new Date(class_.createdAt).toLocaleDateString("en-GB", {
+                    {new Date(class_.createdAt).toLocaleDateString("en-GB", {
                       day: "2-digit",
                       month: "short",
                       year: "numeric",
                     })}
-                    </TableCell> 
+                  </TableCell>
                   <TableCell className="text-center">
-                    <Badge variant={
-                      class_.status === "Tba" ? "secondary" :
-                      class_.status === "Ongoing" ? "default" : "outline"
-                    }>
+                    <Badge
+                      variant={
+                        class_.status === "Tba"
+                          ? "secondary"
+                          : class_.status === "Ongoing"
+                          ? "default"
+                          : "outline"
+                      }
+                    >
                       {class_.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-center">
-                  <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-yellow-600 hover:text-yellow-600"
-                  onClick={handleOpenEdit}
-                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-yellow-600 hover:text-yellow-600"
+                      onClick={() => handleOpenEdit(class_.id)} // Pass class ID here
+                    >
                       <PenBoxIcon className="h-4 w-4" />
                     </Button>
                   </TableCell>

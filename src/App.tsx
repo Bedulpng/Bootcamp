@@ -46,6 +46,7 @@ import { SidebarTrainee } from "./components/Trainee/pages/secondpge/SideBarTrai
 import NavbarTrainee from "./components/Trainee/pages/secondpge/layouts/navbar";
 import LessonsPage from "./components/Trainee/pages/secondpge/Lesson-Challenge/LessonPage";
 import ChallengesPage from "./components/Trainee/pages/secondpge/Challenge/ChallengePage";
+import Challange from "./components/Mentor/Submission";
 import SubjectDetail from "./components/Trainee/pages/secondpge/subjectdetail";
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -243,6 +244,18 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <NotesPage />
+                </Layout>
+              </ProtectedRoute>
+            </Rbac>
+          }
+        />
+        <Route
+          path="/dashboard/c/:classId/s/:id"
+          element={
+            <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
+              <ProtectedRoute>
+                <Layout>
+                  <Challange />
                 </Layout>
               </ProtectedRoute>
             </Rbac>

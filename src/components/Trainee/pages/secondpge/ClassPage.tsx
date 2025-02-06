@@ -22,6 +22,7 @@ export default function ClassesPage() {
   const token = localStorage.getItem("refreshToken");
   const decodedToken: { id: string } = jwtDecode(token as string);
   const userId = decodedToken.id;
+  console.log(userId)
 
   useEffect(() => {
     const fetchData = async () => {

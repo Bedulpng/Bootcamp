@@ -4,7 +4,7 @@ import { FileText } from "lucide-react";
 import { Challenge, Lesson } from "@/types/Trainee";
 import { NoLessons } from "./Lesson-Challenge/LessonPage";
 import axios from "axios";
-import TaskCompletion from "./CompletionButton";
+import SubmissionForm from "./CompletionButton";
 
 export default function SubjectDetail() {
   const { id } = useParams<{ id: string }>();
@@ -59,7 +59,7 @@ export default function SubjectDetail() {
                 {challenges?.title || lessons?.title || "No Title Available"}
               </h1>
               <div className="ml-auto sm:ml-0 w-full sm:w-auto flex justify-end sm:justify-start">
-                <TaskCompletion Id={id}/>
+                <SubmissionForm itemId={id}/>
               </div>
             </div>
           </div>

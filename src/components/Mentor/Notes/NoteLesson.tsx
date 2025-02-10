@@ -7,44 +7,41 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Note, Trainee} from "../../../types/Trainee";
 
-type NoteFormProps = {
+type NoteLessonProps = {
   addNote: (note: Note) => void;
   selectedTrainee: Trainee | null;
+  completionId: string | undefined
   onCancel: () => void;
 };
 
-export default function NoteForm({ addNote, selectedTrainee, onCancel }: NoteFormProps) {
+export default function NoteLesson({ addNote, selectedTrainee, completionId, onCancel }: NoteLessonProps) {
   const [content, setContent] = useState("");
   const [visibility, setVisibility] = useState<"FOR_TRAINEE" | "FOR_GRADER">("FOR_TRAINEE");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedTrainee) {
-      alert("Please select a trainee.");
-      return;
-    }
     try {
       const token = localStorage.getItem("refreshToken");
       if (!token) {
         alert("You must be logged in to add a note.");
         return;
       }
-
+  
       const decodedToken: { id: string; role: string } = jwtDecode(token);
       const graderId = decodedToken.id;
+  
       if (decodedToken.role === "TRAINEE") {
         alert("Only mentors, graders, or admins can add notes.");
         return;
       }
-
+  
       const response = await axios.post(
-        "http://10.10.103.13:4000/mentor/note/add",
+       `http://10.10.103.13:4000/mentor/note/${completionId}/lesson`, // Use the lesson completion note router
         {
           content,
           visibility,
           graderId,
-          traineeId: selectedTrainee.id,
         },
         {
           headers: {
@@ -52,7 +49,7 @@ export default function NoteForm({ addNote, selectedTrainee, onCancel }: NoteFor
           },
         }
       );
-
+  
       addNote(response.data);
       setContent("");
       setIsSubmitting(false);
@@ -63,7 +60,7 @@ export default function NoteForm({ addNote, selectedTrainee, onCancel }: NoteFor
     }
   };
   
-
+  
   return (
     <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-md">
       {selectedTrainee && (

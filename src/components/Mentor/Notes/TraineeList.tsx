@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Trainee} from '../../../types/Trainee'
+import { Trainee} from '@/types/Trainee'
 
 type TraineeListProps = {
   trainees: Trainee[]

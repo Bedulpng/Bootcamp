@@ -14,7 +14,7 @@ export const fetchBatchesByMentorId = async (
 ): Promise<Batch[]> => {
   try {
     const response = await axios.get<FetchBatchesResponse>(
-      `http://192.168.1.6:4000/admin/batch/${mentorId}`
+      `http://10.10.103.13:4000/admin/batch/${mentorId}`
     );
     return response.data?.batches || [];
   } catch (error) {
@@ -32,7 +32,7 @@ export const fetchClassById = async (
     }
 
     const response = await axios.get<FetchClassResponse>(
-      `http://192.168.1.6:4000/admin/classes/${classId}`
+      `http://10.10.103.13:4000/admin/class/${classId}/class`
     );
 
     // Ensure response.data?.classData is always an array

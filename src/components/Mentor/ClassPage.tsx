@@ -171,7 +171,7 @@ export default function ClassDetails() {
                                       "Filepath:",
                                       user.profiles[0].filepath
                                     ),
-                                    `http://192.168.1.6:4000${user.profiles[0].filepath
+                                    `http://10.10.103.13:4000${user.profiles[0].filepath
                                       .replace(/\\/g, "/")
                                       .replace("public", "")}`)
                                   : "/placeholder.svg"

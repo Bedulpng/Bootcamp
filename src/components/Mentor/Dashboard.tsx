@@ -52,7 +52,7 @@ export default function MentorDb() {
         }
 
         const response = await fetch(
-          "http://192.168.1.6:4000/mentor/schedule",
+          "http://10.10.103.13:4000/mentor/schedule",
           {
             method: "GET",
             headers: {
@@ -105,7 +105,7 @@ export default function MentorDb() {
     const fetchBatches = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.6:4000/admin/batch"
+          "http://10.10.103.13:4000/admin/batch"
         ); // Replace with your API URL
         setBatches(response.data);
       } catch (error) {
@@ -128,7 +128,7 @@ export default function MentorDb() {
         if (!mentorId) return;
 
         const response = await axios.get(
-          `http://192.168.1.6:4000/admin/batch/${mentorId}`
+          `http://10.10.103.13:4000/admin/batch/${mentorId}`
         );
         if (!response.data || response.data.length === 0) {
           setMyBatch(null); // Set null if no batches are found
@@ -153,7 +153,7 @@ export default function MentorDb() {
       try {
         const refreshToken = localStorage.getItem("refreshToken"); // Retrieve the refresh token from localStorage
         const response = await axios.get(
-          "http://192.168.1.6:4000/mentor/completion-percentage",
+          "http://10.10.103.13:4000/mentor/completion-percentage",
           {
             headers: {
               Authorization: `Bearer ${refreshToken}`, // Use Authorization header
@@ -212,14 +212,14 @@ export default function MentorDb() {
 
         // Fetch mentor details
         const response = await axios.get(
-          `http://192.168.1.6:4000/admin/mentor/${userId}`
+          `http://10.10.103.13:4000/admin/mentor/${userId}`
         );
         setMentorName(response.data.fullName);
         setMentorRole(response.data.role);
 
         // Fetch the professional profile image
         const profileResponse = await axios.get(
-          `http://192.168.1.6:4000/trainee/${userId}/pro`
+          `http://10.10.103.13:4000/trainee/${userId}/pro`
         );
 
         // Check if profile image exists
@@ -240,7 +240,7 @@ export default function MentorDb() {
     const fetchClasses = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.6:4000/admin/class"
+          "http://10.10.103.13:4000/admin/class"
         ); // Replace with your API URL
         setClasses(response.data);
       } catch (error) {
@@ -533,7 +533,7 @@ export default function MentorDb() {
                       <div className="w-17 h-17 rounded-full border-2 border-gray-200 flex items-center justify-center mb-6">
                         <Avatar className="h-16 w-16 border-gray-800 rounded-full">
                           <AvatarImage
-                            src={`http://192.168.1.6:4000${profileImage}`}
+                            src={`http://10.10.103.13:4000${profileImage}`}
                             alt="Mentor"
                           />
                           <AvatarFallback>

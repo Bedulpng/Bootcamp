@@ -1,22 +1,18 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { FileText } from "lucide-react";
-import { Class, Note } from "@/types/Trainee";
+import { Class } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
-import axios from "axios";
 
 export default function TraineeMain() {
   const { classId } = useParams<{ classId: string }>();
   const [isFilterDropdownOpen, setFilterDropdownOpen] = useState(false);
   const [filterOption, setFilterOption] = useState<string>("Featured");
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"lesson" | "challenge" | "note">(
+  const [activeTab, setActiveTab] = useState<"lesson" | "challenge" >(
     "lesson"
   );
   const [classes, setClasses] = useState<Class[]>([]);
-  const [notese, setNotes] = useState<Note[]>([]);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,47 +28,15 @@ export default function TraineeMain() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchNotes = async () => {
-      const refreshToken = localStorage.getItem("refreshToken");
-      try {
-        const notesData = await axios.get(
-          `http://192.168.1.6:4000/trainee/note/class/${classId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${refreshToken}`, // Add Authorization header
-            },
-          }
-        );
-        console.log("Notes data:", notesData);
-        setNotes(notesData.data);
-      } catch (error) {
-        console.error("Failed to fetch class:", error);
-      }
-    };
-
-    fetchNotes();
-  }, []);
-
   const toggleFilterDropdown = () =>
     setFilterDropdownOpen(!isFilterDropdownOpen);
 
-  const handleTabClick = (tab: "lesson" | "challenge" | "note") =>
+  const handleTabClick = (tab: "lesson" | "challenge" ) =>
     setActiveTab(tab);
 
   const handleChallenge = (id: string) => navigate(`/trainee/challenge/${id}`);
 
   const handleLesson = (id: string) => navigate(`/trainee/lesson/${id}`);
-
-  const handleNoteClick = (note: Note) => {
-    setSelectedNote(note); // Set the selected note to display in the modal
-    setShowModal(true); // Show the modal
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false); // Hide the modal
-    setSelectedNote(null); // Clear the selected note
-  };
 
   return (
     <div className="bg-white overflow-hidden min-h-screen md:px-44 lg:px-10 xl:px-56">
@@ -103,16 +67,6 @@ export default function TraineeMain() {
             onClick={() => handleTabClick("challenge")}
           >
             Challenge
-          </button>
-          <button
-            className={`px-4 py-2 font-bold rounded-lg ${
-              activeTab === "note"
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-600"
-            }`}
-            onClick={() => handleTabClick("note")}
-          >
-            Note
           </button>
         </div>
 
@@ -207,53 +161,7 @@ export default function TraineeMain() {
               </div>
             ))
           )}
-
-        {activeTab === "note" &&
-          notese.map((note) => (
-            <div
-              key={note.id}
-              className="p-4 bg-gray-100  border-black border text-black rounded-lg shadow-md cursor-pointer"
-              onClick={() => handleNoteClick(note)}
-            >
-              <h3 className="text-xl">
-                Note From : {" "}
-                <span className="font-bold">{note.grader.fullName}</span>
-              </h3>{" "}
-              <p className="text-sm text-gray-500">
-                {new Date(note.createdAt).toLocaleDateString("en-GB", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })}
-              </p>
-            </div>
-          ))}
       </div>
-
-      {showModal && selectedNote && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl text-black font-bold">
-                {selectedNote.grader.fullName}
-              </h2>
-              <button onClick={handleCloseModal} className="text-xl font-bold">
-                ×
-              </button>
-            </div>
-            <p className="mt-4 text-gray-600">{selectedNote.content}</p>
-            <p className="mt-4 text-sm text-gray-400">
-              {new Date(selectedNote.createdAt).toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-              })}
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
-
-// export default TraineeMain;

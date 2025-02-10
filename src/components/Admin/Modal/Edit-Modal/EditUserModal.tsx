@@ -59,7 +59,7 @@ export default function UserModalEdit({ open, setOpen, id, fullName }: UserModal
   
       // Sending the PUT request with the form data and authorization header
       const response = await axios.put(
-       `http://192.168.1.6:4000/trainee/edit/${id}`,
+       `http://10.10.103.13:4000/trainee/edit/${id}`,
         {
           fullName: data.fullName,
           nickname: data.nickname,

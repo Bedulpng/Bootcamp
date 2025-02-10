@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Plus, X, AlertCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Plus, X, AlertCircle, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,34 +16,127 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import type { File } from "@/types/Trainee"
-import { jwtDecode } from "jwt-decode"
-import { useLocation } from "react-router-dom"
+} from "@/components/ui/alert-dialog";
+import { Note, type File } from "@/types/Trainee";
+import { jwtDecode } from "jwt-decode";
+import { useLocation } from "react-router-dom";
+import { getChallengeStatus, getLessonStatus } from "@/Api/SubmitAssignment";
 
 interface SubmissionFormProps {
-  itemId: string | undefined
+  itemId: string | undefined;
 }
 
 export default function SubmissionForm({ itemId }: SubmissionFormProps) {
-  const [files, setFiles] = useState<File[]>([])
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [message, setMessage] = useState<string | null>(null)
-  const [showDialog, setShowDialog] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const location = useLocation()
-  const itemType = location.pathname.startsWith("/trainee/lesson") ? "lesson" : "challenge"
+  const [submissionFiles, setSubmissionFiles] = useState<File[]>([]);
+  const [submissionNote, setSubmissionNote] = useState<Note[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<string>("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [showDialog, setShowDialog] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const location = useLocation();
+  const itemType = location.pathname.startsWith("/trainee/lesson")
+    ? "lesson"
+    : "challenge";
 
-  const refreshToken = localStorage.getItem('refreshToken')
-   let userId: string = "";
-      if (refreshToken) {
-        try {
-          const decoded: any = jwtDecode(refreshToken);
-          userId = decoded.id;
-        } catch (err) {
-          console.error("Failed to decode token:", err);
+  const refreshToken = localStorage.getItem("refreshToken");
+  let userId: string = "";
+  if (refreshToken) {
+    try {
+      const decoded: any = jwtDecode(refreshToken);
+      userId = decoded.id;
+    } catch (err) {
+      console.error("Failed to decode token:", err);
+    }
+  }
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      const Id = itemId || "";
+      try {
+        const isChallenge =
+          window.location.pathname.includes("trainee/challenge");
+        if (isChallenge) {
+          // Cek status dari tabel `challenge`
+          const challengeResponse = await getChallengeStatus(Id, userId);
+          if (challengeResponse?.submissionFiles) {
+            setSubmissionFiles(challengeResponse.submissionFiles);
+          }
+          if (challengeResponse?.notes) {
+            setSubmissionNote(challengeResponse.notes);
+          }
+          if (challengeResponse?.status) {
+            setStatus(challengeResponse.status);
+            if (
+              challengeResponse.status === "SUBMITTED" ||
+              challengeResponse.status === "GRADED"
+            ) {
+              setIsSubmitted(true);
+            }
+          }
+        } else {
+          // Cek status dari tabel `lesson`
+          const lessonResponse = await getLessonStatus(Id, userId);
+          if (lessonResponse?.submissionFiles) {
+            setSubmissionFiles(lessonResponse.submissionFiles);
+          }
+          if (lessonResponse?.notes) {
+            setSubmissionNote(lessonResponse.notes);
+          }
+          if (lessonResponse?.status) {
+            setStatus(lessonResponse.status); // SUBMITTED atau NOTSUBMITTED
+            console.log(lessonResponse.files);
+            if (
+              lessonResponse.status === "SUBMITTED" ||
+              lessonResponse.status === "GRADED"
+            ) {
+              setIsSubmitted(true);
+            }
+          }
         }
+      } catch (error: any) {
+        console.error("Error fetching status:", error);
       }
+    };
+    fetchStatus();
+  }, []);
+
+  if (isSubmitted) {
+    return (
+      <Card className="w-[300px] shadow-lg">
+        <CardContent className="pt-6">
+          {submissionFiles && submissionFiles.length > 0 ? (
+            <div className="flex items-center gap-2 p-2 bg-primary/5 rounded-lg">
+              <FileText className="h-4 w-4 text-primary" />
+              <span className="text-sm flex-1 truncate">
+                {submissionFiles.map((f) => f.filename).join(", ")}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center p-2 text-sm text-muted-foreground">
+              No attachment
+            </div>
+          )}
+
+          <div className="my-4 border-t border-muted"></div>
+
+          {submissionNote && submissionNote.length > 0 ? (
+            <div className="mt-4">
+              <span className="text-sm flex-1 truncate">
+                {submissionNote.map((n) => n.content).join(", ")}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center p-2 text-sm text-muted-foreground">
+              No notes yet
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -52,62 +145,81 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
         filename: file.name,
         filepath: URL.createObjectURL(file), // Create a temporary URL
         mimetype: file.type,
-        ...(itemType === "lesson" ? { lessonId: itemId } : { challengeId: itemId }),
-      }))
-      setFiles((prevFiles) => [...prevFiles, ...newFiles])
+        ...(itemType === "lesson"
+          ? { lessonId: itemId }
+          : { challengeId: itemId }),
+      }));
+      setFiles((prevFiles) => [...prevFiles, ...newFiles]);
     }
-  }
+  };
 
   const handleRemoveFile = (id: string) => {
-    setFiles((prevFiles) => prevFiles.filter((file) => file.id !== id))
-  }
+    setFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
+  };
 
   const handleSubmit = async (confirmed = false) => {
     if (files.length === 0 && !confirmed) {
-      setShowDialog(true)
-      return
+      setShowDialog(true);
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
-    const formData = new FormData()
-    formData.append("userId", userId)
+    const formData = new FormData();
+    formData.append("userId", userId);
     files.forEach((file) => {
-      formData.append("files", new Blob([file.filepath], { type: file.mimetype }), file.filename)
-    })
+      formData.append(
+        "files",
+        new Blob([file.filepath], { type: file.mimetype }),
+        file.filename
+      );
+    });
 
-    const endpoint = itemType === "lesson" ? `http://192.168.1.6:4000/complete/lesson/${itemId}` : `http://192.168.1.6:4000/complete/challenge/${itemId}`
+    const endpoint =
+      itemType === "lesson"
+        ? `http://10.10.103.13:4000/complete/lesson/${itemId}`
+        : `http://10.10.103.13:4000/complete/challenge/${itemId}`;
 
     try {
       const response = await fetch(endpoint, {
         method: "POST",
         body: formData,
-      })
+      });
 
       if (!response.ok) {
-        throw new Error("Submission failed")
+        throw new Error("Submission failed");
       }
 
-      const result = await response.json()
-      setMessage(result.message)
+      const result = await response.json();
+      setMessage(result.message);
     } catch (error) {
-      setMessage("An error occurred during submission.")
+      setMessage("An error occurred during submission.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <Card className="w-full max-w-[300px] shadow-md">
       <CardHeader className="pb-4">
         <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-medium">Tugas</CardTitle>
-          <span className="text-sm text-green-600">Ditugaskan</span>
+          <CardTitle className="text-lg font-medium">Assignment</CardTitle>
+          <span className="text-sm text-green-600">{status}</span>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Input type="file" onChange={handleFileChange} ref={fileInputRef} className="hidden" multiple />
-        <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="w-full border-dashed">
+        <Input
+          type="file"
+          onChange={handleFileChange}
+          ref={fileInputRef}
+          className="hidden"
+          multiple
+        />
+        <Button
+          onClick={() => fileInputRef.current?.click()}
+          variant="outline"
+          className="w-full border-dashed"
+        >
           <Plus className="mr-2 h-4 w-4" /> Tambah atau buat
         </Button>
         <AnimatePresence>
@@ -128,7 +240,8 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
                   className="flex items-center justify-between rounded-md border px-3 py-2 text-sm"
                 >
                   <span className="truncate mr-2">
-                    {file.filename} ({(file.filepath.length / 1024).toFixed(2)} KB)
+                    {file.filename} ({(file.filepath.length / 1024).toFixed(2)}{" "}
+                    KB)
                   </span>
                   <Button
                     variant="ghost"
@@ -144,7 +257,11 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
             </motion.ul>
           )}
         </AnimatePresence>
-        <Button onClick={() => handleSubmit()} disabled={isSubmitting} className="w-full bg-blue-500 hover:bg-blue-600">
+        <Button
+          onClick={() => handleSubmit()}
+          disabled={isSubmitting}
+          className="w-full bg-blue-500 hover:bg-blue-600"
+        >
           {isSubmitting ? "Submitting..." : "Tandai sebagai selesai"}
         </Button>
         <AnimatePresence>
@@ -168,17 +285,19 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
             <AlertDialogHeader>
               <AlertDialogTitle>Mark as complete?</AlertDialogTitle>
               <AlertDialogDescription>
-                You don't have any attachment on this {itemType}. Are you sure you want to continue?
+                You don't have any attachment on this {itemType}. Are you sure
+                you want to continue?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={() => handleSubmit(true)}>Yes, continue</AlertDialogAction>
+              <AlertDialogAction onClick={() => handleSubmit(true)}>
+                Yes, continue
+              </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       </CardContent>
     </Card>
-  )
+  );
 }
-

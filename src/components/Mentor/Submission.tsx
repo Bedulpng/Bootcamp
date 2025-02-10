@@ -1,45 +1,34 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { FaRegUserCircle } from "react-icons/fa";
-import NoteForm from "./Notes/NoteForm";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import { Class, Completions } from "@/types/Trainee";
+import { Class, Completions, Trainee } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
 import axios from "axios";
-
-interface Student {
-  id: string;
-  name: string;
-  status: "ASSIGNED" | "SUBMITTED";
-}
-
-const mockStudents: Student[] = [
-  { id: "1", name: "Sza Zxa", status: "ASSIGNED" },
-  { id: "2", name: "John Doe", status: "ASSIGNED" },
-  { id: "3", name: "Jane Doe", status: "SUBMITTED" },
-  { id: "4", name: "Alice Bob", status: "ASSIGNED" },
-  { id: "5", name: "Charlie Eve", status: "SUBMITTED" },
-  { id: "6", name: "David Foo", status: "ASSIGNED" },
-  { id: "7", name: "Eve Bar", status: "SUBMITTED" },
-];
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import NoteLesson from "./Notes/NoteLesson";
 
 function Challenge() {
-  const { classId } = useParams<{ classId: string }>();
-  const { id } = useParams<{ id: string }>();
-  const [students, setStudents] = useState<Student[]>([]);
+  const { classId, id } = useParams<{
+    classId: string;
+    id: string;
+  }>();
   const [expanded, setExpanded] = useState<boolean>(true);
   const [classes, setClasses] = useState<Class[]>([]);
+  const [trainees, setTrainees] = useState<Trainee[]>([]);
   const [completions, setCompletions] = useState<Completions | null>(null);
   const [page, setPage] = useState<number>(1);
   const itemsPerPage = 5;
 
   // State for NoteForm
   const [showNoteForm, setShowNoteForm] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-
-  useEffect(() => {
-    setStudents(mockStudents);
-  }, []);
+  const [selectedTrainee, setSelectedTrainee] = useState<Trainee | null>(null); 
+  const [completionId, setCompletionId] = useState<string | undefined>(undefined);
 
   const toggleExpand = () => {
     setExpanded(!expanded);
@@ -49,32 +38,31 @@ function Challenge() {
     const fetchData = async () => {
       try {
         const classData = await fetchClassById(classId);
-        console.log("Class Data:", classData);
         setClasses(classData);
+        setTrainees(classData.map((t) => t.users).flat()); // Flatten users from all classes
       } catch (error) {
         console.error("Failed to fetch class:", error);
       }
     };
 
     fetchData();
-  }, []);
+  }, [classId]);
 
   useEffect(() => {
     const fetchCompletion = async () => {
       try {
         const completionData = await axios.get(
-          `http://192.168.1.6:4000/mentor/lesson/${id}/completions`
+          `http://10.10.103.13:4000/mentor/lesson/${id}/completions`
         );
-        console.log("Completion:", completionData.data);
         setCompletions(completionData.data); // Set the entire response data
+        console.log("Completions:", completionData.data);
       } catch (error) {
         console.error("Failed to fetch class:", error);
       }
     };
 
     fetchCompletion();
-  }, []);
-
+  }, [id]);
 
   // Pagination logic
   const startIndex = (page - 1) * itemsPerPage;
@@ -95,10 +83,9 @@ function Challenge() {
     setShowNoteForm(false); // Close the modal after adding a note
   };
 
-  // Handle cancel for NoteForm
   const handleCancel = () => {
     setShowNoteForm(false);
-    setSelectedStudent(null);
+    setSelectedTrainee(null); // Reset selected trainee
   };
 
   return (
@@ -141,20 +128,48 @@ function Challenge() {
       <div className="flex-1 p-6 bg-white shadow-md rounded-lg transition-all duration-300">
         <h1 className="text-xl font-bold mb-4"> Submission </h1>
         <div className="flex items-center gap-8">
-          <p>{classes.map((c) => c.users.length)} Assigned</p>
-          <p>{completions?.completions.length} Submitted</p>
+          <p>{trainees.length} Assigned</p>
+          <p>
+            {
+              completions?.completions.filter(
+                (completion) => completion.status === "SUBMITTED"
+              ).length
+            }{" "}
+            Submitted
+          </p>
+          <p>
+            {
+              completions?.completions.filter(
+                (completion) => completion.status === "GRADED"
+              ).length
+            }{" "}
+            Graded
+          </p>
         </div>
-
         <div className="mt-6">
-          <h2 className="font-semibold mb-2">Ditugaskan</h2>
+          <h2 className="font-semibold mb-2">Assignment</h2>
           {displayedStudents.map((student) => (
             <div
               key={student.id}
               className="flex items-center p-2 border rounded-md cursor-pointer"
               onClick={() => {
-                setSelectedStudent(student); // Set the selected student
-                setShowNoteForm(true); // Show the NoteForm
+                // Find the matching completion based on student.id
+                const matchingCompletion = completions?.completions.find(
+                  (completion) => completion.user.id === student.id
+                );
+              
+                // Extract user and completionId from the matching completion
+                const trainee = matchingCompletion?.user;
+                const selectedCompletionId = matchingCompletion?.id;
+              
+                console.log("User selected:", trainee, "Completion ID:", selectedCompletionId);
+              
+                // Update states
+                setSelectedTrainee(trainee || null); // Pass the user object to setSelectedTrainee
+                setCompletionId(selectedCompletionId || null); // Set the completionId
+                setShowNoteForm(true); // Show the note form
               }}
+              
             >
               <FaRegUserCircle className="text-xl mr-2" />
               <span>{student.name}</span>
@@ -163,7 +178,6 @@ function Challenge() {
           ))}
         </div>
 
-        {/* Pagination */}
         <div className="mt-4 flex gap-2">
           {page > 1 && (
             <button
@@ -173,7 +187,7 @@ function Challenge() {
               Back
             </button>
           )}
-          {endIndex < students.length && (
+          {completions && endIndex < completions.completions.length && (
             <button
               className="px-4 py-2 bg-gray-300 rounded-md"
               onClick={() => setPage(page + 1)}
@@ -185,23 +199,19 @@ function Challenge() {
       </div>
 
       {/* NoteForm Modal */}
-      {showNoteForm && selectedStudent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white w-1/2 p-4 rounded-lg shadow-lg">
-            <NoteForm
-              addNote={addNote}
-              selectedTrainee={{
-                id: selectedStudent.id,
-                fullName: selectedStudent.name,
-                email: `${selectedStudent.name
-                  .toLowerCase()
-                  .replace(" ", ".")}@example.com`, // Mock email
-              }}
-              onCancel={handleCancel}
-            />
-          </div>
-        </div>
-      )}
+      <Dialog open={showNoteForm} onOpenChange={setShowNoteForm}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Grade Submisson</DialogTitle>
+          </DialogHeader>
+          <NoteLesson
+            addNote={addNote}
+            selectedTrainee={selectedTrainee}
+            onCancel={handleCancel}
+            completionId={completionId}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

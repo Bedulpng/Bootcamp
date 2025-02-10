@@ -61,6 +61,7 @@ export interface Challenge {
 export interface Completions {
   id: string;
   completions: any[];
+  users: Trainee;
 }
 
 export interface Lesson {

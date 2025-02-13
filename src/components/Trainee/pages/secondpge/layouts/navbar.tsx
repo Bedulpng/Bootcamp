@@ -82,14 +82,6 @@ const NavbarTrainee: React.FC = () => {
     }
   };
 
-  // const handleLogoClick = () => {
-  //   if (location.pathname === "/trainee") {
-  //     window.location.reload();
-  //   } else {
-  //     navigate("/trainee");
-  //   }
-  // };
-
   return (
     <header className="border-b bg-white shadow">
       <div className="container relative flex h-16 items-center px-8 justify-between">

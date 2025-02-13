@@ -1,16 +1,10 @@
-import { motion } from "framer-motion";
-
 export default function ClassesPageSkeleton() {
   return (
-    <div className="grid gap-6 p-4">
-      {[...Array(6)].map((_, i) => (
-        <motion.div
+    <div className="flex gap-6 p-4 overflow-x-auto">
+      {[0, 1, 2].map((i) => (
+        <div
           key={i}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3, delay: i * 0.3 }}
-          className="w-80 rounded-lg border bg-white shadow-md"
+          className="min-w-[320px] rounded-lg border bg-white shadow-md animate-pulse"
         >
           {/* Header */}
           <div className="h-16 rounded-t-lg bg-gray-200" />
@@ -37,7 +31,7 @@ export default function ClassesPageSkeleton() {
             <div className="h-6 w-10 rounded bg-gray-200" />
             <div className="h-6 w-10 rounded bg-gray-200" />
           </div>
-        </motion.div>
+        </div>
       ))}
     </div>
   );

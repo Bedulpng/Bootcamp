@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ArrowLeft,
   X,
+  User2Icon,
 } from "lucide-react";
 import { Class, File } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
@@ -95,18 +96,25 @@ export default function ClassDetails() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <Link to="/dashboard/batch">
+        <Link to={`/dashboard/batch`}>
           <Button variant="ghost" size="icon" className="rounded-full">
             <ArrowLeft className="h-6 w-6" />
             <span className="sr-only">Back to Classes</span>
           </Button>
         </Link>
+        <div className="top-4 right-4 z-50">
+          {activeTab === "challenges" ? (
+            <ChallengeModal />
+          ) : activeTab === "lessons" ? (
+            <LessonModal />
+          ) : null}
+        </div>
         {/* <h1 className="text-3xl font-bold">{classes.title}</h1> */}
       </div>
 
       <div className="flex">
         <nav
-          className={`bg-white rounded-lg shadow-md p-4 mr-6 transition-all duration-300 ${
+          className={`bg-white rounded-lg shadow-md p-2 mr-6 transition-all duration-300 h-full ${
             isNavExpanded ? "w-64" : "w-16"
           }`}
         >
@@ -125,73 +133,68 @@ export default function ClassDetails() {
               {isNavExpanded ? "Collapse navigation" : "Expand navigation"}
             </span>
           </Button>
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`flex items-center w-full px-4 py-2 mb-2 rounded-md text-lg font-semibold transition-all duration-300 ${
-                activeTab === item.id
-                  ? "bg-blue-600 text-white shadow-lg"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              <item.icon className="h-5 w-5" />
-              {isNavExpanded && <span className="ml-2">{item.label}</span>}
-            </button>
-          ))}
+          <div className="flex flex-col gap-2 overflow-hidden">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setActiveTab(item.id)}
+                className={`flex items-center w-full px-4 py-2 rounded-md text-lg font-semibold transition-all duration-300 h-10 ${
+                  activeTab === item.id
+                    ? "bg-blue-600 text-white shadow-lg"
+                    : "text-gray-600 hover:bg-gray-100"
+                }`}
+              >
+                <item.icon className="h-5 w-5 shrink-0" />
+                <span
+                  className={`ml-2 transition-opacity duration-300 ${
+                    isNavExpanded ? "opacity-100 w-auto" : "opacity-0 w-0"
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </button>
+            ))}
+          </div>
         </nav>
 
         <AnimatePresence mode="wait">
-          <motion.div
+          <div
             key={activeTab}
-            variants={tabVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="flex-1 overflow-hidden"
+            className="container mx-auto px-4 min-h-screen overflow-hidden"
           >
             {activeTab === "participants" && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Array.isArray(classes) &&
                   classes.map((classItem, index) =>
                     classItem.users.map((user, userIndex) => (
-                      <motion.div
-                        key={`${index}-${userIndex}`} // Combine indices for unique key
-                        variants={cardVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
+                      <Card
+                        key={`${index}-${userIndex}`}
+                        className="overflow-hidden"
                       >
-                        <Card className="overflow-hidden">
-                          <CardContent className="p-4 flex items-center">
+                        <CardContent className="p-4 flex items-center">
+                          {user.profiles?.[0]?.filepath ? (
                             <img
-                              src={
-                                user.profiles?.[0]?.filepath
-                                  ? (console.log(
-                                      "Filepath:",
-                                      user.profiles[0].filepath
-                                    ),
-                                    `http://10.10.103.13:4000${user.profiles[0].filepath
-                                      .replace(/\\/g, "/")
-                                      .replace("public", "")}`)
-                                  : "/placeholder.svg"
-                              }
+                              src={`http://10.10.103.13:4000${user.profiles[0].filepath
+                                .replace(/\\/g, "/")
+                                .replace("public", "")}`}
                               alt={user.fullName || "No userName"}
                               width={50}
                               height={50}
                               className="rounded-full mr-4"
                             />
-                            <div>
-                              <h3 className="font-semibold">
-                                {user.fullName || "No userName"}
-                              </h3>
-                              <p className="text-sm text-gray-600">
-                                {user.role || "Student"}
-                              </p>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </motion.div>
+                          ) : (
+                            <User2Icon className="w-12 h-12 text-gray-500 mr-4 rounded-full" />
+                          )}
+                          <div>
+                            <h3 className="font-semibold">
+                              {user.fullName || "No userName"}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              {user.role || "Student"}
+                            </p>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))
                   )}
               </div>
@@ -199,20 +202,8 @@ export default function ClassDetails() {
             {(activeTab === "challenges" || activeTab === "lessons") && (
               <div className="relative">
                 {/* Upload Form Positioned on Top Right */}
-                <div className="absolute top-4 right-4 z-50 ">
-                  {activeTab === "challenges" ? (
-                    <ChallengeModal />
-                  ) : (
-                    <LessonModal />
-                  )}
-                </div>
 
-                <motion.div
-                  variants={expandVariants}
-                  initial="collapsed"
-                  animate={selectedItem ? "expanded" : "collapsed"}
-                  className="grid gap-4"
-                >
+                <div className="grid gap-4">
                   <ScrollArea className="h-[calc(100vh-200px)]">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-4">
                       {classes.length === 0 ||
@@ -235,21 +226,16 @@ export default function ClassDetails() {
                               : classItem.lessons
                           )
                           .map((item, index) => (
-                            <motion.div
+                            <div
                               key={index}
-                              variants={cardVariants}
-                              initial="hidden"
-                              animate="visible"
-                              exit="exit"
+                              className={`overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 ${
+                                selectedItem === item
+                                  ? "shadow-lg"
+                                  : ""
+                              }`}
+                              onClick={() => handleItemClick(item)}
                             >
-                              <Card
-                                className={`overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 ${
-                                  selectedItem === item
-                                    ? "ring-2 ring-blue-500"
-                                    : ""
-                                }`}
-                                onClick={() => handleItemClick(item)}
-                              >
+                              <Card>
                                 <CardHeader>
                                   <CardTitle>{item.title}</CardTitle>
                                 </CardHeader>
@@ -259,75 +245,69 @@ export default function ClassDetails() {
                                   </p>
                                 </CardContent>
                               </Card>
-                            </motion.div>
+                            </div>
                           ))
                       )}
                     </div>
                   </ScrollArea>
 
-                  <AnimatePresence>
-                    {selectedItem && (
-                      <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 50 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg shadow-lg p-6 border border-blue-200"
-                      >
-                        <div className="flex justify-between items-center mb-4">
-                          <h2 className="text-2xl font-bold text-blue-800">
-                            {selectedItem.title}
-                          </h2>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={closeExpanded}
-                          >
-                            <X className="h-6 w-6" />
-                            <span className="sr-only">Close details</span>
-                          </Button>
-                        </div>
-
-                        <p className="text-gray-700 mb-4">
-                          {selectedItem.description}
-                        </p>
-
-                        {selectedItem.files &&
-                          selectedItem.files.map((file, index) => (
-                            <p
-                              key={index}
-                              className="text-sm font-semibold text-blue-600 mb-2"
-                            >
-                              File: {file.filename}
-                            </p>
-                          ))}
-
-                        {selectedItem.deadline && (
-                          <p className="text-sm font-semibold text-blue-600">
-                            Deadline:{" "}
-                            {new Date(selectedItem.deadline).toLocaleString()}
-                          </p>
-                        )}
-
-                        {/* Separator line */}
-                        <hr className="my-4 border-blue-300" />
-
-                        {/* Assignment & Submission Button */}
-                        <button
-                          className="w-full py-2 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
-                          onClick={() =>
-                            navigate(`/dashboard/c/${classId}/s/${selectedItem.id}`)
-                          }
+                  {selectedItem && (
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg shadow-lg p-6 border border-blue-200">
+                      <div className="flex justify-between items-center mb-4">
+                        <h2 className="text-2xl font-bold text-blue-800">
+                          {selectedItem.title}
+                        </h2>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={closeExpanded}
                         >
-                          Assignment & Submission
-                        </button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
+                          <X className="h-6 w-6" />
+                          <span className="sr-only">Close details</span>
+                        </Button>
+                      </div>
+
+                      <p className="text-gray-700 mb-4">
+                        {selectedItem.description}
+                      </p>
+
+                      {selectedItem.files &&
+                        selectedItem.files.map((file, index) => (
+                          <p
+                            key={index}
+                            className="text-sm font-semibold text-blue-600 mb-2"
+                          >
+                            File: {file.filename}
+                          </p>
+                        ))}
+
+                      {selectedItem.deadline && (
+                        <p className="text-sm font-semibold text-blue-600">
+                          Deadline:{" "}
+                          {new Date(selectedItem.deadline).toLocaleString()}
+                        </p>
+                      )}
+
+                      {/* Separator line */}
+                      <hr className="my-4 border-blue-300" />
+
+                      {/* Assignment & Submission Button */}
+                      <button
+                        className="w-full py-2 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
+                        onClick={() =>
+                          navigate(
+                            `/dashboard/c/${classId}/s/${selectedItem.id}`
+                          )
+                        }
+                      >
+                        Assignment & Submission
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
-          </motion.div>
+          </div>
         </AnimatePresence>
       </div>
     </div>

@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useState } from "react";
-import { Toaster } from "./components/ui/toaster";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { Testimonial } from "./components/Testimonial";
@@ -23,7 +22,6 @@ import { MentorLogin } from "./components/Login/MentorLogin";
 import { TraineeLogin } from "./components/Login/TraineeLogin";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Rbac from "./components/RbacRoute";
-import DashboardPage from "./components/Mentor/BatchPage";
 import NotesPage from "./components/Mentor/Notes/page";
 import NotificationPage from "./components/Trainee/pages/secondpge/top/Notification";
 import Profile from "./components/Trainee/pages/secondpge/top/profile";
@@ -44,10 +42,12 @@ import TraineeMain from "./components/Trainee/pages/secondpge/ClassDetail";
 import ClassesPage from "./components/Trainee/pages/secondpge/ClassPage";
 import { SidebarTrainee } from "./components/Trainee/pages/secondpge/SideBarTrainee";
 import NavbarTrainee from "./components/Trainee/pages/secondpge/layouts/navbar";
-import LessonsPage from "./components/Trainee/pages/secondpge/Lesson-Challenge/LessonPage";
-import ChallengesPage from "./components/Trainee/pages/secondpge/Challenge/ChallengePage";
+import LessonsPage from "./components/Trainee/pages/secondpge/LessonChallenge/LessonPage";
+import ChallengesPage from "./components/Trainee/pages/secondpge/LessonChallenge/ChallengePage";
 import Challange from "./components/Mentor/Submission";
-import SubjectDetail from "./components/Trainee/pages/secondpge/subjectdetail";
+import SubjectDetail from "./components/Trainee/pages/secondpge/SubjectDetail";
+import ClassPage from "./components/Mentor/ClassCard/ClassPage";
+import { Toaster } from "react-hot-toast";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith("/dashboard");
@@ -261,7 +261,8 @@ function App() {
             </Rbac>
           }
         />
-        <Route
+        {/* ini route buat class page yang sebelumnya}
+        {/* <Route
           path="/dashboard/batch/:batchId"
           element={
             <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
@@ -272,9 +273,24 @@ function App() {
               </ProtectedRoute>
             </Rbac>
           }
+        /> */}
+        <Route
+          path="/dashboard/class/:batchId"
+          element={
+            <>
+            <Toaster />
+            <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
+              <ProtectedRoute>
+                <Layout>
+                  <ClassPage />
+                </Layout>
+              </ProtectedRoute>
+            </Rbac>
+            </>
+          }
         />
         <Route
-          path="/dashboard/c/:classId/b/:batchId"
+          path="/dashboard/c/:classId/"
           element={
             <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
               <ProtectedRoute>

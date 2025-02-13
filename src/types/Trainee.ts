@@ -19,10 +19,14 @@ export interface Profile {
   filepath: string;
 }
 
-export interface Mock {
+export interface ClassCover {
   id: string;
-  fullName: string;
-  email: string;
+  classId: string;
+  gradientColors: string[];
+  filePath: string;
+  fileName: string;
+  mimetype: string;
+  size: number;
 }
 
 export interface File {
@@ -55,6 +59,7 @@ export interface Challenge {
   batch: Batch[];
   files: File[];
   mentor: Mentor;
+  completionStatus: string;
 }
 
 
@@ -62,6 +67,7 @@ export interface Completions {
   id: string;
   completions: any[];
   users: Trainee;
+  files: File[];
 }
 
 export interface Lesson {
@@ -76,6 +82,7 @@ export interface Lesson {
   batch: Batch[];
   files: File[];
   mentor: Mentor;
+  completionStatus: string;
 }
 
 export type Visibility = "All" | "FOR_TRAINEE" | "FOR_GRADER"; // Adjust based on the enum in your Prisma schem
@@ -143,6 +150,7 @@ export interface Class {
   users: Trainee[];
   challenges: Challenge[];
   lessons: Lesson[];
+  cover: ClassCover;
 }
 
 export interface Mentor {

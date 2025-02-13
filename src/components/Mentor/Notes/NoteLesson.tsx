@@ -36,30 +36,58 @@ export default function NoteLesson({ addNote, selectedTrainee, completionId, onC
         return;
       }
   
-      const response = await axios.post(
-       `http://10.10.103.13:4000/mentor/note/${completionId}/lesson`, // Use the lesson completion note router
-        {
-          content,
-          visibility,
-          graderId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+      try {
+        // Attempt to add a note to the lesson completion
+        const response = await axios.post(
+          `http://10.10.103.13:4000/mentor/note/${completionId}/lesson`,
+          {
+            content,
+            visibility,
+            graderId,
           },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        addNote(response.data);
+        setContent("");
+        setIsSubmitting(false);
+        onCancel();
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 404) {
+          console.log("LessonCompletion not found, trying ChallengeCompletion route...");
+          // Fallback to the challenge completion note router
+          const response = await axios.post(
+            `http://10.10.103.13:4000/mentor/note/${completionId}/challenge`,
+            {
+              content,
+              visibility,
+              graderId,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+  
+          addNote(response.data);
+          setContent("");
+          setIsSubmitting(false);
+          onCancel();
+        } else {
+          console.error("Error adding note:", error);
+          alert("Failed to add note. Please try again.");
         }
-      );
-  
-      addNote(response.data);
-      setContent("");
-      setIsSubmitting(false);
-      onCancel();
+      }
     } catch (error) {
-      console.error("Error adding note:", error);
-      alert("Failed to add note. Please try again.");
+      console.error("Unexpected error:", error);
+      alert("An unexpected error occurred. Please try again.");
     }
-  };
-  
+  };  
   
   return (
     <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-md">

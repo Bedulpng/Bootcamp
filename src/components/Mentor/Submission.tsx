@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { FaRegUserCircle } from "react-icons/fa";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import { ChevronRight, ChevronLeft, Eye } from "lucide-react";
 import { Class, Completions, Trainee } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
 import axios from "axios";
@@ -27,8 +27,16 @@ function Challenge() {
 
   // State for NoteForm
   const [showNoteForm, setShowNoteForm] = useState(false);
-  const [selectedTrainee, setSelectedTrainee] = useState<Trainee | null>(null); 
-  const [completionId, setCompletionId] = useState<string | undefined>(undefined);
+  const [selectedTrainee, setSelectedTrainee] = useState<Trainee | null>(null);
+  const [completionId, setCompletionId] = useState<string | undefined>(
+    undefined
+  );
+  const [previewedFile, setPreviewedFile] = useState<string | null>(null);
+
+  // Function to handle file preview
+  const handlePreviewFile = (filePath: string) => {
+    setPreviewedFile(filePath);
+  };
 
   const toggleExpand = () => {
     setExpanded(!expanded);
@@ -57,7 +65,25 @@ function Challenge() {
         setCompletions(completionData.data); // Set the entire response data
         console.log("Completions:", completionData.data);
       } catch (error) {
-        console.error("Failed to fetch class:", error);
+        if (axios.isAxiosError(error)) {
+          // Narrow down the error type to AxiosError
+          if (error.response && error.response.status === 404) {
+            console.log("Lesson not found, falling back to challenge route...");
+            try {
+              const challengeData = await axios.get(
+                `http://10.10.103.13:4000/mentor/challenge/${id}/completions`
+              );
+              setCompletions(challengeData.data); // Set the data from the challenge route
+              console.log("Challenge completions:", challengeData.data);
+            } catch (challengeError) {
+              console.error("Failed to fetch challenge:", challengeError);
+            }
+          } else {
+            console.error("Failed to fetch lesson:", error);
+          }
+        } else {
+          console.error("An unexpected error occurred:", error);
+        }
       }
     };
 
@@ -74,9 +100,11 @@ function Challenge() {
         id: completion.user.id,
         name: completion.user.fullName,
         status: completion.status,
+          files: completion.submissionFiles,
       }))
     : [];
 
+  console.log("Displayed students:", displayedStudents);
   // Add Note to the list (mock implementation)
   const addNote = (note: any) => {
     console.log("Note added:", note);
@@ -149,31 +177,81 @@ function Challenge() {
         <div className="mt-6">
           <h2 className="font-semibold mb-2">Assignment</h2>
           {displayedStudents.map((student) => (
-            <div
-              key={student.id}
-              className="flex items-center p-2 border rounded-md cursor-pointer"
-              onClick={() => {
-                // Find the matching completion based on student.id
-                const matchingCompletion = completions?.completions.find(
-                  (completion) => completion.user.id === student.id
-                );
-              
-                // Extract user and completionId from the matching completion
-                const trainee = matchingCompletion?.user;
-                const selectedCompletionId = matchingCompletion?.id;
-              
-                console.log("User selected:", trainee, "Completion ID:", selectedCompletionId);
-              
-                // Update states
-                setSelectedTrainee(trainee || null); // Pass the user object to setSelectedTrainee
-                setCompletionId(selectedCompletionId || null); // Set the completionId
-                setShowNoteForm(true); // Show the note form
-              }}
-              
-            >
-              <FaRegUserCircle className="text-xl mr-2" />
-              <span>{student.name}</span>
-              <span className="ml-auto text-gray-500">{student.status}</span>
+            <div key={student.id} className="p-2 border rounded-md">
+              {/* Main Student Info */}
+              <div
+                className="flex items-center cursor-pointer"
+                onClick={() => {
+                  // Find the matching completion based on student.id
+                  const matchingCompletion = completions?.completions.find(
+                    (completion) => completion.user.id === student.id
+                  );
+
+                  // Extract user and completionId from the matching completion
+                  const trainee = matchingCompletion?.user;
+                  const selectedCompletionId = matchingCompletion?.id;
+
+                  console.log(
+                    "User selected:",
+                    trainee,
+                    "Completion ID:",
+                    selectedCompletionId
+                  );
+
+                  // Update states
+                  setSelectedTrainee(trainee || null); // Pass the user object to setSelectedTrainee
+                  setCompletionId(selectedCompletionId || null); // Set the completionId
+                  setShowNoteForm(true); // Show the note form
+                }}
+              >
+                <FaRegUserCircle className="text-xl mr-2" />
+                <span>{student.name}</span>
+                <span className="ml-auto text-gray-500">{student.status}</span>
+              </div>
+
+              {/* Render File Names */}
+              {student.files && student.files.length > 0 && (
+                <div className="mt-2">
+                  <h3 className="text-sm font-medium">Files:</h3>
+                  <ul className="list-disc pl-4">
+                    {student.files.map((files) => (
+                      <li key={files.id} className="flex items-center gap-2">
+                        <span>{files.filename}</span>
+                        <button
+                          className="p-1 text-muted-foreground hover:text-primary transition"
+                          onClick={() => handlePreviewFile(files.filepath)}
+                          aria-label="Preview file"
+                        >
+                          <Eye className="w-5 h-5" />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                  {/* Inline Preview */}
+                  {previewedFile && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                      <div className="bg-white p-4 rounded-md shadow-md">
+                        <h3 className="font-medium text-lg mb-2">
+                          File Preview
+                        </h3>
+                        <iframe
+                          src={`http://10.10.103.13:4000${previewedFile
+                            .replace(/\\/g, "/")
+                            .replace("public", "")}`}
+                          className="w-full h-[400px] border rounded-md"
+                          title="File Preview"
+                        ></iframe>
+                        <button
+                          onClick={() => setPreviewedFile(null)}
+                          className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md"
+                        >
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

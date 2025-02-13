@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { FileText } from "lucide-react";
 import { Challenge, Lesson } from "@/types/Trainee";
-import { NoLessons } from "./Lesson-Challenge/LessonPage";
+import { NoLessons } from "./LessonChallenge/LessonPage";
 import axios from "axios";
 import SubmissionForm from "./CompletionButton";
 
@@ -16,8 +16,8 @@ export default function SubjectDetail() {
       try {
         const response = await axios.get(
           `http://10.10.103.13:4000/trainee/challenge/${id}`
-        ); // API endpoint for challenges
-        setChallenges(response.data); // Set challenges state with the response data
+        );
+        setChallenges(response.data);
         console.log("Challenge data:", response.data);
       } catch (error: any) {
         if (error.response?.status === 404) {
@@ -27,8 +27,8 @@ export default function SubjectDetail() {
           try {
             const lessonResponse = await axios.get(
               `http://10.10.103.13:4000/trainee/lesson/${id}`
-            ); // API endpoint for lessons
-            setLesson(lessonResponse.data); // Set challenges state with lesson data
+            );
+            setLesson(lessonResponse.data);
             console.log("Lesson data:", lessonResponse.data);
           } catch (lessonError) {
             console.error("Error fetching lesson data:", lessonError);
@@ -47,56 +47,60 @@ export default function SubjectDetail() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-white">
           {/* Subject Header */}
-          <div className="flex items-center space-x-4 mb-8">
-            {/* Icon */}
-            <div className="bg-blue-600 rounded-full p-4 flex-shrink-0 flex items-center justify-center">
-              <FileText className="h-8 w-8 text-white" />
-            </div>
-
-            {/* Title and Details */}
-            <div className="flex-1 flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-gray-900">
-                {challenges?.title || lessons?.title || "No Title Available"}
-              </h1>
-              <div className="ml-auto sm:ml-0 w-full sm:w-auto flex justify-end sm:justify-start">
-                <SubmissionForm itemId={id}/>
+          <div className="flex items-center justify-between mb-8">
+            {/* Left Section: Icon, Title, and Details */}
+            <div className="flex items-center space-x-4">
+              <div className="bg-blue-600 rounded-full p-4 flex-shrink-0 flex items-center justify-center">
+                <FileText className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {challenges?.title || lessons?.title || "No Title Available"}
+                </h1>
+                <p className="text-sm font-bold text-gray-800 mt-1">
+                  {challenges?.createdAt
+                    ? new Date(challenges.createdAt).toLocaleDateString(
+                        "en-GB",
+                        {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        }
+                      )
+                    : lessons?.createdAt
+                    ? new Date(lessons.createdAt).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })
+                    : "No Date Available"}
+                </p>
+                <p className="text-sm text-gray-600 mt-1">
+                  {challenges?.mentor.fullName ||
+                    lessons?.mentor.fullName ||
+                    "No Mentor Available"}
+                </p>
               </div>
             </div>
+
+            {/* Right Section: Submission Form */}
+            <div className="ml-auto sm:ml-0 w-full sm:w-auto flex justify-end sm:justify-start">
+              <SubmissionForm itemId={id} />
+            </div>
           </div>
 
-          <div className="mb-8">
-            <p className="text-sm font-bold text-gray-800 mt-1">
-              {challenges?.createdAt
-                ? new Date(challenges.createdAt).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })
-                : lessons?.createdAt
-                ? new Date(lessons.createdAt).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })
-                : "No Date Available"}
-            </p>
-            <p className="text-sm text-gray-600 mt-1">
-              {challenges?.mentor.fullName ||
-                lessons?.mentor.fullName ||
-                "No Mentor Available"}
-            </p>
-          </div>
-
-          {/* Subject Description */}
-          <div className="mb-8">
-            <h2 className="text-lg font-semibold mb-2">Description</h2>
-            <p className="text-gray-600">
-              {challenges?.description || lessons?.description}
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Description Section */}
+            <div className="md:col-span-2">
+              <h2 className="text-lg font-semibold mb-2">Description</h2>
+              <p className="text-gray-600">
+                {challenges?.description || lessons?.description}
+              </p>
+            </div>
           </div>
 
           {/* Files List */}
-          <div>
+          <div className="mt-8">
             {challenges && challenges.files ? (
               challenges.files.map((file, index) => (
                 <div

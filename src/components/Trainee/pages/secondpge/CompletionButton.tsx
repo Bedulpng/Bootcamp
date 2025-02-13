@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, AlertCircle, FileText } from "lucide-react";
+import { Plus, X, AlertCircle, FileText, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -21,6 +21,7 @@ import { Note, type File } from "@/types/Trainee";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
 import { getChallengeStatus, getLessonStatus } from "@/Api/SubmitAssignment";
+import ViewNoteModal from "../Modal/ViewNote";
 
 interface SubmissionFormProps {
   itemId: string | undefined;
@@ -40,6 +41,7 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
   const itemType = location.pathname.startsWith("/trainee/lesson")
     ? "lesson"
     : "challenge";
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const refreshToken = localStorage.getItem("refreshToken");
   let userId: string = "";
@@ -51,6 +53,8 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
       console.error("Failed to decode token:", err);
     }
   }
+  const handleModalOpen = () => setIsModalOpen(true);
+  const handleModalClose = () => setIsModalOpen(false);
 
   useEffect(() => {
     const fetchStatus = async () => {
@@ -123,24 +127,42 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
           <div className="my-4 border-t border-muted"></div>
 
           {submissionNote && submissionNote.length > 0 ? (
-            <div className="mt-4">
-              <span className="text-sm flex-1 truncate">
-                {submissionNote.map((n) => n.content).join(", ")}
-              </span>
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <span className="text-sm text-center">View Notes</span>
+              <button
+                className="p-1 text-muted-foreground hover:text-primary transition"
+                onClick={handleModalOpen}
+                aria-label="View notes"
+              >
+                <Eye className="w-5 h-5" />
+              </button>
             </div>
           ) : (
             <div className="flex items-center justify-center p-2 text-sm text-muted-foreground">
               No notes yet
             </div>
           )}
+
+          {/* Render the modal */}
+          {isModalOpen && (
+            <ViewNoteModal notes={submissionNote} onClose={handleModalClose} />
+          )}
         </CardContent>
       </Card>
     );
   }
 
+  const allowedFileTypes = ["image/png", "image/jpeg", "application/pdf"]; // Add allowed MIME types here
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      const newFiles = Array.from(event.target.files).map((file) => ({
+      const newFiles = Array.from(event.target.files).filter((file) => {
+        if (!allowedFileTypes.includes(file.type)) {
+          alert(`File type not allowed: ${file.name}`);
+          return false;
+        }
+        return true;
+      }).map((file) => ({
         id: Math.random().toString(36).substr(2, 9), // Generate a random ID
         filename: file.name,
         filepath: URL.createObjectURL(file), // Create a temporary URL
@@ -149,22 +171,23 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
           ? { lessonId: itemId }
           : { challengeId: itemId }),
       }));
+  
       setFiles((prevFiles) => [...prevFiles, ...newFiles]);
     }
   };
-
+  
   const handleRemoveFile = (id: string) => {
     setFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
   };
-
+  
   const handleSubmit = async (confirmed = false) => {
     if (files.length === 0 && !confirmed) {
       setShowDialog(true);
       return;
     }
-
+  
     setIsSubmitting(true);
-
+  
     const formData = new FormData();
     formData.append("userId", userId);
     files.forEach((file) => {
@@ -174,22 +197,22 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
         file.filename
       );
     });
-
+  
     const endpoint =
       itemType === "lesson"
         ? `http://10.10.103.13:4000/complete/lesson/${itemId}`
         : `http://10.10.103.13:4000/complete/challenge/${itemId}`;
-
+  
     try {
       const response = await fetch(endpoint, {
         method: "POST",
         body: formData,
       });
-
+  
       if (!response.ok) {
         throw new Error("Submission failed");
       }
-
+  
       const result = await response.json();
       setMessage(result.message);
     } catch (error) {
@@ -197,7 +220,7 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  };  
 
   return (
     <Card className="w-full max-w-[300px] shadow-md">

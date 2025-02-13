@@ -236,7 +236,7 @@ export default function ExploreBatch() {
               console.log('Fetched batch:', data);
     
               // Navigate to the dashboard with batch data
-              navigate(`/dashboard/batch/${batch.id}`, { state: { batchData: data } });
+              navigate(`/dashboard/class/${batch.id}`, { state: { batchData: data } });
             } catch (error) {
               if (error instanceof Error) {
                 console.error('Error fetching batch:', error.message);

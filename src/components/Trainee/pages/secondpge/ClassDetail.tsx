@@ -3,15 +3,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FileText } from "lucide-react";
 import { Class } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
+import { NoLessons } from "./LessonChallenge/LessonPage";
+import { NoChallenge } from "./LessonChallenge/ChallengePage";
 
 export default function TraineeMain() {
   const { classId } = useParams<{ classId: string }>();
   const [isFilterDropdownOpen, setFilterDropdownOpen] = useState(false);
   const [filterOption, setFilterOption] = useState<string>("Featured");
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"lesson" | "challenge" >(
-    "lesson"
-  );
+  const [activeTab, setActiveTab] = useState<"lesson" | "challenge">("lesson");
   const [classes, setClasses] = useState<Class[]>([]);
 
   useEffect(() => {
@@ -31,8 +31,7 @@ export default function TraineeMain() {
   const toggleFilterDropdown = () =>
     setFilterDropdownOpen(!isFilterDropdownOpen);
 
-  const handleTabClick = (tab: "lesson" | "challenge" ) =>
-    setActiveTab(tab);
+  const handleTabClick = (tab: "lesson" | "challenge") => setActiveTab(tab);
 
   const handleChallenge = (id: string) => navigate(`/trainee/challenge/${id}`);
 
@@ -118,49 +117,58 @@ export default function TraineeMain() {
 
       <div className="mt-8 space-y-4 mb-16">
         {activeTab === "lesson" &&
-          classes.map((classItem) =>
-            classItem.lessons.map((lesson) => (
-              <div
-                key={lesson.id}
-                className="p-4 bg-gray-100 border-black border text-black rounded-lg shadow-md cursor-pointer"
-                onClick={() => handleLesson(lesson.id)}
-              >
-                <div className="flex items-start space-x-4 mb-8">
-                  <div className="bg-white border border-black rounded-lg p-4">
-                    <FileText className="h-8 w-8 text-black" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold">{lesson.title}</h3>
-                    <p className="text-sm font-semibold text-black-500">
-                      {lesson.description}
-                    </p>
+          (classes.every((classItem) => classItem.lessons.length === 0) ? (
+            <NoLessons />
+          ) : (
+            classes.map((classItem) =>
+              classItem.lessons.map((lesson) => (
+                <div
+                  key={lesson.id}
+                  className="p-4 bg-gray-100 border-black border text-black rounded-lg shadow-md cursor-pointer"
+                  onClick={() => handleLesson(lesson.id)}
+                >
+                  <div className="flex items-start space-x-4 mb-8">
+                    <div className="bg-white border border-black rounded-lg p-4">
+                      <FileText className="h-8 w-8 text-black" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold">{lesson.title}</h3>
+                      <p className="text-sm font-semibold text-black-500">
+                        {lesson.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              ))
+            )
+          ))}
+
         {activeTab === "challenge" &&
-          classes.map((classItem) =>
-            classItem.challenges.map((challenge) => (
-              <div
-                key={challenge.id}
-                className="p-4 bg-gray-100 border-black border text-black rounded-lg shadow-md cursor-pointer"
-                onClick={() => handleChallenge(challenge.id)}
-              >
-                <div className="flex items-start space-x-4 mb-8">
-                  <div className="bg-white border border-black rounded-lg p-4">
-                    <FileText className="h-8 w-8 text-black" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold">{challenge.title}</h3>
-                    <p className="text-sm font-semibold text-black-500">
-                      {challenge.description}
-                    </p>
+          (classes.every((classItem) => classItem.challenges.length === 0) ? (
+            <NoChallenge />
+          ) : (
+            classes.map((classItem) =>
+              classItem.challenges.map((challenge) => (
+                <div
+                  key={challenge.id}
+                  className="p-4 bg-gray-100 border-black border text-black rounded-lg shadow-md cursor-pointer"
+                  onClick={() => handleChallenge(challenge.id)}
+                >
+                  <div className="flex items-start space-x-4 mb-8">
+                    <div className="bg-white border border-black rounded-lg p-4">
+                      <FileText className="h-8 w-8 text-black" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold">{challenge.title}</h3>
+                      <p className="text-sm font-semibold text-black-500">
+                        {challenge.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
+              ))
+            )
+          ))}
       </div>
     </div>
   );

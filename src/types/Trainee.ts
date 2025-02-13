@@ -22,7 +22,15 @@ export interface Profile {
 export interface ClassCover {
   id: string;
   classId: string;
-  gradientColors: string[];
+  filePath: string;
+  fileName: string;
+  mimetype: string;
+  size: number;
+}
+
+export interface BatchCover {
+  id: string;
+  batchId: string;
   filePath: string;
   fileName: string;
   mimetype: string;
@@ -176,4 +184,5 @@ export interface Batch {
   classes: Class[];
   lessons: Lesson[];
   certificates: Certificate[];
+  cover: BatchCover;
 }

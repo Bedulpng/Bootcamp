@@ -16,7 +16,7 @@ import MentorDb from "./components/Mentor/Dashboard";
 import NavbarMentor from "./components/Mentor/NavbarMentor";
 import FooterMentor from "./components/Mentor/FooterMentor";
 import NotFound from "./components/NotFound";
-import Batch from "./components/Mentor/ExploreBatch";
+import Batch from "./components/Mentor/Batch/ExploreBatch";
 import { TraineePages } from "./components/TraineeManagement/TraineePage";
 import { MentorLogin } from "./components/Login/MentorLogin";
 import { TraineeLogin } from "./components/Login/TraineeLogin";
@@ -159,6 +159,8 @@ function MainContent() {
 
 function App() {
   return (
+    <>
+    <Toaster />
     <Router>
       <Routes>
         <Route
@@ -277,8 +279,6 @@ function App() {
         <Route
           path="/dashboard/class/:batchId"
           element={
-            <>
-            <Toaster />
             <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
               <ProtectedRoute>
                 <Layout>
@@ -286,7 +286,6 @@ function App() {
                 </Layout>
               </ProtectedRoute>
             </Rbac>
-            </>
           }
         />
         <Route
@@ -426,6 +425,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
+    </>
   );
 }
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -12,7 +12,6 @@ import {
   Trophy,
   ChevronRight,
   ArrowLeft,
-  X,
   User2Icon,
 } from "lucide-react";
 import { Class, File } from "@/types/Trainee";
@@ -32,7 +31,7 @@ export default function ClassDetails() {
   const { classId } = useParams<{ classId: string }>();
   const [activeTab, setActiveTab] = useState("participants");
   const [isNavExpanded, setIsNavExpanded] = useState(true);
-  const [selectedItem, setSelectedItem] = useState<ItemDetails | null>(null);
+  const [selectedItem] = useState<ItemDetails | null>(null);
   const [classes, setClasses] = useState<Class[]>([]);
   const navigate = useNavigate();
 
@@ -50,48 +49,11 @@ export default function ClassDetails() {
     fetchData();
   }, []);
 
-  const tabVariants = {
-    hidden: { opacity: 0, x: -50 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
-    exit: { opacity: 0, x: 50, transition: { duration: 0.3 } },
-  };
-
-  const expandVariants = {
-    collapsed: {
-      gridTemplateColumns: "1fr",
-      transition: {
-        duration: 0.5,
-        ease: "easeInOut",
-      },
-    },
-    expanded: {
-      gridTemplateColumns: "1fr 1fr",
-      transition: {
-        duration: 0.5,
-        ease: "easeInOut",
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 50 },
-  };
-
   const navItems = [
     { id: "participants", icon: Users, label: "Participants" },
     { id: "challenges", icon: Trophy, label: "Challenges" },
     { id: "lessons", icon: BookOpen, label: "Lessons" },
   ];
-
-  const handleItemClick = (item: ItemDetails) => {
-    setSelectedItem(item);
-  };
-
-  const closeExpanded = () => {
-    setSelectedItem(null);
-  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -109,7 +71,6 @@ export default function ClassDetails() {
             <LessonModal />
           ) : null}
         </div>
-        {/* <h1 className="text-3xl font-bold">{classes.title}</h1> */}
       </div>
 
       <div className="flex">
@@ -233,7 +194,7 @@ export default function ClassDetails() {
                                   ? "shadow-lg"
                                   : ""
                               }`}
-                              onClick={() => handleItemClick(item)}
+                              onClick={() => navigate(`/dashboard/c/${classId}/s/${item.id}`)}
                             >
                               <Card>
                                 <CardHeader>
@@ -250,60 +211,6 @@ export default function ClassDetails() {
                       )}
                     </div>
                   </ScrollArea>
-
-                  {selectedItem && (
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg shadow-lg p-6 border border-blue-200">
-                      <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-2xl font-bold text-blue-800">
-                          {selectedItem.title}
-                        </h2>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={closeExpanded}
-                        >
-                          <X className="h-6 w-6" />
-                          <span className="sr-only">Close details</span>
-                        </Button>
-                      </div>
-
-                      <p className="text-gray-700 mb-4">
-                        {selectedItem.description}
-                      </p>
-
-                      {selectedItem.files &&
-                        selectedItem.files.map((file, index) => (
-                          <p
-                            key={index}
-                            className="text-sm font-semibold text-blue-600 mb-2"
-                          >
-                            File: {file.filename}
-                          </p>
-                        ))}
-
-                      {selectedItem.deadline && (
-                        <p className="text-sm font-semibold text-blue-600">
-                          Deadline:{" "}
-                          {new Date(selectedItem.deadline).toLocaleString()}
-                        </p>
-                      )}
-
-                      {/* Separator line */}
-                      <hr className="my-4 border-blue-300" />
-
-                      {/* Assignment & Submission Button */}
-                      <button
-                        className="w-full py-2 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-300"
-                        onClick={() =>
-                          navigate(
-                            `/dashboard/c/${classId}/s/${selectedItem.id}`
-                          )
-                        }
-                      >
-                        Assignment & Submission
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
             )}

@@ -12,6 +12,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import NoteLesson from "./Notes/NoteLesson";
+import FilePreview from "./FilePreview";
+import NoSubmitted from "./NoTask";
 
 function Challenge() {
   const { classId, id } = useParams<{
@@ -32,6 +34,7 @@ function Challenge() {
     undefined
   );
   const [previewedFile, setPreviewedFile] = useState<string | null>(null);
+  const [filteredStatus, setFilteredStatus] = useState<string | null>(null);
 
   // Function to handle file preview
   const handlePreviewFile = (filePath: string) => {
@@ -100,7 +103,7 @@ function Challenge() {
         id: completion.user.id,
         name: completion.user.fullName,
         status: completion.status,
-          files: completion.submissionFiles,
+        files: completion.submissionFiles,
       }))
     : [];
 
@@ -115,6 +118,17 @@ function Challenge() {
     setShowNoteForm(false);
     setSelectedTrainee(null); // Reset selected trainee
   };
+
+
+const handleFilterStatus = (status: string) => {
+  setFilteredStatus(status);
+};
+
+// Determine the displayed students based on the selected filter
+const filteredStudents =
+  filteredStatus !== null
+    ? displayedStudents.filter((student) => student.status === filteredStatus)
+    : displayedStudents;
 
   return (
     <div className="flex h-screen p-4">
@@ -138,6 +152,9 @@ function Challenge() {
         </h2>
         {expanded && (
           <div>
+            <p className="cursor-pointer mb-3">
+            {trainees.length} Assigned
+          </p>
             {classes.map((t) => (
               <div key={t.id}>
                 {t.users.map((user) => (
@@ -156,104 +173,90 @@ function Challenge() {
       <div className="flex-1 p-6 bg-white shadow-md rounded-lg transition-all duration-300">
         <h1 className="text-xl font-bold mb-4"> Submission </h1>
         <div className="flex items-center gap-8">
-          <p>{trainees.length} Assigned</p>
-          <p>
-            {
-              completions?.completions.filter(
-                (completion) => completion.status === "SUBMITTED"
-              ).length
-            }{" "}
+          <p className="cursor-pointer hover:text-blue-500" onClick={() => handleFilterStatus("SUBMITTED")}>
+            {completions?.completions.filter(
+              (completion) => completion.status === "SUBMITTED"
+            ).length || 0}{" "}
             Submitted
           </p>
-          <p>
-            {
-              completions?.completions.filter(
-                (completion) => completion.status === "GRADED"
-              ).length
-            }{" "}
+          <p className="cursor-pointer hover:text-blue-500" onClick={() => handleFilterStatus("GRADED")}>
+            {completions?.completions.filter(
+              (completion) => completion.status === "GRADED"
+            ).length || 0}{" "}
             Graded
           </p>
         </div>
         <div className="mt-6">
           <h2 className="font-semibold mb-2">Assignment</h2>
-          {displayedStudents.map((student) => (
-            <div key={student.id} className="p-2 border rounded-md">
-              {/* Main Student Info */}
-              <div
-                className="flex items-center cursor-pointer"
-                onClick={() => {
-                  // Find the matching completion based on student.id
-                  const matchingCompletion = completions?.completions.find(
-                    (completion) => completion.user.id === student.id
-                  );
+          {filteredStudents.length === 0 ? (
+            <NoSubmitted />
+          ) : (
+            filteredStudents.map((student) => (
+              <div key={student.id} className="p-2 border rounded-md">
+                {/* Main Student Info */}
+                <div
+                  className="flex items-center cursor-pointer"
+                  onClick={() => {
+                    // Find the matching completion based on student.id
+                    const matchingCompletion = completions?.completions.find(
+                      (completion) => completion.user.id === student.id
+                    );
 
-                  // Extract user and completionId from the matching completion
-                  const trainee = matchingCompletion?.user;
-                  const selectedCompletionId = matchingCompletion?.id;
+                    // Extract user and completionId from the matching completion
+                    const trainee = matchingCompletion?.user;
+                    const selectedCompletionId = matchingCompletion?.id;
 
-                  console.log(
-                    "User selected:",
-                    trainee,
-                    "Completion ID:",
-                    selectedCompletionId
-                  );
+                    console.log(
+                      "User selected:",
+                      trainee,
+                      "Completion ID:",
+                      selectedCompletionId
+                    );
 
-                  // Update states
-                  setSelectedTrainee(trainee || null); // Pass the user object to setSelectedTrainee
-                  setCompletionId(selectedCompletionId || null); // Set the completionId
-                  setShowNoteForm(true); // Show the note form
-                }}
-              >
-                <FaRegUserCircle className="text-xl mr-2" />
-                <span>{student.name}</span>
-                <span className="ml-auto text-gray-500">{student.status}</span>
-              </div>
-
-              {/* Render File Names */}
-              {student.files && student.files.length > 0 && (
-                <div className="mt-2">
-                  <h3 className="text-sm font-medium">Files:</h3>
-                  <ul className="list-disc pl-4">
-                    {student.files.map((files) => (
-                      <li key={files.id} className="flex items-center gap-2">
-                        <span>{files.filename}</span>
-                        <button
-                          className="p-1 text-muted-foreground hover:text-primary transition"
-                          onClick={() => handlePreviewFile(files.filepath)}
-                          aria-label="Preview file"
-                        >
-                          <Eye className="w-5 h-5" />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                  {/* Inline Preview */}
-                  {previewedFile && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                      <div className="bg-white p-4 rounded-md shadow-md">
-                        <h3 className="font-medium text-lg mb-2">
-                          File Preview
-                        </h3>
-                        <iframe
-                          src={`http://10.10.103.13:4000${previewedFile
-                            .replace(/\\/g, "/")
-                            .replace("public", "")}`}
-                          className="w-full h-[400px] border rounded-md"
-                          title="File Preview"
-                        ></iframe>
-                        <button
-                          onClick={() => setPreviewedFile(null)}
-                          className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md"
-                        >
-                          Close
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                    // Update states
+                    setSelectedTrainee(trainee || null); // Pass the user object to setSelectedTrainee
+                    setCompletionId(selectedCompletionId || null); // Set the completionId
+                    setShowNoteForm(true); // Show the note form
+                  }}
+                >
+                  <FaRegUserCircle className="text-xl mr-2" />
+                  <span>{student.name}</span>
+                  <span className="ml-auto text-gray-500">
+                    {student.status}
+                  </span>
                 </div>
-              )}
-            </div>
-          ))}
+
+                {/* Render File Names if Available */}
+                {student.files && student.files.length > 0 && (
+                  <div className="mt-2">
+                    <h3 className="text-sm font-medium">Files:</h3>
+                    <ul className="list-disc pl-4">
+                      {student.files.map((file) => (
+                        <li key={file.id} className="flex items-center gap-2">
+                          <span>{file.filename}</span>
+                          <button
+                            className="p-1 text-muted-foreground hover:text-primary transition"
+                            onClick={() => handlePreviewFile(file.filepath)}
+                            aria-label="Preview file"
+                          >
+                            <Eye className="w-5 h-5" />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Inline Preview */}
+                {previewedFile && (
+                  <FilePreview
+                    filePath={previewedFile}
+                    onClose={() => setPreviewedFile(null)}
+                  />
+                )}
+              </div>
+            ))
+          )}
         </div>
 
         <div className="mt-4 flex gap-2">

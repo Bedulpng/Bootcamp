@@ -243,6 +243,7 @@ export default function MentorDb() {
           "http://10.10.103.13:4000/admin/class"
         ); // Replace with your API URL
         setClasses(response.data);
+        console.log(response.data)
       } catch (error) {
         console.error("Error fetching classes:", error);
       }
@@ -251,9 +252,8 @@ export default function MentorDb() {
     fetchClasses();
   }, []);
 
-  const totalChallenges = classes.reduce((total, classItem) => {
-    return total + (classItem.challenges ? classItem.challenges.length : 0);
-  }, 0);
+  const totalSubject = classes.length;
+  
 
   useEffect(() => {
     async function loadTrainees() {
@@ -314,10 +314,10 @@ export default function MentorDb() {
                     <CardContent className="p-6 flex flex-col items-center justify-between h-[180px]">
                       <div className="text-center">
                         <p className="text-4xl font-bold mb-2">
-                          {totalChallenges}
+                          {totalSubject}
                         </p>
                         <p className="text-sm text-gray-600">
-                          Total Challenges
+                          Total Classes
                         </p>
                       </div>
                       <Link to="/dashboard/batch" className="w-full">

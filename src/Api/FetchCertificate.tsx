@@ -3,7 +3,7 @@ import axios from 'axios';
 // Define the function to fetch the professional profile image URL based on user ID
 export async function fetchCertificate(userId: string): Promise<string | null> {
   try {
-    const response = await axios.get(`http://10.10.103.13:4000/trainee/${userId}/certificate`);
+    const response = await axios.get(`http://192.168.1.7:4000/trainee/${userId}/certificate`);
     return response.data.certificates || null;
   } catch (error) {
     console.error("Error fetching certificate", error);
@@ -14,7 +14,7 @@ export async function fetchCertificate(userId: string): Promise<string | null> {
 // Fetch all certificates
 export async function fetchAllCertificates(): Promise<any[]> {
   try {
-    const response = await axios.get("http://10.10.103.13:4000/trainee/certificates");
+    const response = await axios.get("http://192.168.1.7:4000/trainee/certificates");
     return response.data;
   } catch (error) {
     console.error("Error fetching all certificates", error);
@@ -25,7 +25,7 @@ export async function fetchAllCertificates(): Promise<any[]> {
 // Fetch a certificate by certificate ID
 export async function fetchCertificateById(certificateId: string): Promise<any | null> {
   try {
-    const response = await axios.get(`http://10.10.103.13:4000/trainee/certificates/${certificateId}`);
+    const response = await axios.get(`http://192.168.1.7:4000/trainee/certificates/${certificateId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching certificate by ID", error);

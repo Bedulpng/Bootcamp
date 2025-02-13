@@ -27,7 +27,7 @@ export default function ExploreBatch() {
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const response = await axios.get("http://10.10.103.13:4000/admin/batch");
+        const response = await axios.get("http://192.168.1.7:4000/admin/batch");
         setBatches(response.data);
         setTimeout(() => {
           setLoading(false);
@@ -48,7 +48,7 @@ export default function ExploreBatch() {
         const decodedToken: any = jwtDecode(refreshToken as string);
         const mentorId = decodedToken.id;
         if (!mentorId) return;
-        const response = await axios.get(`http://10.10.103.13:4000/admin/batch/${mentorId}`);
+        const response = await axios.get(`http://192.168.1.7:4000/admin/batch/${mentorId}`);
         setMentorBatches(response.data);
         setTimeout(() => {
           setLoading(false);
@@ -120,58 +120,67 @@ export default function ExploreBatch() {
 
           {/* Carousel */}
           <div className="relative h-[300px] overflow-hidden rounded-xl">
-            <div
-              className={`flex cursor-pointer transition-transform duration-500 ease-in-out ${isAnimating ? "" : "transition-none"}`}
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            >
-              {batches.map((batch, index) => (
-                <div key={index} className="min-w-full relative" 
-                onClick={async () => {
-                  try {
-                  const response = await fetch(
-                      `http://10.10.103.13:4000/admin/batchs/${batch.id}`
-                  );
-                  if (!response.ok) {
-                      throw new Error(`Failed to fetch batch with ID: ${batch.id}`);
-                  }
-                  const data = await response.json();
-                  console.log("Fetched batch:", data);
-                  navigate(`/dashboard/class/${batch.id}`, {
-                      state: { batchData: data },
-                  });
-                  } catch (error) {
-                  console.error(
-                      "Error fetching batch:",
-                      error instanceof Error ? error.message : error
-                  );
-                  }
-              }}
-                >
-                  <BatchCover batchTitle={batch.batchTitle} coverImage={batch.cover.filePath} />
-                </div>
-              ))}
-            </div>
+  <div
+    className={`flex w-full h-full cursor-pointer transition-transform duration-500 ease-in-out ${
+      isAnimating ? "" : "transition-none"
+    }`}
+    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+  >
+    {batches.map((batch, index) => (
+      <div
+        key={index}
+        className="min-w-full h-full flex items-end" // Ensure proper alignment
+        onClick={async () => {
+          try {
+            const response = await fetch(
+              `http://192.168.1.7:4000/admin/batchs/${batch.id}`
+            );
+            if (!response.ok) {
+              throw new Error(`Failed to fetch batch with ID: ${batch.id}`);
+            }
+            const data = await response.json();
+            console.log("Fetched batch:", data);
+            navigate(`/dashboard/class/${batch.id}`, {
+              state: { batchData: data },
+            });
+          } catch (error) {
+            console.error(
+              "Error fetching batch:",
+              error instanceof Error ? error.message : error
+            );
+          }
+        }}
+      >
+        {/* Ensure BatchCover takes full height */}
+        <BatchCover
+          batchTitle={batch.batchTitle}
+          coverImage={batch.cover.filePath}
+        />
+      </div>
+    ))}
+  </div>
 
-            {/* Navigation Buttons */}
-            <Button
-              className="absolute left-4 top-1/2 -translate-y-1/2 transform rounded-full z-20"
-              onClick={handlePrevSlide}
-              size="icon"
-              variant="secondary"
-            >
-              <ChevronLeft className="h-6 w-6" />
-              <span className="sr-only">Previous slide</span>
-            </Button>
-            <Button
-              className="absolute right-4 top-1/2 -translate-y-1/2 transform rounded-full z-20"
-              onClick={handleNextSlide}
-              size="icon"
-              variant="secondary"
-            >
-              <ChevronRight className="h-6 w-6" />
-              <span className="sr-only">Next slide</span>
-            </Button>
-          </div>
+  {/* Navigation Buttons */}
+  <Button
+    className="absolute left-4 top-1/2 -translate-y-1/2 transform rounded-full z-20"
+    onClick={handlePrevSlide}
+    size="icon"
+    variant="secondary"
+  >
+    <ChevronLeft className="h-6 w-6" />
+    <span className="sr-only">Previous slide</span>
+  </Button>
+  <Button
+    className="absolute right-4 top-1/2 -translate-y-1/2 transform rounded-full z-20"
+    onClick={handleNextSlide}
+    size="icon"
+    variant="secondary"
+  >
+    <ChevronRight className="h-6 w-6" />
+    <span className="sr-only">Next slide</span>
+  </Button>
+</div>
+
 
           <div className="mt-2 text-right text-sm text-gray-600">
             Showing {(activeFilter === "all-batch" ? batches : mentorBatches).length} Batch

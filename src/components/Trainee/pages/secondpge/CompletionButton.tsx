@@ -200,8 +200,8 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
   
     const endpoint =
       itemType === "lesson"
-        ? `http://10.10.103.13:4000/complete/lesson/${itemId}`
-        : `http://10.10.103.13:4000/complete/challenge/${itemId}`;
+        ? `http://192.168.1.7:4000/complete/lesson/${itemId}`
+        : `http://192.168.1.7:4000/complete/challenge/${itemId}`;
   
     try {
       const response = await fetch(endpoint, {

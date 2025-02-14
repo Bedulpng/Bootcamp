@@ -5,6 +5,7 @@ import { Class } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
 import { NoLessons } from "./LessonChallenge/LessonPage";
 import { NoChallenge } from "./LessonChallenge/ChallengePage";
+import { ClassDetailCover } from "./ClassDetailCover";
 
 export default function TraineeMain() {
   const { classId } = useParams<{ classId: string }>();
@@ -39,10 +40,11 @@ export default function TraineeMain() {
 
   return (
     <div className="bg-white overflow-hidden min-h-screen md:px-44 lg:px-10 xl:px-56">
-      <div className="flex justify-center items-center h-[40vh] w-full bg-gradient-to-r from-gray-900 to-black rounded-lg shadow-2xl mt-8 hover:shadow-3xl transition-shadow duration-300">
-        <h2 className="text-[40px] font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 animate-text">
-          {classes.map((classes) => classes.className) || "Class Name"}
-        </h2>
+      <div className="relative flex justify-center items-end h-[250px] w-full overflow-hidden rounded-xl">
+        <ClassDetailCover
+          coverImage={classes.length > 0 ? classes[0].cover.filePath : ""}
+          title={classes.length > 0 ? classes[0].className : "Class Name"}
+        />
       </div>
 
       <div className="flex justify-between mt-8">

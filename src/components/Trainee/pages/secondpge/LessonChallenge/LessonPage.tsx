@@ -81,7 +81,7 @@ export default function LessonsPage() {
         const decodedToken = jwtDecode<{ id: string }>(refreshToken);
         const userId = decodedToken.id;
 
-        const response = await axios.get(`http://192.168.1.7:4000/trainee/class/user/${userId}`);
+        const response = await axios.get(`http://10.10.103.13:4000/trainee/class/user/${userId}`);
         setClassList(response.data.map((cls: { id: string; className: string }) => ({
           id: cls.id,
           className: cls.className,
@@ -104,7 +104,7 @@ export default function LessonsPage() {
         const decodedToken = jwtDecode<{ id: string }>(refreshToken);
         const userId = decodedToken.id;
 
-        let url = `http://192.168.1.7:4000/mentor/class-lesson/${userId}`;
+        let url = `http://10.10.103.13:4000/mentor/class-lesson/${userId}`;
 
         // Only add query params if "ALL" is not selected
         if (selectedStatus !== "ALL" || selectedClass !== "all") {

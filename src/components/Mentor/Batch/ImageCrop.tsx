@@ -5,6 +5,7 @@ import ReactCrop, { type Crop } from "react-image-crop"
 import "react-image-crop/dist/ReactCrop.css"
 import { X } from "lucide-react"
 import axios from "axios";
+import { toast } from "react-hot-toast"
 
 interface ImageCropModalProps {
   isOpen: boolean
@@ -64,9 +65,18 @@ export function ImageCropModal({ isOpen, onClose, imageUrl, onCropComplete, batc
               formData.append("coverImage", blob, "cropped-image.jpg");
 
               try {
-                await axios.post("http://192.168.1.7:4000/uploads/batch-cover", formData, {
+                await axios.post("http://10.10.103.13:4000/uploads/batch-cover", formData, {
                   headers: {
                     "Content-Type": "multipart/form-data",
+                  },
+                });
+
+                toast.success("Cover Updated!", {
+                  position: "top-center",
+                  style: {
+                    background: "green",
+                    color: "white",
+                    fontWeight: "bold",
                   },
                 });
 

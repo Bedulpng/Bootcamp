@@ -39,7 +39,7 @@ export default function NoteLesson({ addNote, selectedTrainee, completionId, onC
       try {
         // Attempt to add a note to the lesson completion
         const response = await axios.post(
-          `http://192.168.1.7:4000/mentor/note/${completionId}/lesson`,
+          `http://10.10.103.13:4000/mentor/note/${completionId}/lesson`,
           {
             content,
             visibility,
@@ -61,7 +61,7 @@ export default function NoteLesson({ addNote, selectedTrainee, completionId, onC
           console.log("LessonCompletion not found, trying ChallengeCompletion route...");
           // Fallback to the challenge completion note router
           const response = await axios.post(
-            `http://192.168.1.7:4000/mentor/note/${completionId}/challenge`,
+            `http://10.10.103.13:4000/mentor/note/${completionId}/challenge`,
             {
               content,
               visibility,

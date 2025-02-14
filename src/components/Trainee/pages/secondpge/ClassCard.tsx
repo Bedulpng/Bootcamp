@@ -1,37 +1,51 @@
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Image, Folder } from "lucide-react";
+import { ClassCover } from "./CoverClass";
 
 interface ClassCardProps {
   classNames: string;
   mentorName: string;
   mentorProfile: string;
-  onClick?: () => void; // Add onClick to the props
+  coverImage: string;
+  onClick?: () => void;
 }
 
 export function ClassCard({
   classNames,
   mentorName,
   mentorProfile,
-  onClick, // Destructure onClick
+  coverImage,
+  onClick,
 }: ClassCardProps) {
   return (
     <Card
-      className="w-[300px] h-[320px] overflow-hidden group shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 cursor-pointer" // Add cursor-pointer
-      onClick={onClick} // Attach onClick handler here
+      className="w-[300px] h-[350px] overflow-hidden group shadow-md hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+      onClick={onClick}
     >
       {/* Header Section with Gradient */}
-      <div className="relative h-[120px] bg-gradient-to-br from-slate-700 to-slate-500 p-4 text-white">
-        {/* Class Info */}
-        <div className="space-y-2">
+      <div className="relative h-[169px] p-4 text-white overflow-hidden">
+        {/* ClassCover as Background */}
+        <div className="absolute inset-0">
+          <ClassCover coverImage={coverImage} />
+          <div className="absolute inset-0 bg-black/40"></div>
+        </div>
+
+        {/* Class Info - Ensure Text Stays Above Background */}
+        <div className="relative z-10 space-y-2">
           <h2 className="text-lg font-bold">{classNames}</h2>
           <p className="text-sm opacity-90">{mentorName}</p>
         </div>
+      </div>
 
-        {/* Profile Picture */}
-        <Avatar className="absolute -bottom-10 right-4 h-20 w-20 border-4 border-white shadow-lg">
-          <AvatarImage src={`http://192.168.1.7:4000${mentorProfile.replace(/\\/g, "/").replace("public", "")}`} alt={mentorName} />
+      {/* Profile Picture Overlapping Both Sections */}
+      <div className="relative">
+        <Avatar className="absolute -top-10 right-4 h-20 w-20 border-4 border-white shadow-lg z-20">
+          <AvatarImage
+            src={`http://10.10.103.13:4000${mentorProfile
+              .replace(/\\/g, "/")
+              .replace("public", "")}`}
+            alt={mentorName}
+          />
           <AvatarFallback className="text-lg font-bold">
             {mentorName
               .split(" ")
@@ -49,17 +63,7 @@ export function ClassCard({
       </div>
 
       {/* Footer with Actions */}
-      <div className="p-3 border-t flex justify-between">
-        <p className="text-muted-foreground text-xs">Actions</p>
-        <div className="flex space-x-2">
-          <Button variant="ghost" size="icon">
-            <Image className="h-4 w-4 text-slate-600" />
-          </Button>
-          <Button variant="ghost" size="icon">
-            <Folder className="h-4 w-4 text-slate-600" />
-          </Button>
-        </div>
-      </div>
+      <div className="p-3 border-t flex justify-between"></div>
     </Card>
   );
 }

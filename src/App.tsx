@@ -48,14 +48,20 @@ import Challange from "./components/Mentor/Submission";
 import SubjectDetail from "./components/Trainee/pages/secondpge/SubjectDetail";
 import ClassPage from "./components/Mentor/ClassCard/ClassPage";
 import { Toaster } from "react-hot-toast";
+import { ExaminerLogin } from "./components/Login/ExaminerLogin";
+import { SidebarExaminer } from "./components/Examiner/Sidebar/Sidebar";
+import ExploreBatchExaminer from "./components/Examiner/Batch/ExploreBatch";
+import ExaminerDashboard from "./components/Examiner/Dashboard";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith("/dashboard");
   const isAdmin = window.location.pathname.startsWith("/admin");
   const isTrainee = window.location.pathname.startsWith("/trainee");
+  const isExaminer = window.location.pathname.startsWith("/examiner");
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSidebarOpenTrainee, setIsSidebarOpenTrainee] = useState(true);
+  const [isSidebarOpenExaminer, setIsSidebarOpenExaminer] = useState(true);
   const [currentPage, setCurrentPage] = useState("dashboard");
 
   const renderAdminPage = () => {
@@ -80,12 +86,12 @@ function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={`min-h-screen ${
-        isAdmin || isDashboard || isTrainee
+        isAdmin || isDashboard || isTrainee || isExaminer
           ? "bg-white dark:bg-gray-900"
           : "bg-white"
       }`}
     >
-      {isAdmin || isDashboard || isTrainee ? (
+      {isAdmin || isDashboard || isTrainee || isExaminer ? (
         <div className="flex h-screen overflow-x-hidden">
           {/* Sidebar */}
           {isAdmin && (
@@ -102,13 +108,19 @@ function Layout({ children }: { children: React.ReactNode }) {
               setIsOpen={setIsSidebarOpenTrainee}
             />
           )}
+          {/* {isExaminer && (
+            <SidebarExaminer
+              isOpen={isSidebarOpenExaminer}
+              setIsOpen={setIsSidebarOpenExaminer}
+            />
+          )} */}
 
           {/* Main Content Area */}
           <div className="flex-1 flex flex-col">
             {/* Navbar */}
             {isAdmin ? (
               <NavbarAdmin />
-            ) : isTrainee ? (
+            ) : isTrainee || isExaminer ? (
               <NavbarTrainee />
             ) : (
               <NavbarMentor />
@@ -121,7 +133,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 
             {/* Footer */}
             <div className="w-full">
-              {isAdmin || isDashboard || isTrainee ? (
+              {isAdmin || isDashboard || isTrainee || isExaminer ? (
                 <FooterMentor />
               ) : (
                 <Footer />
@@ -263,19 +275,6 @@ function App() {
             </Rbac>
           }
         />
-        {/* ini route buat class page yang sebelumnya}
-        {/* <Route
-          path="/dashboard/batch/:batchId"
-          element={
-            <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
-              <ProtectedRoute>
-                <Layout>
-                  <DashboardPage />
-                </Layout>
-              </ProtectedRoute>
-            </Rbac>
-          }
-        /> */}
         <Route
           path="/dashboard/class/:batchId"
           element={
@@ -302,6 +301,7 @@ function App() {
         />
         <Route path="/login/mentor" element={<MentorLogin />} />
         <Route path="/login/trainee" element={<TraineeLogin />} />
+        <Route path="/login/examiner" element={<ExaminerLogin />} />
         <Route
           path="/trainee/class/:classId"
           element={
@@ -418,6 +418,18 @@ function App() {
             <div className="min-h-screen w-full bg-[#111111] flex items-center justify-center">
               <LoginForm />
             </div>
+          }
+        />
+        <Route
+          path="/examiner/dashboard"
+          element={
+            <Rbac allowedRoles={["EXAMINER", "ADMIN"]}>
+              <ProtectedRoute>
+                <Layout>
+                  <ExaminerDashboard />
+                </Layout>
+              </ProtectedRoute>
+            </Rbac>
           }
         />
         <Route path="/unauthorized" element={<NotAuthorized />} />

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 
 interface LoginFormProps {
-  type: 'mentor' | 'trainee';
+  type: 'examiner' | 'mentor' | 'trainee';
   onSubmit: (e: React.FormEvent<HTMLFormElement>, loginData: { email: string; password: string }) => Promise<void>;
 }
 
@@ -55,14 +55,14 @@ export function LoginForm({ type, onSubmit }: LoginFormProps) {
         />
       </div>
 
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <a
           href="#"
           className={`text-sm font-medium text-${accentColor}-600 hover:text-${accentColor}-500`}
         >
           Don't have an account?
         </a>
-      </div>
+      </div> */}
 
       <button
         type="submit"

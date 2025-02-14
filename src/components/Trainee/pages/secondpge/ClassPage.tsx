@@ -59,6 +59,7 @@ export default function ClassesPage() {
         cls.mentors
           .flatMap((mentor) => mentor.profiles.map((p) => p.filepath))
           .join(", ") || "path/to/default-image.jpg", 
+      coverImage: cls.cover.filePath,
     };
 
     console.log("Transformed class data:", transformedData);

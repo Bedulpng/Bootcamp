@@ -49,8 +49,6 @@ import SubjectDetail from "./components/Trainee/pages/secondpge/SubjectDetail";
 import ClassPage from "./components/Mentor/ClassCard/ClassPage";
 import { Toaster } from "react-hot-toast";
 import { ExaminerLogin } from "./components/Login/ExaminerLogin";
-import { SidebarExaminer } from "./components/Examiner/Sidebar/Sidebar";
-import ExploreBatchExaminer from "./components/Examiner/Batch/ExploreBatch";
 import ExaminerDashboard from "./components/Examiner/Dashboard";
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -61,7 +59,6 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSidebarOpenTrainee, setIsSidebarOpenTrainee] = useState(true);
-  const [isSidebarOpenExaminer, setIsSidebarOpenExaminer] = useState(true);
   const [currentPage, setCurrentPage] = useState("dashboard");
 
   const renderAdminPage = () => {

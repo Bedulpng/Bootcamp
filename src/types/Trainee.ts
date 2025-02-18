@@ -70,6 +70,21 @@ export interface Challenge {
   completionStatus: string;
 }
 
+export interface Presentation {
+  id: string;
+  title: string;
+  description: string;
+  deadline: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  class: Class[];
+  batch: Batch[];
+  files: File[];
+  mentor: Mentor;
+  completionStatus: string;
+}
+
 
 export interface Completions {
   id: string;

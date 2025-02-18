@@ -49,7 +49,7 @@ import SubjectDetail from "./components/Trainee/pages/secondpge/SubjectDetail";
 import ClassPage from "./components/Mentor/ClassCard/ClassPage";
 import { Toaster } from "react-hot-toast";
 import { ExaminerLogin } from "./components/Login/ExaminerLogin";
-import ExaminerDashboard from "./components/Examiner/Dashboard";
+import ExaminerDashboard from "./components/Examiner/Page";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith("/dashboard");

@@ -18,6 +18,7 @@ import { Class, File } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
 import LessonModal from "./Modal/LessonUpload";
 import ChallengeModal from "./Modal/ChallengeUpload";
+import PresentationModal from "./Modal/PresentationUpload";
 
 interface ItemDetails {
   id: string;
@@ -68,7 +69,10 @@ export default function ClassDetails() {
           {activeTab === "challenges" ? (
             <ChallengeModal />
           ) : activeTab === "lessons" ? (
+            <>
             <LessonModal />
+            <PresentationModal />
+            </>
           ) : null}
         </div>
       </div>

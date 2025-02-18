@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { FaRegUserCircle } from "react-icons/fa";
 import { ChevronRight, ChevronLeft, Eye } from "lucide-react";
-import { Class, Completions, Trainee } from "@/types/Trainee";
+import { Class, Completions, Files, Trainee } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
 import axios from "axios";
 import {
@@ -231,7 +231,7 @@ const filteredStudents =
                   <div className="mt-2">
                     <h3 className="text-sm font-medium">Files:</h3>
                     <ul className="list-disc pl-4">
-                      {student.files.map((file) => (
+                      {student.files.map((file : Files) => (
                         <li key={file.id} className="flex items-center gap-2">
                           <span>{file.filename}</span>
                           <button

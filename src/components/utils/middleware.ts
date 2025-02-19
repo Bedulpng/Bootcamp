@@ -38,15 +38,18 @@ export const verifyRoles = (allowedRoles: string[]): boolean => {
 };
 
 // Check if the user is verified
-export const isVerified = (): boolean => {
-  const token = localStorage.getItem('accessToken');
-  if (!token) return false;
-
+export const isVerified = async (): Promise<boolean> => {
   try {
-    const decoded = jwtDecode<CustomJwtPayload>(token);
-    return decoded.status === 'VERIFIED';
+    const token = localStorage.getItem("refreshToken");
+    if (!token) return false;
+
+    const response = await axios.get("http://192.168.1.12:4000/trainee/status", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    return response.data?.Status === "VERIFIED";
   } catch (error) {
-    console.error('Error decoding token:', error);
+    console.error("Error fetching user status:", error);
     return false;
   }
 };
@@ -79,8 +82,8 @@ export const checkTokenValidity = async (): Promise<boolean> => {
   const accessToken = localStorage.getItem('accessToken'); // Retrieve token from storage
 
   try {
-    const response = await axios.post(
-      'http://10.10.103.13:4000/api/check-token',
+    await axios.post(
+      'http://192.168.1.12:4000/api/check-token',
       {}, 
       {
         headers: {

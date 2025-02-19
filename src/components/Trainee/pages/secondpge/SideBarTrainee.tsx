@@ -30,7 +30,7 @@ export function SidebarTrainee({ isOpen, setIsOpen }: { isOpen: boolean; setIsOp
     }
 
     try {
-      const response = await axios.post("http://10.10.103.13:4000/trainee/logout", {
+      const response = await axios.post("http://192.168.1.12:4000/trainee/logout", {
         accessToken,
       });
 

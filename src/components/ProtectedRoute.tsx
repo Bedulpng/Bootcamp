@@ -1,7 +1,9 @@
-// src/components/ProtectedRoute.tsx
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import { isLoggedIn, checkTokenValidity } from './utils/middleware';
+import { isLoggedIn, checkTokenValidity, isVerified } from './utils/middleware';
+import { MultiStepFormModal } from './Trainee/pages/secondpge/Verification/multi-step-form-modal';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -9,6 +11,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const validateAccess = async () => {
@@ -21,6 +24,21 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     };
     validateAccess();
   }, []);
+
+  useEffect(() => {
+    if (!isVerified()) {
+      toast.error('You have to verify first!');
+      setIsModalOpen(true);
+    }
+  }, []);
+
+  if (!isVerified()) {
+    return (
+      <>
+        {isModalOpen && <MultiStepFormModal onClose={() => setIsModalOpen(false)} isOpen/>}
+      </>
+    );
+  }
 
   if (isValid === null) {
     return <div>Loading...</div>;

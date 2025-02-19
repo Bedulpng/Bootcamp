@@ -15,7 +15,7 @@ export default function FilePreview({ filePath, onClose }: FilePreviewProps) {
     if (!filePath) return
 
     const formattedPath = filePath.replace(/\\/g, "/").replace("public", "")
-    const url = `http://10.10.103.13:4000${formattedPath}`
+    const url = `http://192.168.1.12:4000${formattedPath}`
     setPreviewUrl(url)
 
     const img = new Image()

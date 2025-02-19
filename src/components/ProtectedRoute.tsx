@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { isLoggedIn, checkTokenValidity, isVerified } from './utils/middleware';
-import { MultiStepFormModal } from './Trainee/pages/secondpge/Verification/multi-step-form-modal';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
+import { isLoggedIn, checkTokenValidity, isVerified } from "./utils/middleware";
+import { MultiStepFormModal } from "./Trainee/pages/secondpge/Verification/multi-step-form-modal";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -11,6 +11,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const [isValid, setIsValid] = useState<boolean | null>(null);
+  const [isVerifiedUser, setIsVerifiedUser] = useState<boolean | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -19,28 +20,35 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
         const tokenValid = await checkTokenValidity();
         setIsValid(tokenValid);
       } else {
-        setIsValid(false); 
+        setIsValid(false);
       }
     };
     validateAccess();
   }, []);
 
   useEffect(() => {
-    if (!isVerified()) {
-      toast.error('You have to verify first!');
-      setIsModalOpen(true);
-    }
+    const checkVerification = async () => {
+      const verified = await isVerified();
+      setIsVerifiedUser(verified);
+
+      if (!verified) {
+        toast.error("You have to verify first!");
+        setIsModalOpen(true);
+      }
+    };
+
+    checkVerification();
   }, []);
 
-  if (!isVerified()) {
+  if (isVerifiedUser === false) {
     return (
       <>
-        {isModalOpen && <MultiStepFormModal onClose={() => setIsModalOpen(false)} isOpen/>}
+        {isModalOpen && <MultiStepFormModal onClose={() => setIsModalOpen(false)} isOpen />}
       </>
     );
   }
 
-  if (isValid === null) {
+  if (isValid === null || isVerifiedUser === null) {
     return <div>Loading...</div>;
   }
 

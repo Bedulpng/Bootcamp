@@ -429,13 +429,6 @@ function App() {
             </Rbac>
           }
         />
-        {/* <Route
-          path="/tester"
-          element={
-                  <MultiStepFormModal />
-
-          }
-        /> */}
         <Route path="/unauthorized" element={<NotAuthorized />} />
         {/* Route without Layout */}
         <Route path="*" element={<NotFound />} />

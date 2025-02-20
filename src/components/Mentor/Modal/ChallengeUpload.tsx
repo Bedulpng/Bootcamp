@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Upload } from "lucide-react"
-import LessonChallengeUploadForm from "../ChallengeUpload"
+import ChallengeUpload  from "../ChallengeUpload"
 import { useParams } from "react-router-dom"
 
 export default function ChallengeModal() {
@@ -23,7 +23,7 @@ export default function ChallengeModal() {
         <DialogHeader>
           <DialogTitle>Upload Challenge</DialogTitle>
         </DialogHeader>
-        <LessonChallengeUploadForm onSuccess={() => setIsOpen(false)} classId={classId} batchId={batchId}/>
+        <ChallengeUpload onSuccess={() => setIsOpen(false)} classId={classId} batchId={batchId}/>
       </DialogContent>
     </Dialog>
   )

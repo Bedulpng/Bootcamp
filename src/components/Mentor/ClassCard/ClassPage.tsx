@@ -74,9 +74,10 @@ export default function ClassPage() {
               <ClassCard
                 key={classItem.id}
                 id={classItem.id}
+                batchId={batchId}
                 className={classItem.className}
                 createdAt={classItem.createdAt}
-                coverImage={classItem.cover.filePath}
+                coverImage={classItem.cover?.filePath}
                 onEditColors={() => handleEditColors(classItem.id)}
               />
             ))

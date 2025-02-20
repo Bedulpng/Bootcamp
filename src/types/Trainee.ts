@@ -27,7 +27,6 @@ export interface ClassCover {
   mimetype: string;
   size: number;
 }
-
 export interface BatchCover {
   id: string;
   batchId: string;
@@ -77,12 +76,23 @@ export interface Presentation {
   deadline: string;
   status: string;
   createdAt: string;
-  updatedAt: string;
-  class: Class[];
-  batch: Batch[];
+  class: Class;
+  batch: Batch;
   files: File[];
   mentor: Mentor;
-  completionStatus: string;
+  completionStatus?: string;
+}
+
+export interface PresentationCompletion {
+  id: string;
+  userId: string;
+  presentationId: string;
+  completed: boolean
+  status: string;
+  completedAt: string;
+  user: Trainee;
+  final : Presentation;
+  submissionFiles: Files[];
 }
 
 
@@ -173,6 +183,7 @@ export interface Class {
   users: Trainee[];
   challenges: Challenge[];
   lessons: Lesson[];
+  presentation : Presentation[];
   cover: ClassCover;
 }
 

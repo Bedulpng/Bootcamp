@@ -162,7 +162,7 @@ export default function ExploreBatch() {
                   {/* Ensure BatchCover takes full height */}
                   <BatchCover
                     batchTitle={batch.batchTitle}
-                    coverImage={batch.cover.filePath}
+                    coverImage={batch.cover?.filePath}
                   />
                 </div>
               ))}

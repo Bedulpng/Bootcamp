@@ -25,6 +25,39 @@ interface ColorPickerModalProps {
   batchId: string;
 }
 
+export const colors = [
+  {
+    name: "blue",
+    class: "bg-blue-600",
+    filePath: "/public/cover/blue-cover.jpg",
+  },
+  {
+    name: "green",
+    class: "bg-green-500",
+    filePath: "/public/cover/green-cover.jpg",
+  },
+  {
+    name: "orange",
+    class: "bg-orange-500",
+    filePath: "/public/cover/orange-cover.jpg",
+  },
+  {
+    name: "purple",
+    class: "bg-purple-600",
+    filePath: "/public/cover/purple-cover.jpg",
+  },
+  {
+    name: "red",
+    class: "bg-red-600",
+    filePath: "/public/cover/red-cover.jpg",
+  },
+  {
+    name: "yellow",
+    class: "bg-yellow-300",
+    filePath: "/public/cover/yellow-cover.jpg",
+  },
+];
+
 export function ColorPickerModal({
   isOpen,
   onClose,
@@ -35,39 +68,6 @@ export function ColorPickerModal({
 }: ColorPickerModalProps) {
   const [selectedColor, setSelectedColor] = useState("gray");
   const [coverImage, setCoverImage] = useState(currentCoverImage || "");
-
-  const colors = [
-    {
-      name: "blue",
-      class: "bg-blue-600",
-      filePath: "/public/cover/blue-cover.jpg",
-    },
-    {
-      name: "green",
-      class: "bg-green-500",
-      filePath: "/public/cover/green-cover.jpg",
-    },
-    {
-      name: "orange",
-      class: "bg-orange-500",
-      filePath: "/public/cover/orange-cover.jpg",
-    },
-    {
-      name: "purple",
-      class: "bg-purple-600",
-      filePath: "/public/cover/purple-cover.jpg",
-    },
-    {
-      name: "red",
-      class: "bg-red-600",
-      filePath: "/public/cover/red-cover.jpg",
-    },
-    {
-      name: "yellow",
-      class: "bg-yellow-300",
-      filePath: "/public/cover/yellow-cover.jpg",
-    },
-  ];
 
   const handleColorSelect = (colorName: string) => {
     const selected = colors.find((color) => color.name === colorName);

@@ -1,139 +1,212 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { BarChart, Calendar, Eye, GraduationCap, Search } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-
-interface Presentation {
-  id: number
-  student: string
-  batch: string
-  class: string
-  presentationName: string
-  status: string
-  fileType: string
-  fileUrl: string
-}
+import { useState, useEffect } from "react";
+import { BarChart, Calendar, Eye, GraduationCap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Batch,
+  Class,
+  Files,
+  PresentationCompletion,
+  Trainee,
+} from "@/types/Trainee";
+import axios from "axios";
+import NotePresentation from "./NoteFinalPresentation";
 
 export default function ExaminerDashboard() {
-  const [selectedBatch, setSelectedBatch] = React.useState<string>("all")
-  const [selectedClass, setSelectedClass] = React.useState<string>("all")
-  const [isLoading, setIsLoading] = React.useState(true)
+  const [selectedBatch, setSelectedBatch] = useState<string>("all");
+  const [selectedClass, setSelectedClass] = useState<string>("all");
+  const [presentations, setPresentations] = useState<PresentationCompletion[]>(
+    []
+  );
+  const [batches, setBatches] = useState<Batch[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedTrainee, setSelectedTrainee] = useState<Trainee | null>(null);
+  const [showNoteForm, setShowNoteForm] = useState(false);
+  const [presentationId, setPresentationId] = useState<string | undefined>(
+    undefined
+  );
 
-  // Mock data for presentations
-  const presentations: Presentation[] = [
-    {
-      id: 1,
-      student: "Alice Johnson",
-      batch: "2023A",
-      class: "Web Development",
-      presentationName: "E-commerce Platform",
-      status: "Pending",
-      fileType: "pdf",
-      fileUrl: "/sample.pdf",
-    },
-    {
-      id: 2,
-      student: "Bob Smith",
-      batch: "2023A",
-      class: "Data Science",
-      presentationName: "Predictive Analytics Model",
-      status: "Graded",
-      fileType: "mp4",
-      fileUrl: "/sample.mp4",
-    },
-    {
-      id: 3,
-      student: "Charlie Brown",
-      batch: "2023B",
-      class: "Mobile App Development",
-      presentationName: "Health Tracking App",
-      status: "Pending",
-      fileType: "pdf",
-      fileUrl: "/sample.pdf",
-    },
-    {
-      id: 4,
-      student: "Diana Ross",
-      batch: "2023B",
-      class: "Web Development",
-      presentationName: "Social Media Dashboard",
-      status: "Pending",
-      fileType: "pptx",
-      fileUrl: "/sample.pptx",
-    },
-    {
-      id: 5,
-      student: "Ethan Hunt",
-      batch: "2023C",
-      class: "Data Science",
-      presentationName: "Natural Language Processing Tool",
-      status: "Graded",
-      fileType: "mp4",
-      fileUrl: "/sample.mp4",
-    },
-  ]
+  const addNote = (note: any) => {
+    console.log("Note added:", note);
+    setShowNoteForm(false); // Close the modal after adding a note
+  };
 
-  React.useEffect(() => {
+  const handleCancel = () => {
+    setShowNoteForm(false);
+    setSelectedTrainee(null); // Reset selected trainee
+  };
+
+  const handleGradeClick = (trainee: Trainee, presentationId: string) => {
+    setSelectedTrainee(trainee);
+    setPresentationId(presentationId);
+    setShowNoteForm(true);
+  };
+
+  useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        const response = await axios.get(
+          "http://192.168.1.12:4000/admin/batch"
+        );
+        setBatches(response.data);
+      } catch (error) {
+        console.error("Error fetching batches:", error);
+      }
+    };
+    fetchBatches();
+  }, []);
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const response = await axios.get(
+          "http://192.168.1.12:4000/admin/class"
+        );
+        setClasses(response.data);
+      } catch (error) {
+        console.error("Error fetching batches:", error);
+      }
+    };
+    fetchClasses();
+  }, []);
+
+  useEffect(() => {
+    const fetchFinalPresentations = async () => {
+      try {
+        const params: Record<string, string> = {};
+        if (selectedBatch !== "all") params.batchId = selectedBatch;
+        if (selectedClass !== "all") params.classId = selectedClass;
+
+        const response = await axios.get(
+          "http://192.168.1.12:4000/examiner/presentations/completions",
+          { params }
+        );
+
+        setPresentations(response.data);
+      } catch (err) {
+        console.error("Failed to fetch final presentations:", err);
+      } finally {
+      }
+    };
+
+    fetchFinalPresentations();
+  }, [selectedBatch, selectedClass]);
+
+  useEffect(() => {
     // Simulate API call
     setTimeout(() => {
-      setIsLoading(false)
-    }, 1500)
-  }, [])
+      setIsLoading(false);
+    }, 1500);
+  }, []);
 
-  const filteredPresentations = presentations.filter(
-    (p) =>
-      (selectedBatch === "all" || p.batch === selectedBatch) && (selectedClass === "all" || p.class === selectedClass),
-  )
+  const totalPresentations = presentations.length;
+  const gradedPresentations = presentations.filter(
+    (p) => p.status === "GRADED"
+  ).length;
+  const pendingPresentations = presentations.filter(
+    (p) => p.status === "NOTSUBMITTED" || p.status === "LATE"
+  ).length;
 
-  const totalPresentations = presentations.length
-  const gradedPresentations = presentations.filter((p) => p.status === "Graded").length
-  const pendingPresentations = totalPresentations - gradedPresentations
+  const FilePreview: React.FC<{ file: Files }> = ({ file }) => {
+    const [, setAspectRatio] = useState<{
+      width: number;
+      height: number;
+    } | null>(null);
 
-  const FilePreview: React.FC<{ file: Presentation }> = ({ file }) => {
-    // React.useEffect(() => {
-    //   if (file.fileType === "mp4") {
-    //     const video = document.createElement("video")
-    //     video.onloadedmetadata = () => {
-    //       setAspectRatio({ width: video.videoWidth, height: video.videoHeight })
-    //     }
-    //     video.src = file.fileUrl
-    //   }
-    // }, [file])
+    useEffect(() => {
+      if (file.mimetype === "video/mp4") {
+        const video = document.createElement("video");
+        video.src = file.filepath;
+        video.preload = "metadata";
 
-    if (file.fileType === "mp4") {
-      return (
-        <div className="w-full aspect-video bg-black flex items-center justify-center">
-          <video src={file.fileUrl} controls className="w-full h-full">
-            Your browser does not support the video tag.
-          </video>
+        video.onloadedmetadata = () => {
+          setAspectRatio({
+            width: video.videoWidth,
+            height: video.videoHeight,
+          });
+        };
+      }
+    }, [file]);
+
+    const renderVideo = () => (
+      <div className="w-full aspect-video bg-black flex items-center justify-center">
+        <video
+          src={`http://192.168.1.12:4000${file.filepath
+            .replace(/\\/g, "/")
+            .replace("public", "")}`}
+          controls
+          className="w-full h-full"
+          aria-label="Video preview"
+        >
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    );
+
+    const renderPDF = () => (
+      <iframe
+        // src={`file.filepath.replace`}
+        src={`http://192.168.1.12:4000${file.filepath
+          .replace(/\\/g, "/")
+          .replace("public", "")}`}
+        title={`Preview of ${file.filename}`}
+        className="w-full h-[80vh]"
+        aria-label="PDF preview"
+      />
+    );
+
+    const renderUnsupported = () => (
+      <div className="w-full h-[80vh] flex items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <p className="mb-4">
+            Preview not available for {file.mimetype.toUpperCase()} files
+          </p>
+          <Button asChild>
+            <a href={file.filename} download>
+              Download File
+            </a>
+          </Button>
         </div>
-      )
-    } else if (file.fileType === "pdf") {
-      return <iframe src={file.fileUrl} title={`Preview of ${file.presentationName}`} className="w-full h-[80vh]" />
-    } else {
-      // For other file types (e.g., pptx), show a placeholder or download link
-      return (
-        <div className="w-full h-[80vh] flex items-center justify-center bg-gray-100">
-          <div className="text-center">
-            <p className="mb-4">Preview not available for {file.fileType.toUpperCase()} files</p>
-            <Button asChild>
-              <a href={file.fileUrl} download>
-                Download File
-              </a>
-            </Button>
-          </div>
-        </div>
-      )
+      </div>
+    );
+
+    switch (file.mimetype) {
+      case "video/mp4":
+        return renderVideo();
+      case "image/jpeg":
+      case "image/png":
+      case "application/pdf":
+        return renderPDF();
+      default:
+        return renderUnsupported();
     }
-  }
+  };
 
   return (
     <div className="min-h-screen p-6">
@@ -141,7 +214,9 @@ export default function ExaminerDashboard() {
         <div className="grid gap-6 md:grid-cols-3 mb-8">
           <Card className="bg-blue-500 text-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Presentations</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Presentations
+              </CardTitle>
               <GraduationCap className="h-4 w-4" />
             </CardHeader>
             <CardContent>
@@ -154,7 +229,9 @@ export default function ExaminerDashboard() {
           </Card>
           <Card className="bg-green-500 text-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Graded Presentations</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Graded Presentations
+              </CardTitle>
               <BarChart className="h-4 w-4" />
             </CardHeader>
             <CardContent>
@@ -167,7 +244,9 @@ export default function ExaminerDashboard() {
           </Card>
           <Card className="bg-amber-500 text-white">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Trainee Not Submitted Yet</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Trainee Not Submitted Yet
+              </CardTitle>
               <Calendar className="h-4 w-4" />
             </CardHeader>
             <CardContent>
@@ -181,9 +260,12 @@ export default function ExaminerDashboard() {
         </div>
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">
           <div className="p-6 bg-gray-50 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-800">Presentations</h2>
+            <h2 className="text-xl font-semibold text-gray-800">
+              Presentations
+            </h2>
             <p className="text-sm text-gray-600 mt-1">
-              Manage and grade student final presentations across all batches and classes.
+              Manage and grade student final presentations across all batches
+              and classes.
             </p>
           </div>
           <div className="p-6">
@@ -195,9 +277,11 @@ export default function ExaminerDashboard() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Batches</SelectItem>
-                    <SelectItem value="2023A">Batch 2023A</SelectItem>
-                    <SelectItem value="2023B">Batch 2023B</SelectItem>
-                    <SelectItem value="2023C">Batch 2023C</SelectItem>
+                    {batches.map((batch) => (
+                      <SelectItem key={batch.id} value={batch.id}>
+                        {batch.batchTitle}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <Select value={selectedClass} onValueChange={setSelectedClass}>
@@ -206,20 +290,22 @@ export default function ExaminerDashboard() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Classes</SelectItem>
-                    <SelectItem value="Web Development">Web Development</SelectItem>
-                    <SelectItem value="Data Science">Data Science</SelectItem>
-                    <SelectItem value="Mobile App Development">Mobile App Development</SelectItem>
+                    {classes.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.className}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="relative">
+              {/* <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <Input
                   type="search"
                   placeholder="Search presentations..."
                   className="pl-10 w-full md:w-[300px] bg-white"
                 />
-              </div>
+              </div> */}
             </div>
             <div className="overflow-x-auto">
               <Table>
@@ -228,7 +314,9 @@ export default function ExaminerDashboard() {
                     <TableHead className="font-semibold">Student</TableHead>
                     <TableHead className="font-semibold">Batch</TableHead>
                     <TableHead className="font-semibold">Class</TableHead>
-                    <TableHead className="font-semibold">Final Presentation</TableHead>
+                    <TableHead className="font-semibold">
+                      Final Presentation
+                    </TableHead>
                     <TableHead className="font-semibold">Status</TableHead>
                     <TableHead className="font-semibold">Action</TableHead>
                   </TableRow>
@@ -257,25 +345,45 @@ export default function ExaminerDashboard() {
                           </TableCell>
                         </TableRow>
                       ))
-                    : filteredPresentations.map((presentation) => (
-                        <TableRow key={presentation.id} className="hover:bg-gray-50">
-                          <TableCell className="font-medium">{presentation.student}</TableCell>
-                          <TableCell>{presentation.batch}</TableCell>
-                          <TableCell>{presentation.class}</TableCell>
+                    : presentations.map((presentation) => (
+                        <TableRow
+                          key={presentation.id}
+                          className="hover:bg-gray-50"
+                        >
+                          <TableCell className="font-medium">
+                            {presentation.user.fullName}
+                          </TableCell>
+                          <TableCell>
+                            {presentation.final.batch.batchTitle}
+                          </TableCell>
+                          <TableCell>
+                            {presentation.final.class.className}
+                          </TableCell>
                           <TableCell>
                             <Dialog>
                               <DialogTrigger asChild>
-                                <Button variant="link" className="p-0 h-auto font-normal">
-                                  {presentation.presentationName}
+                                <Button
+                                  variant="link"
+                                  className="p-0 h-auto font-normal"
+                                >
+                                  {presentation.submissionFiles.map(
+                                    (f) => f.filename
+                                  )}
                                   <Eye className="ml-2 h-4 w-4" />
                                 </Button>
                               </DialogTrigger>
-                              <DialogContent className="max-w-[80vw] w-full max-h-[90vh] p-0 overflow-hidden">
+                              <DialogContent className="max-w-[60vw] w-full max-h-[90vh] overflow-hidden">
                                 <DialogHeader className="p-6 bg-white border-b">
-                                  <DialogTitle>{presentation.presentationName}</DialogTitle>
+                                  <DialogTitle>
+                                    {presentation.submissionFiles.map(
+                                      (f) => f.filename
+                                    )}
+                                  </DialogTitle>
                                 </DialogHeader>
                                 <div className="flex-grow overflow-auto">
-                                  <FilePreview file={presentation} />
+                                  <FilePreview
+                                    file={presentation.submissionFiles[0]}
+                                  />
                                 </div>
                               </DialogContent>
                             </Dialog>
@@ -283,7 +391,7 @@ export default function ExaminerDashboard() {
                           <TableCell>
                             <span
                               className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                presentation.status === "Pending"
+                                presentation.status === "SUBMITTED"
                                   ? "bg-amber-100 text-amber-800"
                                   : "bg-green-100 text-green-800"
                               }`}
@@ -293,22 +401,40 @@ export default function ExaminerDashboard() {
                           </TableCell>
                           <TableCell>
                             <Button
-                              variant={presentation.status === "Pending" ? "default" : "default"}
+                              variant="default"
                               size="sm"
-                              className={presentation.status === "Pending" ? "bg-indigo-600 hover:bg-indigo-700" : "bg-indigo-600 hover:bg-indigo-700"}
+                              className="bg-indigo-600 hover:bg-indigo-700"
+                              onClick={() =>
+                                handleGradeClick(
+                                  presentation.user,
+                                  presentation.id
+                                )
+                              }
                             >
-                              {presentation.status === "Pending" ? "Grade" : "Grade"}
+                              Grade
                             </Button>
                           </TableCell>
                         </TableRow>
                       ))}
                 </TableBody>
+                <Dialog open={showNoteForm} onOpenChange={setShowNoteForm}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Grade Submisson</DialogTitle>
+                    </DialogHeader>
+                    <NotePresentation
+                      addNote={addNote}
+                      selectedTrainee={selectedTrainee}
+                      onCancel={handleCancel}
+                      presentationId={presentationId}
+                    />
+                  </DialogContent>
+                </Dialog>
               </Table>
             </div>
           </div>
         </div>
       </main>
     </div>
-  )
+  );
 }
-

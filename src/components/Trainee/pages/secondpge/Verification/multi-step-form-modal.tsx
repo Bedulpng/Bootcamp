@@ -34,6 +34,8 @@ export const MultiStepFormModal: React.FC<MultiStepFormModalProps> = ({ isOpen, 
     skills: {},
   })
 
+  toast.error("Verify First")
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose()
@@ -94,6 +96,7 @@ export const MultiStepFormModal: React.FC<MultiStepFormModalProps> = ({ isOpen, 
       })
       toast.success("Verification form submitted successfully")
       onClose() // Close the modal on success
+      window.location.reload(); // Refresh the page
     } catch (error) {
       console.error("Error submitting form:", error)
       if (axios.isAxiosError(error)) {

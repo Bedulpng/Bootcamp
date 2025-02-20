@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ArrowLeft,
   User2Icon,
+  Presentation,
 } from "lucide-react";
 import { Class, File } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
@@ -48,13 +49,42 @@ export default function ClassDetails() {
     };
 
     fetchData();
-  }, []);
+  }, [classId]);
 
   const navItems = [
     { id: "participants", icon: Users, label: "Participants" },
     { id: "challenges", icon: Trophy, label: "Challenges" },
     { id: "lessons", icon: BookOpen, label: "Lessons" },
+    { id: "presentations", icon: Presentation, label: "Presentations" },
   ];
+
+  // Render items based on activeTab
+  const renderItems = () => {
+    switch (activeTab) {
+      case "challenges":
+        return classes.flatMap((classItem) => classItem.challenges ?? []);
+      case "lessons":
+        return classes.flatMap((classItem) => classItem.lessons ?? []);
+      case "presentations":
+        return classes.flatMap((classItem) => classItem.presentation ?? []);
+      default:
+        return [];
+    }
+  };
+
+  // Modal based on activeTab
+  const renderModal = () => {
+    switch (activeTab) {
+      case "challenges":
+        return <ChallengeModal />;
+      case "lessons":
+        return <LessonModal />;
+      case "presentations":
+        return <PresentationModal />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -65,16 +95,7 @@ export default function ClassDetails() {
             <span className="sr-only">Back to Classes</span>
           </Button>
         </Link>
-        <div className="top-4 right-4 z-50">
-          {activeTab === "challenges" ? (
-            <ChallengeModal />
-          ) : activeTab === "lessons" ? (
-            <>
-            <LessonModal />
-            <PresentationModal />
-            </>
-          ) : null}
-        </div>
+        <div className="top-4 right-4 z-50">{renderModal()}</div>
       </div>
 
       <div className="flex">
@@ -127,95 +148,64 @@ export default function ClassDetails() {
             key={activeTab}
             className="container mx-auto px-4 min-h-screen overflow-hidden"
           >
-            {activeTab === "participants" && (
+            {activeTab === "participants" ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {Array.isArray(classes) &&
-                  classes.map((classItem, index) =>
-                    classItem.users.map((user, userIndex) => (
-                      <Card
-                        key={`${index}-${userIndex}`}
-                        className="overflow-hidden"
-                      >
-                        <CardContent className="p-4 flex items-center">
-                          {user.profiles?.[0]?.filepath ? (
-                            <img
-                              src={`http://192.168.1.12:4000${user.profiles[0].filepath
-                                .replace(/\\/g, "/")
-                                .replace("public", "")}`}
-                              alt={user.fullName || "No userName"}
-                              width={50}
-                              height={50}
-                              className="rounded-full mr-4"
-                            />
-                          ) : (
-                            <User2Icon className="w-12 h-12 text-gray-500 mr-4 rounded-full" />
-                          )}
-                          <div>
-                            <h3 className="font-semibold">
-                              {user.fullName || "No userName"}
-                            </h3>
-                            <p className="text-sm text-gray-600">
-                              {user.role || "Student"}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))
-                  )}
+                {classes.map((classItem, index) =>
+                  classItem.users.map((user, userIndex) => (
+                    <Card key={`${index}-${userIndex}`} className="overflow-hidden">
+                      <CardContent className="p-4 flex items-center">
+                        {user.profiles?.[0]?.filepath ? (
+                          <img
+                            src={`http://192.168.1.12:4000${user.profiles[0].filepath
+                              .replace(/\\/g, "/")
+                              .replace("public", "")}`}
+                            alt={user.fullName || "No userName"}
+                            width={50}
+                            height={50}
+                            className="rounded-full mr-4"
+                          />
+                        ) : (
+                          <User2Icon className="w-12 h-12 text-gray-500 mr-4 rounded-full" />
+                        )}
+                        <div>
+                          <h3 className="font-semibold">{user.fullName || "No userName"}</h3>
+                          <p className="text-sm text-gray-600">{user.role || "Student"}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
               </div>
-            )}
-            {(activeTab === "challenges" || activeTab === "lessons") && (
+            ) : (
               <div className="relative">
-                {/* Upload Form Positioned on Top Right */}
-
-                <div className="grid gap-4">
-                  <ScrollArea className="h-[calc(100vh-200px)]">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-4">
-                      {classes.length === 0 ||
-                      (activeTab === "challenges" &&
-                        classes.every(
-                          (classItem) => classItem.challenges.length === 0
-                        )) ||
-                      (activeTab === "lessons" &&
-                        classes.every(
-                          (classItem) => classItem.lessons.length === 0
-                        )) ? (
-                        <p className="text-gray-600 text-center">
-                          No {activeTab} yet
-                        </p>
-                      ) : (
-                        classes
-                          .flatMap((classItem) =>
-                            activeTab === "challenges"
-                              ? classItem.challenges
-                              : classItem.lessons
-                          )
-                          .map((item, index) => (
-                            <div
-                              key={index}
-                              className={`overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 ${
-                                selectedItem === item
-                                  ? "shadow-lg"
-                                  : ""
-                              }`}
-                              onClick={() => navigate(`/dashboard/c/${classId}/s/${item.id}`)}
-                            >
-                              <Card>
-                                <CardHeader>
-                                  <CardTitle>{item.title}</CardTitle>
-                                </CardHeader>
-                                <CardContent>
-                                  <p className="text-sm text-gray-600 truncate">
-                                    {item.description}
-                                  </p>
-                                </CardContent>
-                              </Card>
-                            </div>
-                          ))
-                      )}
-                    </div>
-                  </ScrollArea>
-                </div>
+                <ScrollArea className="h-[calc(100vh-200px)]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-4">
+                    {renderItems().length === 0 ? (
+                      <p className="text-gray-600 text-center">No {activeTab} yet</p>
+                    ) : (
+                      renderItems().map((item: any, index: number) => (
+                        <div
+                          key={index}
+                          className={`overflow-hidden cursor-pointer hover:shadow-lg transition-all duration-300 ${
+                            selectedItem === item ? "shadow-lg" : ""
+                          }`}
+                          onClick={() =>
+                            activeTab !== "presentations" &&
+                            navigate(`/dashboard/c/${classId}/s/${item.id}`)
+                          }                        >
+                          <Card>
+                            <CardHeader>
+                              <CardTitle>{item.title}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="text-sm text-gray-600 truncate">{item.description}</p>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </ScrollArea>
               </div>
             )}
           </div>

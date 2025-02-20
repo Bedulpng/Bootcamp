@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Modal from "react-modal";
-import { LogIn, X, User2, Presentation, ChevronDown } from "lucide-react";
+import { LogIn, X, User2, ChevronDown, Users } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
 export function Navbar() {
@@ -198,8 +198,8 @@ export function Navbar() {
             className="flex items-center px-4 py-2 bg-gray-100 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors"
             onClick={() => navigate("/login/mentor")}
           >
-            <Presentation className="h-5 w-5 mr-2" />
-            Mentor
+            <Users className="h-5 w-5 mr-2" />
+            Grader
           </button>
         </div>
       </Modal>

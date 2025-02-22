@@ -66,8 +66,9 @@ export function ColorPickerModal({
   batchTitle,
   batchId,
 }: ColorPickerModalProps) {
-  const [selectedColor, setSelectedColor] = useState("gray");
+  const [selectedColor, setSelectedColor] = useState("");
   const [coverImage, setCoverImage] = useState(currentCoverImage || "");
+  console.log("current cover", currentCoverImage)
 
   const handleColorSelect = (colorName: string) => {
     const selected = colors.find((color) => color.name === colorName);

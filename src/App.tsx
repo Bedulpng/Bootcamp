@@ -45,7 +45,7 @@ import NavbarTrainee from "./components/Trainee/pages/secondpge/layouts/navbar";
 import LessonsPage from "./components/Trainee/pages/secondpge/LessonChallenge/LessonPage";
 import ChallengesPage from "./components/Trainee/pages/secondpge/LessonChallenge/ChallengePage";
 import Challange from "./components/Mentor/Submission";
-import SubjectDetail from "./components/Trainee/pages/secondpge/SubjectDetail";
+import SubjectDetail from "./components/Trainee/pages/secondpge/subjectdetail";
 import ClassPage from "./components/Mentor/ClassCard/ClassPage";
 import { Toaster } from "react-hot-toast";
 import { ExaminerLogin } from "./components/Login/ExaminerLogin";

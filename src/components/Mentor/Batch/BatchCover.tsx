@@ -7,15 +7,15 @@ interface BatchCoverProps {
 }
 
 export function BatchCover({ batchTitle, coverImage }: BatchCoverProps) {
-  const getRandomColorFilePath = () => {
-    const randomIndex = Math.floor(Math.random() * colors.length);
-    return colors[randomIndex].filePath.replace("/public", "");
-  };
+  // const getRandomColorFilePath = () => {
+  //   const randomIndex = Math.floor(Math.random() * colors.length);
+  //   return colors[randomIndex].filePath.replace("/public", "");
+  // };
 
   return (
     <div className="relative w-full pt-[56.25%] rounded-t-lg overflow-hidden flex flex-col">
       <div className="absolute inset-0">
-        <img
+        {/* <img
           src={
             coverImage
               ? `http://192.168.1.12:4000${coverImage.replace("/public", "")}`
@@ -24,8 +24,8 @@ export function BatchCover({ batchTitle, coverImage }: BatchCoverProps) {
           alt={`Cover for ${batchTitle}`}
           className="w-full h-full object-cover"
           loading="eager"
-        />
-        {/* {coverImage ? (
+        /> */}
+        {coverImage ? (
           <img
             src={`http://192.168.1.12:4000${coverImage.replace("/public", "")}`}
             alt={`Cover for ${batchTitle}`}
@@ -39,7 +39,7 @@ export function BatchCover({ batchTitle, coverImage }: BatchCoverProps) {
             className="w-full h-full object-cover"
             loading="eager"
           />
-        )} */}
+        )}
       </div>
 
       {/* Batch title positioned relatively at the bottom */}

@@ -3,6 +3,7 @@ import { X, Search, UserPlus, Users, GraduationCap } from 'lucide-react';
 import { fetchClasses } from '@/Api/FetchingBatches&Classes';
 import { fetchMentors, fetchTrainees } from '@/Api/FetchUsersByRole';
 import { Class, Mentor } from '@/types/Trainee';
+import { colors } from '@/components/Mentor/Batch/EditCover';
 import axios from 'axios';
 
 interface BatchModalProps {

@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { X, Search, UserPlus, Users, GraduationCap } from "lucide-react";
 import {
-  fetchClasses
-} from "@/Api/FetchingBatches&Classes";
+  X,
+  Search,
+  UserPlus,
+  GraduationCap,
+  Wallpaper,
+  CheckCheck,
+} from "lucide-react";
+import { fetchClasses } from "@/Api/FetchingBatches&Classes";
 import { fetchMentors, fetchTrainees } from "@/Api/FetchUsersByRole";
 import { Class, Mentor } from "@/types/Trainee";
-import  axios  from "axios";
+import axios from "axios";
 
 interface BatchModalProps {
   isOpen: boolean;
@@ -32,7 +37,7 @@ export const BatchEdit: React.FC<BatchModalProps> = ({
   const [mentorSearch, setMentorSearch] = useState("");
   const [participants, setParticipants] = useState<Mentor[]>([]);
   const [fetchedParticipant, setFetchedParticipant] = useState<Mentor[]>([]);
-  const [participantSearch, setParticipantSearch] = useState('');
+  const [participantSearch, setParticipantSearch] = useState("");
 
   useEffect(() => {
     const getClasses = async () => {
@@ -75,7 +80,7 @@ export const BatchEdit: React.FC<BatchModalProps> = ({
       )
     : [];
 
-    const filteredMentors = mentorSearch
+  const filteredMentors = mentorSearch
     ? fetchedMentors.filter((person) =>
         (person.fullName ?? "No Name")
           .toLowerCase()
@@ -83,7 +88,7 @@ export const BatchEdit: React.FC<BatchModalProps> = ({
       )
     : [];
 
-    const filteredParticipants = participantSearch
+  const filteredParticipants = participantSearch
     ? fetchedParticipant.filter((person) =>
         (person.fullName ?? "No Name")
           .toLowerCase()
@@ -91,43 +96,49 @@ export const BatchEdit: React.FC<BatchModalProps> = ({
       )
     : [];
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      // Construct the payload with conditional inclusion of fields
+      const payload: Record<string, any> = {};
 
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      try {
-        // Construct the payload with conditional inclusion of fields
-        const payload: Record<string, any> = {};
-    
-        if (batchNum) payload.batchNum = batchNum;
-        if (batchTitle) payload.batchTitle = batchTitle;
-        if (batchDesc) payload.batchDesc = batchDesc;
-        if (selectedClasses.length > 0)
-          payload.batchClass = selectedClasses.map((cls) => cls.id); // Include only if there are selected classes
-        if (mentors.length > 0) payload.mentors = mentors.map((mentor) => mentor.id); // Include only if there are mentors
-        if (participants.length > 0)
-          payload.participants = participants.map((participant) => participant.id); // Include only if there are participants
-    
-        // Make the API request
-        await axios.put(`http://192.168.1.12:4000/admin/batch/${batchId}`, payload, {
+      if (batchNum) payload.batchNum = batchNum;
+      if (batchTitle) payload.batchTitle = batchTitle;
+      if (batchDesc) payload.batchDesc = batchDesc;
+      if (selectedClasses.length > 0)
+        payload.batchClass = selectedClasses.map((cls) => cls.id); // Include only if there are selected classes
+      if (mentors.length > 0)
+        payload.mentors = mentors.map((mentor) => mentor.id); // Include only if there are mentors
+      if (participants.length > 0)
+        payload.participants = participants.map(
+          (participant) => participant.id
+        ); // Include only if there are participants
+
+      // Make the API request
+      await axios.put(
+        `http://192.168.1.12:4000/admin/batch/${batchId}`,
+        payload,
+        {
           headers: {
             Authorization: "Bearer " + localStorage.getItem("refreshToken"),
           },
-        });
-    
-        console.log("Batch successfully edited:", payload);
-        onClose();
-      } catch (error) {
-        console.error("Error submitting batch:", error);
-      }
-    };    
+        }
+      );
 
-    const removeMentor = (id: string) => {
-      setMentors(mentors.filter(m => m.id !== id));
-    };
+      console.log("Batch successfully edited:", payload);
+      onClose();
+    } catch (error) {
+      console.error("Error submitting batch:", error);
+    }
+  };
 
-    const removeUsers = (id: string) => {
-      setMentors(mentors.filter(m => m.id !== id));
-    };
+  const removeMentor = (id: string) => {
+    setMentors(mentors.filter((m) => m.id !== id));
+  };
+
+  const removeUsers = (id: string) => {
+    setMentors(mentors.filter((m) => m.id !== id));
+  };
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -378,19 +389,12 @@ export const BatchEdit: React.FC<BatchModalProps> = ({
 
           <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
             <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
-            >
-              Cancel
-            </button>
-            <button
               type="submit"
               disabled={!selectedClasses}
-              className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 disabled:bg-yellow-300 font-medium flex items-center gap-2"
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-yellow-300 font-medium flex items-center gap-2"
             >
-              <Users className="w-5 h-5" />
-              Edit Batch
+              <CheckCheck className="w-5 h-5" />
+              Confirm Edit
             </button>
           </div>
         </form>

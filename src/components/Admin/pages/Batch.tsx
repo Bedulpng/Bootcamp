@@ -5,16 +5,19 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { BatchEdit } from "../Modal/Edit-Modal/EditBatchModal";
 import { fetchBatches } from "@/Api/FetchingBatches&Classes";
 import { Batch } from "@/types/Trainee";
-import { PenBoxIcon } from "lucide-react";
+import { PenBoxIcon, Wallpaper } from "lucide-react";
 import { BatchModal } from "../Modal/BatchModal";
+import { ColorPickerModal } from "@/components/Mentor/Batch/EditCover";
 
 export default function BatchAdmin() {
   const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
   const [isBatchEditOpen, setIsBatchEditOpen] = useState(false);
   const [fetchedBatch, setFetchedBatch] = useState<Batch[]>([]);
   const [selectedBatchId, setSelectedBatchId] = useState<string>(""); // State for selected batch ID
-  const [batchTitle, setSelectedBatchTitle] = useState<string>(""); // State for selected batch title
-
+  const [batchTitle, setSelectedBatchTitle] = useState<string>("");
+  const [coverImagePath, setCoverImagePath] = useState<string>("");
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false); 
+  
   useEffect(() => {
     const getBatches = async () => {
       try {
@@ -47,6 +50,13 @@ export default function BatchAdmin() {
     setIsBatchEditOpen(true); // Open the modal for editing
   };
 
+  const handleEditCover = (batchId: string, batchTitle: string, coverImage: string) => {
+    setSelectedBatchTitle(batchTitle)
+    setSelectedBatchId(batchId)
+    setCoverImagePath(coverImage)
+    setIsColorPickerOpen(true); // Open the ColorPickerModal after a short delay
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -64,6 +74,14 @@ export default function BatchAdmin() {
         <BatchModal 
           isOpen={isBatchModalOpen} 
           onClose={handleCloseBatchModal}
+        />
+        <ColorPickerModal
+          isOpen={isColorPickerOpen}
+          onClose={() => setIsColorPickerOpen(false)}
+          onImageUpload={(file) => console.log("Image uploaded:", file)}
+          currentCoverImage={coverImagePath}
+          batchTitle={batchTitle}
+          batchId={selectedBatchId}
         />
       </div>
 
@@ -101,6 +119,16 @@ export default function BatchAdmin() {
                         handleEditBatch(batch.id, batch.batchTitle)}} // Pass the batch ID on click
                     >
                       <PenBoxIcon className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-green-600 hover:text-green-600"
+                      onClick={() => {
+                        console.log("Edit Batch", batch.id, batch.batchTitle, batch.cover.filePath);
+                        handleEditCover(batch.id, batch.batchTitle, batch.cover.filePath)}} // Pass the batch ID on click
+                    >
+                      <Wallpaper className="h-4 w-4" />
                     </Button>
                   </TableCell>
                 </TableRow>

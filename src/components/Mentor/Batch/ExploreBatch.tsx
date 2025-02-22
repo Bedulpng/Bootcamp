@@ -30,7 +30,7 @@ export default function ExploreBatch() {
     const fetchBatches = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.12:4000/admin/batch"
+          "http://192.168.254.104:4000/admin/batch"
         );
         setBatches(response.data);
         setTimeout(() => {
@@ -53,7 +53,7 @@ export default function ExploreBatch() {
         const mentorId = decodedToken.id;
         if (!mentorId) return;
         const response = await axios.get(
-          `http://192.168.1.12:4000/admin/batch/${mentorId}`
+          `http://192.168.254.104:4000/admin/batch/${mentorId}`
         );
         setMentorBatches(response.data);
         setTimeout(() => {
@@ -90,10 +90,10 @@ export default function ExploreBatch() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      handleNextSlide();
+      setCurrentSlide((prev) => (prev + 1) % totalSlides);
     }, 2000);
     return () => clearInterval(timer);
-  }, []);
+  }, [totalSlides]);  
 
   const handleFilterChange = (filter: "all-batch" | "my-batch") => {
     setActiveFilter(filter);
@@ -139,7 +139,7 @@ export default function ExploreBatch() {
                   onClick={async () => {
                     try {
                       const response = await fetch(
-                        `http://192.168.1.12:4000/admin/batchs/${batch.id}`
+                        `http://192.168.254.104:4000/admin/batchs/${batch.id}`
                       );
                       if (!response.ok) {
                         throw new Error(

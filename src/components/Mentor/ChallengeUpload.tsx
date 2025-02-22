@@ -78,7 +78,7 @@ export default function ChallengeUpload({ onSuccess, classId, batchId }: Challen
     files.forEach((file) => formData.append("files", file));
   
     try {
-      const response = await fetch("http://192.168.1.12:4000/uploads/challenge", {
+      const response = await fetch("http://192.168.254.104:4000/uploads/challenge", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${refreshToken}`, 

@@ -10,7 +10,7 @@ export function ClassCover({ className, coverImage }: ClassCoverProps) {
     <div className="relative w-full pt-[56.25%] rounded-t-lg overflow-hidden">
       {coverImage ? (
         <img
-          src={`http://192.168.1.12:4000${coverImage.replace("/public", "")}`}
+          src={`http://192.168.254.104:4000${coverImage.replace("/public", "")}`}
           alt={`Cover for ${className}`}
           className="absolute inset-0 w-full h-full object-cover"
           loading="eager"

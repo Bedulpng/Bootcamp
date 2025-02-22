@@ -3,7 +3,7 @@ import { Notification } from "../types/Notification";
 
 export const fetchNotifications = async (): Promise<Notification[]> => {
     try {
-        const response = await axios.get(`http://192.168.1.12:4000/mentor/notifications`, {
+        const response = await axios.get(`http://192.168.254.104:4000/mentor/notifications`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
             },

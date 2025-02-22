@@ -72,7 +72,7 @@ export default function ExaminerDashboard() {
     const fetchBatches = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.12:4000/admin/batch"
+          "http://192.168.254.104:4000/admin/batch"
         );
         setBatches(response.data);
       } catch (error) {
@@ -86,7 +86,7 @@ export default function ExaminerDashboard() {
     const fetchClasses = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.12:4000/admin/class"
+          "http://192.168.254.104:4000/admin/class"
         );
         setClasses(response.data);
       } catch (error) {
@@ -104,7 +104,7 @@ export default function ExaminerDashboard() {
         if (selectedClass !== "all") params.classId = selectedClass;
 
         const response = await axios.get(
-          "http://192.168.1.12:4000/examiner/presentations/completions",
+          "http://192.168.254.104:4000/examiner/presentations/completions",
           { params }
         );
 
@@ -157,7 +157,7 @@ export default function ExaminerDashboard() {
     const renderVideo = () => (
       <div className="w-full aspect-video bg-black flex items-center justify-center">
         <video
-          src={`http://192.168.1.12:4000${file.filepath
+          src={`http://192.168.254.104:4000${file.filepath
             .replace(/\\/g, "/")
             .replace("public", "")}`}
           controls
@@ -172,7 +172,7 @@ export default function ExaminerDashboard() {
     const renderPDF = () => (
       <iframe
         // src={`file.filepath.replace`}
-        src={`http://192.168.1.12:4000${file.filepath
+        src={`http://192.168.254.104:4000${file.filepath
           .replace(/\\/g, "/")
           .replace("public", "")}`}
         title={`Preview of ${file.filename}`}

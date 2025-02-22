@@ -4,6 +4,7 @@ import { fetchClasses } from '@/Api/FetchingBatches&Classes';
 import { fetchMentors, fetchTrainees } from '@/Api/FetchUsersByRole';
 import { Class, Mentor } from '@/types/Trainee';
 import { colors } from '@/components/Mentor/Batch/EditCover';
+import { toast } from 'react-hot-toast';
 import axios from 'axios';
 
 interface BatchModalProps {
@@ -98,29 +99,60 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const payload = {
+      // Create the batch
+      const batchPayload = {
         batchNum,
         batchTitle,
         batchDesc,
-        batchClass: selectedClasses.map((cls) => cls.id), // Extract class IDs
-        mentorIds: mentors.map((mentor) => mentor.id), // Extract mentor IDs
-        participantIds: participants.map((participant) => participant.id), // Extract participant IDs
+        batchClass: selectedClasses.map((cls) => cls.id),
+        mentorIds: mentors.map((mentor) => mentor.id),
+        participantIds: participants.map((participant) => participant.id),
         startDate: startDate.toISOString(),
-        endDate: endDate ? new Date(endDate).toISOString() : null, // Ensure nullability
-        status: 'Ongoing', // Update the batch status if needed
+        endDate: endDate ? new Date(endDate).toISOString() : null,
+        status: 'Ongoing',
       };
-  
-      await axios.post('http://192.168.1.12:4000/admin/batch', payload, {
+    
+      const batchResponse = await axios.post('http://192.168.254.104:4000/admin/batch', batchPayload, {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('refreshToken'),
         },
       });
-  
-      console.log('Batch successfully created:', payload);
+    
+      console.log('Batch successfully created:', batchResponse.data);
+      const batchId = batchResponse.data.id;
+      console.log(batchResponse.data.id)
+    
+      if (!batchId) {
+        throw new Error('Batch ID not found in response.');
+      }
+    
+      // Randomize colors array and pick a random color
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    
+      if (!randomColor?.filePath) {
+        console.warn('No valid cover file path found.');
+        onClose();
+        return;
+      }
+    
+      // Upload the batch cover using the random color's filePath
+      const formData = new FormData();
+      formData.append('batchId', batchId);
+      const fileName = randomColor?.filePath?.split('/').pop() ?? 'default-cover.jpg';
+      formData.append('fileName', fileName);
+      console.log("got color: ", fileName)
+    
+      await axios.post('http://192.168.254.104:4000/uploads/batch-cover', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+    
+      toast.success('Batch and cover successfully created!');
       onClose();
     } catch (error) {
-      console.error('Error submitting batch:', error);
+      console.error('Error during batch creation or cover upload:', error);
+      toast.error('Failed to create batch or upload cover.');
     }
+       
   };
 
   const removeMentor = (id: string) => {

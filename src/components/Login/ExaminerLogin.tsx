@@ -19,7 +19,7 @@ export function ExaminerLogin() {
     };
 
     try {
-      const response = await fetch('http://192.168.1.12:4000/trainee/login', {
+      const response = await fetch('http://192.168.254.104:4000/trainee/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -65,7 +65,7 @@ export function ImageCropModal({ isOpen, onClose, imageUrl, onCropComplete, batc
               formData.append("coverImage", blob, "cropped-image.jpg");
 
               try {
-                await axios.post("http://192.168.1.12:4000/uploads/batch-cover", formData, {
+                await axios.post("http://192.168.254.104:4000/uploads/batch-cover", formData, {
                   headers: {
                     "Content-Type": "multipart/form-data",
                   },

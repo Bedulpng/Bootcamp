@@ -11,7 +11,7 @@ export function ClassDetailCover({ title, coverImage }: BatchCoverProps) {
       <div className="absolute inset-0">
         {coverImage ? (
           <img
-            src={`http://192.168.1.12:4000${coverImage.replace("/public", "")}`}
+            src={`http://192.168.254.104:4000${coverImage.replace("/public", "")}`}
             alt={`Cover for ${title}`}
             className="w-full h-full object-cover"
             loading="eager"

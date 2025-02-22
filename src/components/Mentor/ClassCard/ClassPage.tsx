@@ -22,7 +22,7 @@ export default function ClassPage() {
     const fetchClasses = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://192.168.1.12:4000/admin/class/${batchId}/batch`);
+        const response = await fetch(`http://192.168.254.104:4000/admin/class/${batchId}/batch`);
         if (!response.ok) {
           throw new Error(`Failed to fetch classes for batch with ID: ${batchId}`);
         }

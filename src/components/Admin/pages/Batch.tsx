@@ -1,13 +1,21 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { BatchEdit } from "../Modal/Edit-Modal/EditBatchModal";
 import { fetchBatches } from "@/Api/FetchingBatches&Classes";
 import { Batch } from "@/types/Trainee";
 import { PenBoxIcon, Wallpaper } from "lucide-react";
 import { BatchModal } from "../Modal/BatchModal";
 import { ColorPickerModal } from "@/components/Mentor/Batch/EditCover";
+import { ImageCropModal } from "@/components/Mentor/Batch/ImageCrop";
 
 export default function BatchAdmin() {
   const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
@@ -16,8 +24,10 @@ export default function BatchAdmin() {
   const [selectedBatchId, setSelectedBatchId] = useState<string>(""); // State for selected batch ID
   const [batchTitle, setSelectedBatchTitle] = useState<string>("");
   const [coverImagePath, setCoverImagePath] = useState<string>("");
-  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false); 
-  
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+  const [isImageCropOpen, setIsImageCropOpen] = useState(false);
+  const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
+
   useEffect(() => {
     const getBatches = async () => {
       try {
@@ -50,11 +60,30 @@ export default function BatchAdmin() {
     setIsBatchEditOpen(true); // Open the modal for editing
   };
 
-  const handleEditCover = (batchId: string, batchTitle: string, coverImage: string) => {
-    setSelectedBatchTitle(batchTitle)
-    setSelectedBatchId(batchId)
-    setCoverImagePath(coverImage)
-    setIsColorPickerOpen(true); // Open the ColorPickerModal after a short delay
+  const handleEditCover = (
+    batchId: string,
+    batchTitle: string,
+    coverImage: string
+  ) => {
+    setSelectedBatchTitle(batchTitle);
+    setSelectedBatchId(batchId);
+    setCoverImagePath(coverImage);
+
+    setTimeout(() => {
+      setIsColorPickerOpen(true);
+    }, 0); // Allow state update before opening modal
+  };
+
+  // Handle image upload before cropping
+  const handleImageUpload = (file: File) => {
+    const imageUrl = URL.createObjectURL(file);
+    setTempImageUrl(imageUrl);
+    setIsImageCropOpen(true);
+  };
+
+  const handleCropComplete = () => {
+    setIsColorPickerOpen(false);
+    setIsImageCropOpen(false);
   };
 
   return (
@@ -71,18 +100,27 @@ export default function BatchAdmin() {
           batchId={selectedBatchId}
           batchTitles={batchTitle}
         />
-        <BatchModal 
-          isOpen={isBatchModalOpen} 
-          onClose={handleCloseBatchModal}
-        />
-        <ColorPickerModal
-          isOpen={isColorPickerOpen}
-          onClose={() => setIsColorPickerOpen(false)}
-          onImageUpload={(file) => console.log("Image uploaded:", file)}
-          currentCoverImage={coverImagePath}
-          batchTitle={batchTitle}
-          batchId={selectedBatchId}
-        />
+        <BatchModal isOpen={isBatchModalOpen} onClose={handleCloseBatchModal} />
+        {isColorPickerOpen && selectedBatchId && (
+          <ColorPickerModal
+            isOpen={isColorPickerOpen}
+            onClose={() => setIsColorPickerOpen(false)}
+            onImageUpload={handleImageUpload}
+            currentCoverImage={coverImagePath}
+            batchTitle={batchTitle}
+            batchId={selectedBatchId}
+          />
+        )}
+
+        {isImageCropOpen && tempImageUrl && (
+          <ImageCropModal
+            isOpen={isImageCropOpen}
+            onClose={() => setIsImageCropOpen(false)}
+            imageUrl={tempImageUrl}
+            onCropComplete={handleCropComplete}
+            batchId={selectedBatchId}
+          />
+        )}
       </div>
 
       <Card>
@@ -105,9 +143,15 @@ export default function BatchAdmin() {
               {fetchedBatch.map((batch, index) => (
                 <TableRow key={batch.id}>
                   <TableCell className="text-center">{index + 1}</TableCell>
-                  <TableCell className="text-center">{batch.batchNum}</TableCell>
-                  <TableCell className="text-center">{batch.batchTitle}</TableCell>
-                  <TableCell className="text-center">{batch.participants.length}</TableCell>
+                  <TableCell className="text-center">
+                    {batch.batchNum}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {batch.batchTitle}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {batch.participants.length}
+                  </TableCell>
                   <TableCell className="text-center">{batch.status}</TableCell>
                   <TableCell className="text-center">
                     <Button
@@ -116,7 +160,8 @@ export default function BatchAdmin() {
                       className="text-yellow-600 hover:text-yellow-600"
                       onClick={() => {
                         console.log("Edit Batch", batch.id, batch.batchTitle);
-                        handleEditBatch(batch.id, batch.batchTitle)}} // Pass the batch ID on click
+                        handleEditBatch(batch.id, batch.batchTitle);
+                      }} // Pass the batch ID on click
                     >
                       <PenBoxIcon className="h-4 w-4" />
                     </Button>
@@ -125,8 +170,18 @@ export default function BatchAdmin() {
                       size="sm"
                       className="text-green-600 hover:text-green-600"
                       onClick={() => {
-                        console.log("Edit Batch", batch.id, batch.batchTitle, batch.cover.filePath);
-                        handleEditCover(batch.id, batch.batchTitle, batch.cover.filePath)}} // Pass the batch ID on click
+                        console.log(
+                          "Edit Batch",
+                          batch.id,
+                          batch.batchTitle,
+                          batch.cover.filePath
+                        );
+                        handleEditCover(
+                          batch.id,
+                          batch.batchTitle,
+                          batch.cover.filePath
+                        );
+                      }} // Pass the batch ID on click
                     >
                       <Wallpaper className="h-4 w-4" />
                     </Button>

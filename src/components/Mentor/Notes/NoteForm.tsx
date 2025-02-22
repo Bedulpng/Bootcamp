@@ -39,7 +39,7 @@ export default function NoteForm({ addNote, selectedTrainee, onCancel }: NoteFor
       }
 
       const response = await axios.post(
-        "http://192.168.1.12:4000/mentor/note/add",
+        "http://192.168.254.104:4000/mentor/note/add",
         {
           content,
           visibility,

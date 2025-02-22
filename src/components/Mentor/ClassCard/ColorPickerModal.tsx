@@ -105,7 +105,7 @@ export function ColorPickerModal({
       }
   
       await axios.post(
-        `http://192.168.1.12:4000/uploads/class-cover`,
+        `http://192.168.254.104:4000/uploads/class-cover`,
         formData,
         {
           headers: {

@@ -156,7 +156,7 @@ export default function ClassDetails() {
                       <CardContent className="p-4 flex items-center">
                         {user.profiles?.[0]?.filepath ? (
                           <img
-                            src={`http://192.168.1.12:4000${user.profiles[0].filepath
+                            src={`http://192.168.254.104:4000${user.profiles[0].filepath
                               .replace(/\\/g, "/")
                               .replace("public", "")}`}
                             alt={user.fullName || "No userName"}

@@ -15,7 +15,7 @@ export default function SubjectDetail() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.1.12:4000/trainee/challenge/${id}`
+          `http://192.168.254.104:4000/trainee/challenge/${id}`
         );
         setChallenges(response.data);
         console.log("Challenge data:", response.data);
@@ -26,7 +26,7 @@ export default function SubjectDetail() {
           );
           try {
             const lessonResponse = await axios.get(
-              `http://192.168.1.12:4000/trainee/lesson/${id}`
+              `http://192.168.254.104:4000/trainee/lesson/${id}`
             );
             setLesson(lessonResponse.data);
             console.log("Lesson data:", lessonResponse.data);

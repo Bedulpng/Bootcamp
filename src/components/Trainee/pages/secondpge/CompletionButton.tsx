@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, X, AlertCircle, FileText, Eye } from "lucide-react";
@@ -20,8 +18,9 @@ import {
 import { Note, type File } from "@/types/Trainee";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
-import { getChallengeStatus, getLessonStatus } from "@/Api/SubmitAssignment";
+import { getChallengeStatus, getLessonStatus, getPresentationStatus } from "@/Api/SubmitAssignment";
 import ViewNoteModal from "../Modal/ViewNote";
+import axios from "axios";
 
 interface SubmissionFormProps {
   itemId: string | undefined;
@@ -36,15 +35,23 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [showDialog, setShowDialog] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
-  const itemType = location.pathname.startsWith("/trainee/lesson")
+  const path = location.pathname;
+
+  const itemType = path.includes("/lesson")
     ? "lesson"
-    : "challenge";
-  const [isModalOpen, setIsModalOpen] = useState(false);
+    : path.includes("/challenge")
+    ? "challenge"
+    : path.includes("/presentation")
+    ? "presentation"
+    : "";
 
   const refreshToken = localStorage.getItem("refreshToken");
   let userId: string = "";
+
   if (refreshToken) {
     try {
       const decoded: any = jwtDecode(refreshToken);
@@ -53,65 +60,119 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
       console.error("Failed to decode token:", err);
     }
   }
+
   const handleModalOpen = () => setIsModalOpen(true);
   const handleModalClose = () => setIsModalOpen(false);
 
   useEffect(() => {
     const fetchStatus = async () => {
       const Id = itemId || "";
+
       try {
-        const isChallenge =
-          window.location.pathname.includes("trainee/challenge");
-        if (isChallenge) {
-          // Cek status dari tabel `challenge`
-          const challengeResponse = await getChallengeStatus(Id, userId);
-          if (challengeResponse?.submissionFiles) {
-            setSubmissionFiles(challengeResponse.submissionFiles);
-          }
-          if (challengeResponse?.notes) {
-            setSubmissionNote(challengeResponse.notes);
-          }
-          if (challengeResponse?.status) {
-            setStatus(challengeResponse.status);
-            if (
-              challengeResponse.status === "SUBMITTED" ||
-              challengeResponse.status === "GRADED"
-            ) {
-              setIsSubmitted(true);
-            }
-          }
-        } else {
-          // Cek status dari tabel `lesson`
-          const lessonResponse = await getLessonStatus(Id, userId);
-          if (lessonResponse?.submissionFiles) {
-            setSubmissionFiles(lessonResponse.submissionFiles);
-          }
-          if (lessonResponse?.notes) {
-            setSubmissionNote(lessonResponse.notes);
-          }
-          if (lessonResponse?.status) {
-            setStatus(lessonResponse.status); // SUBMITTED atau NOTSUBMITTED
-            console.log(lessonResponse.files);
-            if (
-              lessonResponse.status === "SUBMITTED" ||
-              lessonResponse.status === "GRADED"
-            ) {
-              setIsSubmitted(true);
-            }
-          }
+        let response;
+        switch (itemType) {
+          case "challenge":
+            response = await getChallengeStatus(Id, userId);
+            break;
+          case "lesson":
+            response = await getLessonStatus(Id, userId);
+            break;
+          case "presentation":
+            response = await getPresentationStatus(Id, userId);
+            break;
+          default:
+            console.warn("Unknown item type.");
+            return;
         }
-      } catch (error: any) {
+
+        if (response) {
+          setSubmissionFiles(response.submissionFiles || []);
+          setSubmissionNote(response.notes || []);
+          setStatus(response.status || "");
+          setIsSubmitted(response.status === "SUBMITTED" || response.status === "GRADED");
+        }
+      } catch (error) {
         console.error("Error fetching status:", error);
       }
     };
+
     fetchStatus();
-  }, []);
+  }, [itemType, itemId, userId]);
+
+  const allowedFileTypes = ["image/png", "image/jpeg", "application/pdf", "video/mp4"];
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const newFiles = Array.from(event.target.files)
+        .filter((file) => {
+          if (!allowedFileTypes.includes(file.type)) {
+            alert(`File type not allowed: ${file.name}`);
+            return false;
+          }
+          return true;
+        })
+        .map((file) => ({
+          id: Math.random().toString(36).substr(2, 9),
+          filename: file.name,
+          filepath: URL.createObjectURL(file),
+          mimetype: file.type,
+          ...(itemType === "lesson"
+            ? { lessonId: itemId }
+            : { challengeId: itemId }),
+          file,
+        }));
+
+      setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    }
+  };
+
+  const handleRemoveFile = (id: string) => {
+    setFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
+  };
+
+  const handleSubmit = async (confirmed = false) => {
+    if (files.length === 0 && !confirmed) {
+      setShowDialog(true);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const formData = new FormData();
+    formData.append("userId", userId);
+    files.forEach((file) => formData.append("files", file.filename));
+
+    console.log("FormData entries:");
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    const endpoint =
+      itemType === "lesson"
+        ? `http://192.168.1.12:4000/complete/lesson/${itemId}`
+        : itemType === "challenge"
+        ? `http://192.168.1.12:4000/complete/challenge/${itemId}`
+        : `http://192.168.1.12:4000/complete/presentation/${itemId}`;
+
+    try {
+      const response = await axios.post(endpoint, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      setMessage(response.data.message);
+    } catch (error: any) {
+      console.error("Submission failed:", error);
+      setMessage("An error occurred during submission.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (isSubmitted) {
     return (
       <Card className="w-[300px] shadow-lg">
         <CardContent className="pt-6">
-          {submissionFiles && submissionFiles.length > 0 ? (
+          {submissionFiles.length > 0 ? (
             <div className="flex items-center gap-2 p-2 bg-primary/5 rounded-lg">
               <FileText className="h-4 w-4 text-primary" />
               <span className="text-sm flex-1 truncate">
@@ -126,7 +187,7 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
 
           <div className="my-4 border-t border-muted"></div>
 
-          {submissionNote && submissionNote.length > 0 ? (
+          {submissionNote.length > 0 ? (
             <div className="mt-4 flex items-center justify-center gap-2">
               <span className="text-sm text-center">View Notes</span>
               <button
@@ -143,84 +204,11 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
             </div>
           )}
 
-          {/* Render the modal */}
-          {isModalOpen && (
-            <ViewNoteModal notes={submissionNote} onClose={handleModalClose} />
-          )}
+          {isModalOpen && <ViewNoteModal notes={submissionNote} onClose={handleModalClose} />}
         </CardContent>
       </Card>
     );
   }
-
-  const allowedFileTypes = ["image/png", "image/jpeg", "application/pdf"]; // Add allowed MIME types here
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const newFiles = Array.from(event.target.files).filter((file) => {
-        if (!allowedFileTypes.includes(file.type)) {
-          alert(`File type not allowed: ${file.name}`);
-          return false;
-        }
-        return true;
-      }).map((file) => ({
-        id: Math.random().toString(36).substr(2, 9), // Generate a random ID
-        filename: file.name,
-        filepath: URL.createObjectURL(file), // Create a temporary URL
-        mimetype: file.type,
-        ...(itemType === "lesson"
-          ? { lessonId: itemId }
-          : { challengeId: itemId }),
-      }));
-  
-      setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    }
-  };
-  
-  const handleRemoveFile = (id: string) => {
-    setFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
-  };
-  
-  const handleSubmit = async (confirmed = false) => {
-    if (files.length === 0 && !confirmed) {
-      setShowDialog(true);
-      return;
-    }
-  
-    setIsSubmitting(true);
-  
-    const formData = new FormData();
-    formData.append("userId", userId);
-    files.forEach((file) => {
-      formData.append(
-        "files",
-        new Blob([file.filepath], { type: file.mimetype }),
-        file.filename
-      );
-    });
-  
-    const endpoint =
-      itemType === "lesson"
-        ? `http://192.168.254.104:4000/complete/lesson/${itemId}`
-        : `http://192.168.254.104:4000/complete/challenge/${itemId}`;
-  
-    try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        body: formData,
-      });
-  
-      if (!response.ok) {
-        throw new Error("Submission failed");
-      }
-  
-      const result = await response.json();
-      setMessage(result.message);
-    } catch (error) {
-      setMessage("An error occurred during submission.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };  
 
   return (
     <Card className="w-full max-w-[300px] shadow-md">
@@ -230,6 +218,7 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
           <span className="text-sm text-green-600">{status}</span>
         </div>
       </CardHeader>
+
       <CardContent className="space-y-4">
         <Input
           type="file"
@@ -243,8 +232,9 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
           variant="outline"
           className="w-full border-dashed"
         >
-          <Plus className="mr-2 h-4 w-4" /> Tambah atau buat
+          <Plus className="mr-2 h-4 w-4" /> Add or Create
         </Button>
+
         <AnimatePresence>
           {files.length > 0 && (
             <motion.ul
@@ -262,10 +252,7 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
                   transition={{ duration: 0.2 }}
                   className="flex items-center justify-between rounded-md border px-3 py-2 text-sm"
                 >
-                  <span className="truncate mr-2">
-                    {file.filename} ({(file.filepath.length / 1024).toFixed(2)}{" "}
-                    KB)
-                  </span>
+                  <span className="truncate mr-2">{file.filename}</span>
                   <Button
                     variant="ghost"
                     size="icon"
@@ -280,13 +267,15 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
             </motion.ul>
           )}
         </AnimatePresence>
+
         <Button
           onClick={() => handleSubmit()}
           disabled={isSubmitting}
           className="w-full bg-blue-500 hover:bg-blue-600"
         >
-          {isSubmitting ? "Submitting..." : "Tandai sebagai selesai"}
+          {isSubmitting ? "Submitting..." : "Mark as Complete"}
         </Button>
+
         <AnimatePresence>
           {message && (
             <motion.div
@@ -303,13 +292,13 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
             </motion.div>
           )}
         </AnimatePresence>
+
         <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Mark as complete?</AlertDialogTitle>
               <AlertDialogDescription>
-                You don't have any attachment on this {itemType}. Are you sure
-                you want to continue?
+                You don't have any attachments for this {itemType}. Are you sure you want to continue?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

@@ -3,16 +3,19 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FileText } from "lucide-react";
 import { Class } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
-import { NoLessons } from "./LessonChallenge/LessonPage";
-import { NoChallenge } from "./LessonChallenge/ChallengePage";
+import { NoLessons } from "./NothingHandle/NoLesson";
+import { NoChallenge } from "./NothingHandle/NoChallenge";
 import { ClassDetailCover } from "./ClassDetailCover";
+import { NoPresentation } from "./NothingHandle/NoPresentation";
 
 export default function TraineeMain() {
   const { classId } = useParams<{ classId: string }>();
   const [isFilterDropdownOpen, setFilterDropdownOpen] = useState(false);
   const [filterOption, setFilterOption] = useState<string>("Featured");
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"lesson" | "challenge">("lesson");
+  const [activeTab, setActiveTab] = useState<
+    "lesson" | "challenge" | "presentation"
+  >("lesson");
   const [classes, setClasses] = useState<Class[]>([]);
 
   useEffect(() => {
@@ -32,11 +35,15 @@ export default function TraineeMain() {
   const toggleFilterDropdown = () =>
     setFilterDropdownOpen(!isFilterDropdownOpen);
 
-  const handleTabClick = (tab: "lesson" | "challenge") => setActiveTab(tab);
+  const handleTabClick = (tab: "lesson" | "challenge" | "presentation") =>
+    setActiveTab(tab);
 
   const handleChallenge = (id: string) => navigate(`/trainee/challenge/${id}`);
 
   const handleLesson = (id: string) => navigate(`/trainee/lesson/${id}`);
+
+  const handlePresentation = (id: string) =>
+    navigate(`/trainee/presentation/${id}`);
 
   return (
     <div className="bg-white overflow-hidden min-h-screen md:px-44 lg:px-10 xl:px-56">
@@ -68,6 +75,16 @@ export default function TraineeMain() {
             onClick={() => handleTabClick("challenge")}
           >
             Challenge
+          </button>
+          <button
+            className={`px-4 py-2 font-bold rounded-lg ${
+              activeTab === "presentation"
+                ? "bg-blue-700 text-white"
+                : "bg-gray-200 text-gray-600"
+            }`}
+            onClick={() => handleTabClick("presentation")}
+          >
+            Presentation
           </button>
         </div>
 
@@ -164,6 +181,35 @@ export default function TraineeMain() {
                       <h3 className="text-xl font-bold">{challenge.title}</h3>
                       <p className="text-sm font-semibold text-black-500">
                         {challenge.description}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )
+          ))}
+
+        {activeTab === "presentation" &&
+          (classes.every((classItem) => classItem.presentation.length === 0) ? (
+            <NoPresentation />
+          ) : (
+            classes.map((classItem) =>
+              classItem.presentation.map((presentation) => (
+                <div
+                  key={presentation.id}
+                  className="p-4 bg-gray-100 border-black border text-black rounded-lg shadow-md cursor-pointer"
+                  onClick={() => handlePresentation(presentation.id)}
+                >
+                  <div className="flex items-start space-x-4 mb-8">
+                    <div className="bg-white border border-black rounded-lg p-4">
+                      <FileText className="h-8 w-8 text-black" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold">
+                        {presentation.title}
+                      </h3>
+                      <p className="text-sm font-semibold text-black-500">
+                        {presentation.description}
                       </p>
                     </div>
                   </div>

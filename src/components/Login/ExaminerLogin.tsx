@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Users } from 'lucide-react';
 import { LoginLayout } from './LoginLayout';
 import { ExaminerMentorForm } from './ExaminerMentorForm';
+import toast from 'react-hot-toast';
 
 export function ExaminerLogin() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export function ExaminerLogin() {
     };
 
     try {
-      const response = await fetch('http://192.168.254.104:4000/trainee/login', {
+      const response = await fetch('http://192.168.1.12:4000/trainee/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -38,11 +39,11 @@ export function ExaminerLogin() {
         navigate('/examiner/dashboard');
       } else {
         const errorData = await response.json();
-        alert(`Login failed: ${errorData.message}`);
+        toast.error(`Login failed: ${errorData.message}`);
       }
     } catch (err) {
       console.error('Login error:', err);
-      alert('An unexpected error occurred during login.');
+      toast.error('An unexpected error occurred during login.');
     }
   };
 

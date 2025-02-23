@@ -4,7 +4,6 @@ import {
   Search,
   UserPlus,
   GraduationCap,
-  Wallpaper,
   CheckCheck,
 } from "lucide-react";
 import { fetchClasses } from "@/Api/FetchingBatches&Classes";
@@ -116,7 +115,7 @@ export const BatchEdit: React.FC<BatchModalProps> = ({
 
       // Make the API request
       await axios.put(
-        `http://192.168.254.104:4000/admin/batch/${batchId}`,
+        `http://192.168.1.12:4000/admin/batch/${batchId}`,
         payload,
         {
           headers: {

@@ -88,7 +88,7 @@ export const MultiStepFormModal: React.FC<MultiStepFormModalProps> = ({ isOpen, 
     const formattedData = { ...personal, ...education, ...skills }
 
     try {
-      await axios.put("http://192.168.254.104:4000/trainee/verify", formattedData, {
+      await axios.put("http://192.168.1.12:4000/trainee/verify", formattedData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

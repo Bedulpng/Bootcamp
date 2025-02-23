@@ -4,6 +4,7 @@ import { GraduationCap } from 'lucide-react';
 import { LoginLayout } from './LoginLayout';
 import { LoginForm } from './LoginForm';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 // Tipe untuk login data
 type LoginData = {
@@ -22,7 +23,7 @@ export function TraineeLogin() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://192.168.254.104:4000/trainee/login', {
+      const response = await axios.post('http://192.168.1.12:4000/trainee/login', {
         ...loginData,
         role: 'TRAINEE', // Menambahkan role TRAINEE secara default
       });
@@ -41,7 +42,7 @@ export function TraineeLogin() {
           err.response?.data?.message || 'An error occurred. Please check your credentials.';
         setError(message);
       } else {
-        setError('An unexpected error occurred.');
+        toast.error('An unexpected error occurred.');
       }
     } finally {
       setLoading(false);

@@ -51,6 +51,7 @@ import { Toaster } from "react-hot-toast";
 import { ExaminerLogin } from "./components/Login/ExaminerLogin";
 import ExaminerDashboard from "./components/Examiner/Page";
 import NavbarExaminer from "./components/Examiner/Navbar";
+import RoutesPage from "./components/Admin/pages/Route/RoutePage";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith("/dashboard");
@@ -76,6 +77,8 @@ function Layout({ children }: { children: React.ReactNode }) {
         return <Certificates />;
       case "notes":
         return <NotesManagement />;
+      case "access" :
+        return <RoutesPage />;
       default:
         return <DashboardAdmin />;
     }
@@ -333,6 +336,18 @@ function App() {
             }
           />
           <Route
+            path="/trainee/presentation/:id"
+            element={
+              <Rbac allowedRoles={["ADMIN", "TRAINEE"]}>
+                <ProtectedRoute>
+                  <Layout>
+                    <SubjectDetail />
+                  </Layout>
+                </ProtectedRoute>
+              </Rbac>
+            }
+          />
+          <Route
             path="/trainee/lesson"
             element={
               <Rbac allowedRoles={["ADMIN", "TRAINEE"]}>
@@ -424,6 +439,14 @@ function App() {
                   </Layout>
                 </ProtectedRoute>
               </Rbac>
+            }
+          />
+          <Route
+            path="/tester"
+            element={
+              
+                    <RoutesPage />
+                
             }
           />
           <Route path="/unauthorized" element={<NotAuthorized />} />

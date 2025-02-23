@@ -30,7 +30,7 @@ export default function NotesPage() {
     const fetchTrainees = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.254.104:4000/admin/users/TRAINEE"
+          "http://192.168.1.12:4000/admin/users/TRAINEE"
         );
         setTrainees(response.data);
       } catch (error) {
@@ -54,7 +54,7 @@ export default function NotesPage() {
         );
         const graderId = decodedToken.id;
 
-        let endpoint = `http://192.168.254.104:4000/mentor/notes/${graderId}`;
+        let endpoint = `http://192.168.1.12:4000/mentor/notes/${graderId}`;
         if (filter !== "All") {
           endpoint += `/${filter}`;
         }

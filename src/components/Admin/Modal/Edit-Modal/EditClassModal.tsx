@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X, Search, UserPlus, Users, GraduationCap } from "lucide-react";
+import { X, Search, UserPlus, GraduationCap, CheckCheck } from "lucide-react";
 import { Mentor, Trainee, Batch } from "@/types/Trainee";
 import { fetchBatches } from "@/Api/FetchingBatches&Classes";
 import { fetchTrainees, fetchMentors } from "@/Api/FetchUsersByRole";
@@ -15,9 +15,10 @@ interface ClassModalProps {
     participants: Trainee[];
   }) => void;
   selectedClassId: string | null;
+  selectedClassTitle: string;
 }
 
-export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose, selectedClassId }) => {
+export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose, selectedClassId, selectedClassTitle }) => {
   const [className, setClassName] = useState("");
   const [fetchedBatch, setFetchedBatch] = useState<Batch[]>([]);
   const [selectedBatch, setselectedBatch] = useState<Batch[]>([]);
@@ -104,7 +105,7 @@ export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose, sel
         batchId: selectedBatch.map((b) => b.id),
         participants: participants.map((p) => p.id),
       };
-      await axios.put(`http://192.168.254.104:4000/admin/class/${selectedClassId}`, payload, {
+      await axios.put(`http://192.168.1.12:4000/admin/class/${selectedClassId}`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
         }
@@ -129,7 +130,7 @@ export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose, sel
         <form onSubmit={handleSubmit}>
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <h2 className="text-2xl font-bold text-gray-900">
-              Edit Class
+              Edit Class {selectedClassTitle}
             </h2>
             <button
               type="button"
@@ -345,19 +346,12 @@ export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose, sel
 
           <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
             <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium"
-            >
-              Cancel
-            </button>
-            <button
               type="submit"
               disabled={!selectedBatch}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-blue-300 font-medium flex items-center gap-2"
+              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-300 font-medium flex items-center gap-2"
             >
-              <Users className="w-5 h-5" />
-              Edit Class
+              <CheckCheck className="w-5 h-5" />
+              Confirm Edit
             </button>
           </div>
         </form>

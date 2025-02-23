@@ -3,6 +3,8 @@ import { X, Search, UserPlus, Users, GraduationCap } from "lucide-react";
 import { Mentor, Trainee, Batch } from "@/types/Trainee";
 import { fetchBatches } from "@/Api/FetchingBatches&Classes";
 import { fetchTrainees, fetchMentors } from "@/Api/FetchUsersByRole";
+import { colors } from "@/components/Mentor/Batch/EditCover";
+import { toast } from "react-hot-toast"
 import axios from "axios";
 
 interface ClassModalProps {
@@ -74,26 +76,26 @@ export const ClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   const filteredBatches = batchSearch
-  ? fetchedBatch.filter((b) =>
-      b.batchTitle.toLowerCase().includes(batchSearch.toLowerCase())
-    )
-  : [];
+    ? fetchedBatch.filter((b) =>
+        b.batchTitle.toLowerCase().includes(batchSearch.toLowerCase())
+      )
+    : [];
 
-const filteredMentors = mentorSearch
-  ? fetchedMentors.filter((person) =>
-      (person.fullName ?? "No Name")
-        .toLowerCase()
-        .includes(mentorSearch.toLowerCase())
-    )
-  : [];
+  const filteredMentors = mentorSearch
+    ? fetchedMentors.filter((person) =>
+        (person.fullName ?? "No Name")
+          .toLowerCase()
+          .includes(mentorSearch.toLowerCase())
+      )
+    : [];
 
-const filteredParticipants = participantSearch
-  ? fetchedTrainees.filter((person) =>
-      (person.fullName ?? "No Name")
-        .toLowerCase()
-        .includes(participantSearch.toLowerCase())
-    )
-  : [];
+  const filteredParticipants = participantSearch
+    ? fetchedTrainees.filter((person) =>
+        (person.fullName ?? "No Name")
+          .toLowerCase()
+          .includes(participantSearch.toLowerCase())
+      )
+    : [];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,17 +106,43 @@ const filteredParticipants = participantSearch
         mentors: mentors.map((m) => m.id),
         users: participants.map((p) => p.id),
       };
-      await axios.post("http://192.168.254.104:4000/admin/class", payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+      const classResponse = await axios.post(
+        "http://192.168.1.12:4000/admin/class",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+          },
         }
+      );
+
+      const classId = classResponse.data.id;
+      if (!classId) {
+        throw new Error("Batch ID not found in response.");
+      }
+
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+      if (!randomColor?.filePath) {
+        console.warn("No valid cover file path found.");
+        onClose();
+        return;
+      }
+      const formData = new FormData();
+      formData.append('classId', classId);
+      const fileName = randomColor?.filePath?.split('/').pop() ?? 'default-cover.jpg';
+      formData.append('fileName', fileName);
+      console.log("got color: ", fileName)
+    
+      await axios.post('http://192.168.1.12:4000/uploads/class-cover', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
+    
+      toast.success('Class successfully created!');
       onClose();
-      console.log("participants", participants.map((p) => p.id));
-      console.log("mentors", mentors.map((m) => m.id));
-      console.log("batchId", selectedBatch.map((b) => b.id));
     } catch (error) {
       console.error("Error submitting class:", error);
+      toast.error('Failed to create class')
     }
   };
 

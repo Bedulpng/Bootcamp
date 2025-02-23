@@ -10,6 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { jwtDecode } from "jwt-decode"
+import toast from "react-hot-toast"
 
 interface ChallengeUploadFormProps {
   onSuccess: () => void
@@ -78,7 +79,7 @@ export default function ChallengeUpload({ onSuccess, classId, batchId }: Challen
     files.forEach((file) => formData.append("files", file));
   
     try {
-      const response = await fetch("http://192.168.254.104:4000/uploads/challenge", {
+      const response = await fetch("http://192.168.1.12:4000/uploads/challenge", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${refreshToken}`, 
@@ -105,10 +106,10 @@ export default function ChallengeUpload({ onSuccess, classId, batchId }: Challen
       // Call the onSuccess callback to close the modal
       onSuccess();
   
-      alert("Lesson/Challenge uploaded successfully!");
+      toast.success("Lesson/Challenge uploaded successfully!");
     } catch (error) {
       console.error("Error uploading challenge:", error);
-      setError("An unexpected error occurred. Please try again later.");
+      toast.error("An unexpected error occurred. Please try again later.");
     }
   };
   

@@ -4,8 +4,8 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Upload } from "lucide-react"
-import LessonChallengeUploadForm from "../LessonUpload"
 import { useParams } from "react-router-dom"
+import PresentationUpload from "../PresentationUpload"
 
 
 export default function PresentationModal() {
@@ -24,7 +24,7 @@ export default function PresentationModal() {
         <DialogHeader>
           <DialogTitle>Upload Final Presentation</DialogTitle>
         </DialogHeader>
-        <LessonChallengeUploadForm onSuccess={() => setIsOpen(false)} classId={classId} batchId={batchId}/>
+        <PresentationUpload onSuccess={() => setIsOpen(false)} classId={classId} batchId={batchId}/>
       </DialogContent>
     </Dialog>
   )

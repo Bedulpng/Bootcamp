@@ -36,14 +36,14 @@ export default function NavbarMentor() {
 
         // Fetch mentor details
         const response = await axios.get(
-          `http://192.168.254.104:4000/admin/mentor/${userId}`
+          `http://192.168.1.12:4000/admin/mentor/${userId}`
         );
         setMentorName(response.data.fullName);
         setMentorRole(response.data.role);
 
         // Fetch the professional profile image
         const profileResponse = await axios.get(
-          `http://192.168.254.104:4000/trainee/${userId}/pro`
+          `http://192.168.1.12:4000/trainee/${userId}/pro`
         );
         if (profileResponse.data && profileResponse.data.profileImage) {
           setProfileImage(profileResponse.data.profileImage); // Store the profile image path
@@ -76,7 +76,7 @@ export default function NavbarMentor() {
 
     try {
       const response = await axios.post(
-        "http://192.168.254.104:4000/trainee/logout",
+        "http://192.168.1.12:4000/trainee/logout",
         {
           accessToken,
         }
@@ -141,7 +141,7 @@ export default function NavbarMentor() {
               <Button variant="ghost" className="flex items-center gap-2 p-1">
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
                   <AvatarImage
-                    src={`http://192.168.254.104:4000${profileImage}`}
+                    src={`http://192.168.1.12:4000${profileImage}`}
                     alt="Mentor"
                   />
                   <AvatarFallback>

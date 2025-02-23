@@ -159,9 +159,8 @@ export default function BatchAdmin() {
                       size="sm"
                       className="text-yellow-600 hover:text-yellow-600"
                       onClick={() => {
-                        console.log("Edit Batch", batch.id, batch.batchTitle);
                         handleEditBatch(batch.id, batch.batchTitle);
-                      }} // Pass the batch ID on click
+                      }} 
                     >
                       <PenBoxIcon className="h-4 w-4" />
                     </Button>
@@ -170,18 +169,12 @@ export default function BatchAdmin() {
                       size="sm"
                       className="text-green-600 hover:text-green-600"
                       onClick={() => {
-                        console.log(
-                          "Edit Batch",
-                          batch.id,
-                          batch.batchTitle,
-                          batch.cover.filePath
-                        );
                         handleEditCover(
                           batch.id,
                           batch.batchTitle,
                           batch.cover.filePath
                         );
-                      }} // Pass the batch ID on click
+                      }} 
                     >
                       <Wallpaper className="h-4 w-4" />
                     </Button>

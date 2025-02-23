@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://192.168.254.104:4000";
+const API_URL = "http://192.168.1.12:4000";
 
 export async function submitLessonCompletion(
   userId: string,
@@ -106,6 +106,20 @@ export const getChallengeStatus = async (challengeId: string, userId: string) =>
     }
     throw new Error(
       error.response?.data?.message || "Error fetching challenge status"
+    );
+  }
+};
+
+export const getPresentationStatus = async (presentationId: string, userId: string) => {
+  try {
+    const response = await axios.get(`${API_URL}/complete/presentation/${presentationId}/${userId}/status`);
+    return response.data; // Expected response: { status: "SUBMITTED" | "NOTSUBMITTED" }
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      throw new Error("Presentation not found");
+    }
+    throw new Error(
+      error.response?.data?.message || "Error fetching presentation status"
     );
   }
 };

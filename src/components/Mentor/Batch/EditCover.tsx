@@ -100,7 +100,7 @@ export function ColorPickerModal({
       }
 
       await axios.post(
-        `http://192.168.254.104:4000/uploads/batch-cover`,
+        `http://192.168.1.12:4000/uploads/batch-cover`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

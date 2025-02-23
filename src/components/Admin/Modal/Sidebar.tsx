@@ -6,7 +6,8 @@ import {
   GraduationCap,
   Award,
   ClipboardList,
-  Layers
+  Layers,
+  Wrench
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,7 @@ const menuItems = [
   { id: 'classes', label: 'Class Management', icon: GraduationCap },
   { id: 'certificates', label: 'Certificate Management', icon: Award },
   { id: 'notes', label: 'Notes Management', icon: ClipboardList },
+  { id: 'access', label: 'Routes Access', icon: Wrench },
 ];
 
 export default function SidebarAdmin({ isOpen, setIsOpen, currentPage, setCurrentPage }: SidebarProps) {

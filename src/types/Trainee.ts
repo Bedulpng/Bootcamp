@@ -36,7 +36,7 @@ export interface BatchCover {
   size: number;
 }
 
-export interface File {
+export interface  File {
   id: string;
   filename: string;
   filepath: string;

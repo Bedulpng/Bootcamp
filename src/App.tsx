@@ -52,6 +52,7 @@ import { ExaminerLogin } from "./components/Login/ExaminerLogin";
 import ExaminerDashboard from "./components/Examiner/Page";
 import NavbarExaminer from "./components/Examiner/Navbar";
 import RoutesPage from "./components/Admin/pages/Route/RoutePage";
+import RbacTest from "./components/RbacTesting";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith("/dashboard");
@@ -441,14 +442,14 @@ function App() {
               </Rbac>
             }
           />
-          <Route
-            path="/tester"
+          {/* <Route
+            path="/abcd"
             element={
-              
+              <RbacTest routeName="/abcd">
                     <RoutesPage />
-                
+              </RbacTest>
             }
-          />
+          /> */}
           <Route path="/unauthorized" element={<NotAuthorized />} />
           {/* Route without Layout */}
           <Route path="*" element={<NotFound />} />

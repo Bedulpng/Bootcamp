@@ -112,7 +112,7 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
         status: 'Ongoing',
       };
     
-      const batchResponse = await axios.post('http://10.10.103.248:4000/admin/batch', batchPayload, {
+      const batchResponse = await axios.post('http://192.168.1.12:4000/admin/batch', batchPayload, {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('refreshToken'),
         },
@@ -142,7 +142,7 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
       formData.append('fileName', fileName);
       console.log("got color: ", fileName)
     
-      await axios.post('http://10.10.103.248:4000/uploads/batch-cover', formData, {
+      await axios.post('http://192.168.1.12:4000/uploads/batch-cover', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
     

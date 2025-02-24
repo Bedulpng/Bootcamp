@@ -141,10 +141,10 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
 
     const endpoint =
       itemType === "lesson"
-        ? `http://10.10.103.248:4000/complete/lesson/${itemId}`
+        ? `http://192.168.1.12:4000/complete/lesson/${itemId}`
         : itemType === "challenge"
-        ? `http://10.10.103.248:4000/complete/challenge/${itemId}`
-        : `http://10.10.103.248:4000/complete/presentation/${itemId}`;
+        ? `http://192.168.1.12:4000/complete/challenge/${itemId}`
+        : `http://192.168.1.12:4000/complete/presentation/${itemId}`;
 
     try {
       const response = await axios.post(endpoint, formData, {

@@ -55,6 +55,7 @@ import RbacTest from "./components/RbacTesting";
 import ExaminerClassPage from "./components/Examiner/Class/ClassPage";
 import ExaminerClassDetails from "./components/Examiner/Class/ClassDetail";
 import ExaminerSubmissionPage from "./components/Examiner/Class/Submission";
+import { SidebarExaminer } from "./components/Examiner/SidebarExaminer";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith("/dashboard");
@@ -64,6 +65,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isSidebarOpenTrainee, setIsSidebarOpenTrainee] = useState(true);
+  const [isSidebarOpenExaminer, setIsSidebarOpenExaminer] = useState(true);
   const [currentPage, setCurrentPage] = useState("dashboard");
 
   const renderAdminPage = () => {
@@ -110,6 +112,12 @@ function Layout({ children }: { children: React.ReactNode }) {
             <SidebarTrainee
               isOpen={isSidebarOpenTrainee}
               setIsOpen={setIsSidebarOpenTrainee}
+            />
+          )}
+          {isExaminer && (
+            <SidebarExaminer
+              isOpen={isSidebarOpenExaminer}
+              setIsOpen={setIsSidebarOpenExaminer}
             />
           )}
 

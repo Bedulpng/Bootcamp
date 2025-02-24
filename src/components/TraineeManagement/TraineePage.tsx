@@ -6,6 +6,7 @@ import { TraineeModal } from './TraineeModal';
 import { Button } from '../ui/button';
 import { Trainee } from '../../types/Trainee';
 import { fetchTrainees } from '../../Api/FetchUsersByRole'; // Import the fetchTrainees service
+import { DotSpinner } from '../SpinnerLoading';
 
 export function TraineePages() {
   const navigate = useNavigate();
@@ -39,9 +40,12 @@ export function TraineePages() {
 );
 
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <DotSpinner/>
+      </div>
+    );
 
   if (error) {
     return <div className="text-red-500">{error}</div>;

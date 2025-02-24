@@ -5,7 +5,7 @@ function Contact() {
   const navigate = useNavigate(); 
   return (
     <div className="min-h-screen bg-white flex items-center p-4">
-      <div className="max-w-5xl w-full mx-auto">
+      <div className="max-w-7xl w-full mx-auto">
         <div className="space-y-8">
           <h1 className="text-lg font-montserrat font-semibold text-wgs-blue tracking-wider uppercase">
             Get in Touch With Us

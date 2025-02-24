@@ -132,7 +132,7 @@ export default function ExaminerClassDetails() {
                       <CardContent className="p-4 flex items-center">
                         {user.profiles?.[0]?.filepath ? (
                           <img
-                            src={`http://10.10.103.248:4000${user.profiles[0].filepath
+                            src={`http://192.168.1.12:4000${user.profiles[0].filepath
                               .replace(/\\/g, "/")
                               .replace("public", "")}`}
                             alt={user.fullName || "No userName"}
@@ -160,7 +160,7 @@ export default function ExaminerClassDetails() {
                       <CardContent className="p-4 flex items-center">
                         {user.profiles?.[0]?.filepath ? (
                           <img
-                            src={`http://10.10.103.248:4000${user.profiles[0].filepath
+                            src={`http://192.168.1.12:4000${user.profiles[0].filepath
                               .replace(/\\/g, "/")
                               .replace("public", "")}`}
                             alt={user.fullName || "No userName"}

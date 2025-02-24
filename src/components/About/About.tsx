@@ -1,95 +1,114 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+"use client"
+
+import { motion } from "framer-motion"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Code, Users, Zap, Globe } from "lucide-react"
+
+const fadeIn = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6 },
+}
+
+const staggerChildren = {
+  animate: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+}
 
 export default function AboutSection() {
   return (
+    <section className="relative py-28 bg-[#0B1121] overflow-hidden">
+      <div className="container mx-auto px-8 md:px-16 lg:px-24 max-w-7xl">
+        <motion.div initial="initial" animate="animate" variants={staggerChildren} className="text-center mb-20">
+          <motion.h2 variants={fadeIn} className="text-5xl md:text-6xl font-bold text-white mb-6">
+            About Our {" "}
+            <span className="bg-gradient-to-r from-[#4169E1] to-[#9333EA] bg-clip-text text-transparent">
+              Full-Stack Program
+            </span>
+          </motion.h2>
+          <motion.p variants={fadeIn} className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
+            Empowering the next generation of developers with cutting-edge skills and hands-on experience.
+          </motion.p>
+        </motion.div>
 
-    <div className="font-montserrat">
-      {/* Banner Section */}
-    <section className="relative overflow-hidden bg-white h-screen">
-    <div className="relative mx-auto max-w-[1440px] h-full">
-        <div className="grid h-full grid-cols-1 lg:grid-cols-2">
-        {/* Left Content */}
-        <div className="flex flex-col justify-center bg-black p-6 lg:p-8 clip-path-polygon">
-            <div className="max-w-[520px]">
-                <p className="mb-4 text-white text-xl lg:text-2xl">Who are we?</p>
-                <h1 className="mb-4 inline-block text-4xl font-bold text-white lg:text-5xl">
-                    <span className="relative">
-                        About us
-                        <span className="absolute -bottom-1 left-0 h-0.5 w-full bg-blue-500"></span>
-                    </span>
-                </h1>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-12">
+          {[
+            {
+              title: "Comprehensive Curriculum",
+              icon: Code,
+              content:
+                "Our program covers both frontend and backend technologies, ensuring you're prepared for the full spectrum of web development challenges.",
+            },
+            {
+              title: "Industry-Driven Approach",
+              icon: Users,
+              content:
+                "Learn from experienced professionals and work on real-world projects that simulate actual industry scenarios.",
+            },
+            {
+              title: "Cutting-Edge Technologies",
+              icon: Zap,
+              content:
+                "Stay ahead of the curve with our constantly updated curriculum featuring the latest tools and frameworks in the tech industry.",
+            },
+            {
+              title: "Global Community",
+              icon: Globe,
+              content:
+                "Join a diverse community of learners and mentors from around the world, expanding your network and opportunities.",
+            },
+          ].map((item, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: index * 0.2 }}
+            >
+              <Card className="bg-[#0B1121]/80 border-white/10 backdrop-blur-xl h-full p-6 lg:p-8">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-3xl font-bold text-white flex items-center gap-4">
+                    <item.icon className="w-8 h-8 text-[#4169E1]" />
+                    {item.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-300 text-lg leading-relaxed">{item.content}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
         </div>
 
-
-        {/* Right Content - Full Image */}
-        <div className="relative bg-gradient-to-br from-blue-100 to-blue-50 p-0 lg:p-0">
-            <img
-            src="/about.png"
-            alt="Illustration"
-            className="w-full h-full object-cover rounded-none"
-            />
-        </div>
-        </div>
-
-        {/* Decorative Elements */}
-        <div className="absolute bottom-0 left-1/2 h-px w-full bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-        <div className="absolute -left-4 top-1/4 h-48 w-px bg-gradient-to-b from-transparent via-blue-500 to-transparent" />
-        <div className="absolute -right-4 bottom-1/4 h-48 w-px bg-gradient-to-b from-transparent via-yellow-500 to-transparent" />
-    </div>
-    </section>
-    <section className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">About Our Coding Bootcamp</h2>
-        <div className="grid md:grid-cols-2 gap-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Our Mission</CardTitle>
-              <CardDescription>Empowering the next generation of tech innovators</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">
-                At our coding bootcamp, we're committed to providing intensive, hands-on training that transforms beginners into job-ready developers. Our curriculum is designed to meet the evolving needs of the tech industry, ensuring our graduates are equipped with the most in-demand skills.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Why Choose Us?</CardTitle>
-              <CardDescription>What sets our bootcamp apart</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-gray-600">
-                <li>• Industry-aligned curriculum</li>
-                <li>• Experienced instructors from top tech companies</li>
-                <li>• Small class sizes for personalized attention</li>
-                <li>• Career support and job placement assistance</li>
-                <li>• Flexible learning options (full-time and part-time)</li>
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
-        <div className="mt-12 text-center">
-          <h3 className="text-2xl font-bold mb-4">Our Programs</h3>
-          <div className="flex flex-wrap justify-center gap-2">
-            {["Full Stack Web Development", "Data Science", "UX/UI Design", "Cybersecurity", "Mobile App Development"].map((program, index) => (
-              <Badge key={index} variant="secondary" className="text-sm py-1 px-3">
-                {program}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-20 text-center"
+        >
+          <h3 className="text-3xl font-bold text-white mb-8">Why Choose Our Program?</h3>
+          <div className="flex flex-wrap justify-center gap-4 px-6">
+            {[
+              "Flexible Learning",
+              "1-on-1 Mentorship",
+              "Career Support",
+              "Project-Based Learning",
+              "Industry Partnerships",
+              "Lifetime Access",
+            ].map((feature, index) => (
+              <Badge key={index} variant="secondary" className="relative group overflow-hidden px-6 py-3 text-lg">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#4169E1]/20 to-[#9333EA]/20 group-hover:from-[#4169E1]/40 group-hover:to-[#9333EA]/40 transition-all duration-300" />
+                <span className="relative text-black">{feature}</span>
               </Badge>
             ))}
           </div>
-        </div>
-        <div className="mt-12 text-center">
-          <p className="text-lg text-gray-600 mb-6">
-            Join us and take the first step towards a rewarding career in tech. Our next cohort starts soon!
-          </p>
-          <button className="bg-blue-600 text-white py-2 px-6 rounded-full font-semibold hover:bg-blue-700 transition-colors">
-            Apply Now
-          </button>
-        </div>
+        </motion.div>
       </div>
     </section>
-    </div>
   )
 }

@@ -14,22 +14,6 @@ batches: Batch[];
 
 export default function BatchCards({ batches }: BatchCardsProps) {
 const navigate = useNavigate();
-// const [isEditCoverOpen, setIsEditCoverOpen] = useState(false);
-// const [editingBatchId, setEditingBatchId] = useState<string | null>(null);
-// const [isImageCropOpen, setIsImageCropOpen] = useState(false);
-// const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
-
-// Handle image upload before cropping
-// const handleImageUpload = (file: File) => {
-//     const imageUrl = URL.createObjectURL(file);
-//     setTempImageUrl(imageUrl);
-//     setIsImageCropOpen(true);
-// };
-
-// const handleCropComplete = () => {
-//     setIsEditCoverOpen(false);
-//     setIsImageCropOpen(false);
-// };
 
 return (
     <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -39,7 +23,7 @@ return (
         onClick={async () => {
             try {
             const response = await fetch(
-                `http://10.10.103.248:4000/admin/batchs/${batch.id}`
+                `http://192.168.1.12:4000/admin/batchs/${batch.id}`
             );
             if (!response.ok) {
                 throw new Error(`Failed to fetch batch with ID: ${batch.id}`);

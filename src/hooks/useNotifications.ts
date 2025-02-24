@@ -13,7 +13,7 @@ export function useNotifications(initialNotifications: Notification[] = []) {
     const fetchNotifications = async () => {
       try {
         const refreshToken = localStorage.getItem('refreshToken');
-        const response = await axios.get('http://10.10.103.248:4000/mentor/notifications', {
+        const response = await axios.get('http://192.168.1.12:4000/mentor/notifications', {
           headers: {
             Authorization: `Bearer ${refreshToken}`, // Add Authorization header
           },
@@ -30,7 +30,7 @@ export function useNotifications(initialNotifications: Notification[] = []) {
     const decodedToken = jwtDecode<{ id: string }>(refreshToken);
 
     // Set up Socket.IO connection using WebSocket only
-    const socket = io('http://10.10.103.248:4000', {
+    const socket = io('http://192.168.1.12:4000', {
       transports: ['websocket'], // Force WebSocket transport
     }); // Replace with your backend's WebSocket URL
 
@@ -64,7 +64,7 @@ export function useNotifications(initialNotifications: Notification[] = []) {
 
   const markAsRead = useCallback(async (id: string) => {
     try {
-      await axios.put(`http://10.10.103.248:4000/mentor/notification/${id}/read`);
+      await axios.put(`http://192.168.1.12:4000/mentor/notification/${id}/read`);
       setNotifications((prev) => prev.filter((notif) => notif.id !== id));
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
@@ -78,7 +78,7 @@ export function useNotifications(initialNotifications: Notification[] = []) {
         const decodedToken: any = jwtDecode(token as string);
         const mentorId = decodedToken.id;
 
-      await axios.put('http://10.10.103.248:4000/mentor/notifications/read-all');
+      await axios.put('http://192.168.1.12:4000/mentor/notifications/read-all');
 
       setNotifications((prev) =>
         prev.filter((notif) => notif.userId !== mentorId) // Remove all unread notifications

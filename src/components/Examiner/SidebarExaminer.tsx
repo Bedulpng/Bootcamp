@@ -6,9 +6,9 @@ import { ChevronLeft, ChevronRight, Home, BookOpen, Settings, LogOut, ListChecks
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
-import LogoutModal from "../Modal/Logout";
+import LogoutModal from "./LogoutModal";
 
-export function SidebarTrainee({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (value: boolean) => void }) {
+export function SidebarExaminer({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (value: boolean) => void }) {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
 
@@ -62,7 +62,7 @@ export function SidebarTrainee({ isOpen, setIsOpen }: { isOpen: boolean; setIsOp
       </div>
       <ScrollArea className="flex-1 px-3 py-4">
         <nav className="space-y-2">
-          <NavItem icon={Home} label="Dashboard" to="/trainee/dashboard" isOpen={isOpen} />
+          <NavItem icon={Home} label="Dashboard" to="/examiner/dashboard" isOpen={isOpen} />
           <NavItem icon={BookOpen} label="Lessons" to="/trainee/lesson" isOpen={isOpen} />
           <NavItem icon={ListChecks} label="Challenges" to="/trainee/challenge" isOpen={isOpen} />
           <NavItem icon={Settings} label="Settings" to="/trainee/profile" isOpen={isOpen} />

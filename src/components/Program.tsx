@@ -34,8 +34,8 @@ export default function Component() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-20 p-4 mt-20">
-      <div className="flex flex-wrap justify-center gap-20 w-full max-w-screen-xl mx-auto">
+    <div className="flex flex-col items-center gap-20 p-4 mt-[200px]">
+      <div className="flex flex-wrap justify-center gap-[200px] w-full mx-auto">
         {programs.map((program) => (
           <div key={program.id} className="relative group flex-shrink-0 w-80">
             {/* Background shadow */}

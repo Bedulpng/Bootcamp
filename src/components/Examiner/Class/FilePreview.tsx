@@ -26,7 +26,7 @@ const FilePreview: React.FC<{ file: Files }> = ({ file }) => {
     const renderVideo = () => (
       <div className="w-full aspect-video bg-black flex items-center justify-center">
         <video
-          src={`http://10.10.103.248:4000${file.filepath
+          src={`http://192.168.1.12:4000${file.filepath
             .replace(/\\/g, "/")
             .replace("public", "")}`}
           controls
@@ -41,7 +41,7 @@ const FilePreview: React.FC<{ file: Files }> = ({ file }) => {
     const renderPDF = () => (
       <iframe
         // src={`file.filepath.replace`}
-        src={`http://10.10.103.248:4000${file.filepath
+        src={`http://192.168.1.12:4000${file.filepath
           .replace(/\\/g, "/")
           .replace("public", "")}`}
         title={`Preview of ${file.filename}`}

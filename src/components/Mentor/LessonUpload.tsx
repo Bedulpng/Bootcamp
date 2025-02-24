@@ -94,7 +94,7 @@ export default function UploadForm({
 
     try {
       const response = await fetch(
-        "http://10.10.103.248:4000/uploads/lesson",
+        "http://192.168.1.12:4000/uploads/lesson",
         {
           method: "POST",
           headers: {

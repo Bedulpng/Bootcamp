@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { isLoggedIn, checkTokenValidity, isVerified } from "./utils/middleware";
 import { MultiStepFormModal } from "./Trainee/pages/secondpge/Verification/multi-step-form-modal";
 import { toast } from "react-toastify";
+import { DotSpinner } from "./SpinnerLoading";
 import "react-toastify/dist/ReactToastify.css";
 
 interface ProtectedRouteProps {
@@ -49,14 +50,19 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (isValid === null || isVerifiedUser === null) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <DotSpinner />
+      </div>
+    );
   }
+  
 
   if (!isValid) {
     return <Navigate to="/" />; // Redirect to login page if checks fail
   }
 
-  return <>{children}</>; // Render the child components if valid
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

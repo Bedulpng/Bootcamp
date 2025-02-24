@@ -1,50 +1,61 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
-import { UserCog2, LogOut, ChevronDown } from 'lucide-react';
-import { DropdownMenu, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { UserCog2, LogOut, ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { NotificationPopup } from "@/components/Mentor/Notification/Notification";
 import LogoutModal from "@/components/Trainee/pages/Modal/Logout";
-import { jwtDecode } from 'jwt-decode'; 
-import axios from 'axios';
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
 const NavbarExaminer: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-  const [traineeName, setTraineeName] = useState('');
-  const [traineeRole, setTraineeRole] = useState('');
-  const [profileImage, setProfileImage] = useState('');
+  const [traineeName, setTraineeName] = useState("");
+  const [traineeRole, setTraineeRole] = useState("");
+  const [profileImage, setProfileImage] = useState("");
 
   useEffect(() => {
     const fetchMentorDetails = async () => {
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
+        const refreshToken = localStorage.getItem("refreshToken");
         const decodedToken: any = jwtDecode(refreshToken as string);
         const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
 
         // Fetch mentor details
-        const response = await axios.get(`http://192.168.1.12:4000/admin/mentor/${userId}`);
+        const response = await axios.get(
+          `http://10.10.103.248:4000/admin/mentor/${userId}`
+        );
         setTraineeName(response.data.fullName);
         setTraineeRole(response.data.role);
 
         // Fetch the professional profile image
-        const profileResponse = await axios.get(`http://192.168.1.12:4000/trainee/${userId}/pro`);
+        const profileResponse = await axios.get(
+          `http://10.10.103.248:4000/trainee/${userId}/pro`
+        );
         if (profileResponse.data && profileResponse.data.profileImage) {
           setProfileImage(profileResponse.data.profileImage); // Store the profile image path
         } else {
-          setProfileImage('path/to/default-image.jpg'); // Set a default image path
+          setProfileImage("path/to/default-image.jpg"); // Set a default image path
         }
         console.log(profileResponse.data.profileImage);
       } catch (error) {
-        console.error('Error fetching mentor details:', error);
+        console.error("Error fetching mentor details:", error);
       }
     };
 
     fetchMentorDetails();
   }, [navigate]);
-  
+
   const handleProfileClick = () => {
     navigate("/trainee/profile");
   };
@@ -58,26 +69,30 @@ const NavbarExaminer: React.FC = () => {
   };
 
   const confirmLogout = async () => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem("accessToken");
 
     if (!accessToken) {
-      alert('No token found. Please log in again.');
-      navigate('/login/examiner');
+      alert("No token found. Please log in again.");
+      navigate("/login/examiner");
       return;
     }
 
     try {
-      const response = await axios.post('http://192.168.1.12:4000/trainee/logout', {
-        accessToken,
-      });
+      const response = await axios.post(
+        "http://10.10.103.248:4000/trainee/logout",
+        {
+          accessToken,
+        }
+      );
 
       if (response.status === 200) {
-        localStorage.removeItem('accessToken'); // Remove the token from localStorage
-        navigate('/login/examiner'); // Redirect to the login page
+        localStorage.removeItem("accessToken"); // Remove the token from localStorage
+        navigate("/login/examiner"); // Redirect to the login page
       }
     } catch (error: any) {
-      console.error('Error during logout:', error);
-      const errorMessage = error.response?.data?.message || 'An error occurred while logging out.';
+      console.error("Error during logout:", error);
+      const errorMessage =
+        error.response?.data?.message || "An error occurred while logging out.";
       alert(`Logout failed: ${errorMessage}`);
     }
   };
@@ -87,14 +102,17 @@ const NavbarExaminer: React.FC = () => {
       <div className="container relative flex h-16 items-center px-8 justify-between">
         {/* Logo */}
         <div className="flex-shrink-0">
-          {/* <img
-            src="/lil_black.png"
-            alt="Logo"
-            className="w-12 h-12 cursor-pointer rounded md:block hidden"
-            onClick={handleLogoClick}
-          /> */}
+          <Link to="/examiner/dashboard" className="flex-shrink-0">
+            <img
+              src="/Logo_black_big.png"
+              alt="Logo"
+              width={150}
+              height={50}
+              className="rounded"
+            />
+          </Link>
         </div>
-  
+
         {/* User Menu */}
         <div className="flex-shrink-0 flex items-center gap-4">
           <Button variant="ghost" size="icon" className="h-10 w-10">
@@ -104,19 +122,24 @@ const NavbarExaminer: React.FC = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 p-1">
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
-                  <AvatarImage src={`http://192.168.1.12:4000${profileImage}`} alt="Trainee" />
+                  <AvatarImage
+                    src={`http://10.10.103.248:4000${profileImage}`}
+                    alt="Trainee"
+                  />
                   <AvatarFallback>
                     {traineeName
                       ? traineeName
-                          .split(' ')
+                          .split(" ")
                           .map((word) => word.charAt(0).toUpperCase())
-                          .join('')
-                      : '?'}
+                          .join("")
+                      : "?"}
                   </AvatarFallback>
                 </Avatar>
                 <div className="text-sm text-left">
-                  <div>{traineeName || 'THIS TRAINEE NAME'}</div>
-                  <div className="text-xs text-muted-foreground">{traineeRole || 'THIS TRAINEE ROLE'}</div>
+                  <div>{traineeName || "THIS TRAINEE NAME"}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {traineeRole || "THIS TRAINEE ROLE"}
+                  </div>
                 </div>
                 <ChevronDown className="h-4 w-4 ml-2" />
               </Button>
@@ -133,12 +156,15 @@ const NavbarExaminer: React.FC = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <LogoutModal isOpen={showModal} onClose={handleCloseModal} onConfirm={confirmLogout} />
+          <LogoutModal
+            isOpen={showModal}
+            onClose={handleCloseModal}
+            onConfirm={confirmLogout}
+          />
         </div>
       </div>
     </header>
   );
-  
 };
 
 export default NavbarExaminer;

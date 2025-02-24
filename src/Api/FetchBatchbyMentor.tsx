@@ -14,7 +14,7 @@ export const fetchBatchesByMentorId = async (
 ): Promise<Batch[]> => {
   try {
     const response = await axios.get<FetchBatchesResponse>(
-      `http://192.168.1.12:4000/admin/batch/${mentorId}`
+      `http://10.10.103.248:4000/admin/batch/${mentorId}`
     );
     return response.data?.batches || [];
   } catch (error) {
@@ -24,30 +24,26 @@ export const fetchBatchesByMentorId = async (
 };
 
 export const fetchClassById = async (
-  classId: string | undefined
+  classId: string | undefined,
+  order: "asc" | "desc" = "asc" // Default to "asc"
 ): Promise<Class[]> => {
   try {
-    if (!classId) {
-      throw new Error("classId is required but was undefined");
-    }
+    if (!classId) throw new Error("classId is required but was undefined");
 
+    // Pass the order parameter to the API
     const response = await axios.get<FetchClassResponse>(
-      `http://192.168.1.12:4000/admin/class/${classId}/class`
+      `http://10.10.103.248:4000/admin/class/${classId}/class`,
+      { params: order === "desc" ? { order: "desc" } : {} } // Only send if "desc"
     );
 
-    // Ensure response.data?.classData is always an array
     const classData = response.data?.classData;
-    if (Array.isArray(classData)) {
-      return classData; // Return as is if already an array
-    } else if (classData) {
-      return [classData]; // Wrap single object in an array
-    }
-    return [];
+    return Array.isArray(classData) ? classData : classData ? [classData] : [];
   } catch (error) {
     console.error("Error fetching class:", error);
     return [];
   }
 };
+ 
 
 
 

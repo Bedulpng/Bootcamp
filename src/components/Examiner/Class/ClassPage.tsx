@@ -4,18 +4,18 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ClassCard } from "./ClassCard";
 import { ClassCardSkeleton } from "./ClassCardSkeleton";
-import { ColorPickerModal } from "./ColorPickerModal";
-import { ImageCropModal } from "./ImageCropModal";
+// import { ColorPickerModal } from "./ColorPickerModal";
+// import { ImageCropModal } from "./ImageCropModal";
 import { Class } from "@/types/Trainee";
 
-export default function ClassPage() {
+export default function ExaminerClassPage() {
   const { batchId } = useParams<{ batchId: string }>();
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingClassId, setEditingClassId] = useState<string | null>(null);
-  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
-  const [isImageCropOpen, setIsImageCropOpen] = useState(false);
-  const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
+//   const [editingClassId, setEditingClassId] = useState<string | null>(null);
+//   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+//   const [isImageCropOpen, setIsImageCropOpen] = useState(false);
+//   const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
@@ -39,28 +39,28 @@ export default function ClassPage() {
     if (batchId) fetchClasses();
   }, [batchId]);
 
-  const handleEditColors = (classId: string) => {
-    setEditingClassId(classId);
-    setIsColorPickerOpen(true);
-  };
+//   const handleEditColors = (classId: string) => {
+//     setEditingClassId(classId);
+//     setIsColorPickerOpen(true);
+//   };
 
-  const handleImageUpload = (file: File) => {
-    const imageUrl = URL.createObjectURL(file);
-    setTempImageUrl(imageUrl);
-    setIsImageCropOpen(true);
-  };
+//   const handleImageUpload = (file: File) => {
+//     const imageUrl = URL.createObjectURL(file);
+//     setTempImageUrl(imageUrl);
+//     setIsImageCropOpen(true);
+//   };
 
-  const handleCropComplete = (croppedImageUrl: string) => {
-    if (editingClassId) {
-      setClasses((prevClasses) =>
-        prevClasses.map((c) =>
-          c.id === editingClassId ? { ...c, coverImage: croppedImageUrl, gradientColors: undefined } : c
-        )
-      );
-    }
-    setIsColorPickerOpen(false);
-    setIsImageCropOpen(false);
-  };
+//   const handleCropComplete = (croppedImageUrl: string) => {
+//     if (editingClassId) {
+//       setClasses((prevClasses) =>
+//         prevClasses.map((c) =>
+//           c.id === editingClassId ? { ...c, coverImage: croppedImageUrl, gradientColors: undefined } : c
+//         )
+//       );
+//     }
+//     setIsColorPickerOpen(false);
+//     setIsImageCropOpen(false);
+//   };
 
   return (
     <div className="container mx-auto px-4 py-8">      
@@ -78,14 +78,13 @@ export default function ClassPage() {
                 className={classItem.className}
                 createdAt={classItem.createdAt}
                 coverImage={classItem.cover?.filePath}
-                onEditColors={() => handleEditColors(classItem.id)}
               />
             ))
           : <p>No classes available.</p>
         }
       </div>
 
-      {isColorPickerOpen && editingClassId && (
+      {/* {isColorPickerOpen && editingClassId && (
         <ColorPickerModal
           isOpen={isColorPickerOpen}
           onClose={() => setIsColorPickerOpen(false)}
@@ -104,7 +103,7 @@ export default function ClassPage() {
           onCropComplete={handleCropComplete}
           classId={classes.find((c) => c.id === editingClassId)?.id || ""}
         />
-      )}
+      )} */}
     </div>
   );
 }

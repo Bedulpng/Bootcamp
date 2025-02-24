@@ -37,7 +37,7 @@ const RbacTest: React.FC<RoleBasedRouteProps> = ({ children, routeName }) => {
   useEffect(() => {
     const fetchAllowedRoles = async () => {
       try {
-        const response = await axios.get(`http://192.168.1.12:4000/api/allowed?route=${routeName}`);
+        const response = await axios.get(`http://10.10.103.248:4000/api/allowed?route=${routeName}`);
         setAllowedRoles(response.data.allowedRoles);
       } catch (error) {
         console.error('Failed to fetch allowed roles:', error);

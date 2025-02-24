@@ -39,7 +39,7 @@ export default function NotePresentation({ addNote, selectedTrainee, presentatio
       }
 
       const response = await axios.post(
-        `http://192.168.1.12:4000/examiner/note/${presentationId}/presentation`,
+        `http://10.10.103.248:4000/examiner/note/${presentationId}/presentation`,
         {
           content,
           visibility,

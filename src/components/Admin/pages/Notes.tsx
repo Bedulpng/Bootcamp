@@ -12,6 +12,7 @@ import {
 import { Eye } from "lucide-react";
 import { Mentor } from "@/types/Trainee";
 import { fetchMentors } from "@/Api/FetchUsersByRole";
+import NoSubmitted from "@/components/Examiner/Class/NoTask";
 
 interface NotesTableProps {
   onViewGraderNotes: (graderId: string, graderName: string, visibility: string) => void;
@@ -37,55 +38,64 @@ export default function Notes({ onViewGraderNotes }: NotesTableProps) {
   return (
     <div className="space-y-6">
 
-      <Card>
-        <CardHeader>
-          <CardTitle>All Notes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-center">#</TableHead>
-                <TableHead className="text-center">Grader Name</TableHead>
-                <TableHead className="text-center">Nickname</TableHead>
-                <TableHead className="text-center">Email</TableHead>
-                <TableHead className="text-center">Role</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {graders.map((grader, index) => (
-                <TableRow key={grader.id}>
-                  <TableCell className="text-center">{index + 1}</TableCell>
-                  <TableCell className="text-center">
-                    {grader.fullName}
-                  </TableCell>
-                  <TableCell
-                    className={`text-center ${
-                      !grader.nickname ? "text-gray-500" : ""
-                    }`}
-                  >
-                    {grader.nickname || "No Nickname"}
-                  </TableCell>
-                  <TableCell className="text-center">{grader.email}</TableCell>
-                  <TableCell className="text-center">{grader.role}</TableCell>
-                  <TableCell className="text-center">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        onViewGraderNotes(grader.id, grader.fullName, "");
-                      }}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+<Card>
+  <CardHeader>
+    <CardTitle>All Notes</CardTitle>
+  </CardHeader>
+  <CardContent>
+    {graders.length > 0 ? (
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-center">#</TableHead>
+            <TableHead className="text-center">Grader Name</TableHead>
+            <TableHead className="text-center">Nickname</TableHead>
+            <TableHead className="text-center">Email</TableHead>
+            <TableHead className="text-center">Role</TableHead>
+            <TableHead className="text-center">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {graders.map((grader, index) => (
+            <TableRow key={grader.id}>
+              <TableCell className="text-center">{index + 1}</TableCell>
+              <TableCell className="text-center">
+                {grader.fullName ?? "N/A"}
+              </TableCell>
+              <TableCell
+                className={`text-center ${
+                  !grader.nickname ? "text-gray-500" : ""
+                }`}
+              >
+                {grader.nickname || "No Nickname"}
+              </TableCell>
+              <TableCell className="text-center">
+                {grader.email ?? "N/A"}
+              </TableCell>
+              <TableCell className="text-center">
+                {grader.role ?? "Unknown"}
+              </TableCell>
+              <TableCell className="text-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() =>
+                    onViewGraderNotes(grader.id, grader.fullName ?? "N/A", "")
+                  }
+                >
+                  <Eye className="h-4 w-4" />
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    ) : (
+      <NoSubmitted/>
+    )}
+  </CardContent>
+</Card>
+
     </div>
   );
 }

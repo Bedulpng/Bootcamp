@@ -21,7 +21,6 @@ import { TraineePages } from "./components/TraineeManagement/TraineePage";
 import { MentorLogin } from "./components/Login/MentorLogin";
 import { TraineeLogin } from "./components/Login/TraineeLogin";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Rbac from "./components/RbacRoute";
 import NotesPage from "./components/Mentor/Notes/page";
 import NotificationPage from "./components/Trainee/pages/secondpge/top/Notification";
 import Profile from "./components/Trainee/pages/secondpge/top/profile";
@@ -53,6 +52,9 @@ import ExaminerDashboard from "./components/Examiner/Page";
 import NavbarExaminer from "./components/Examiner/Navbar";
 import RoutesPage from "./components/Admin/pages/Route/RoutePage";
 import RbacTest from "./components/RbacTesting";
+import ExaminerClassPage from "./components/Examiner/Class/ClassPage";
+import ExaminerClassDetails from "./components/Examiner/Class/ClassDetail";
+import ExaminerSubmissionPage from "./components/Examiner/Class/Submission";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isDashboard = window.location.pathname.startsWith("/dashboard");
@@ -216,85 +218,85 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
+              <RbacTest routeName="/dashboard">
                 <ProtectedRoute>
                   <Layout>
                     <MentorDb />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/dashboard/batch"
             element={
-              <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
+              <RbacTest routeName="/dashboard/batch">
                 <ProtectedRoute>
                   <Layout>
                     <Batch />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/dashboard/trainee"
             element={
-              <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
+              <RbacTest routeName="/dashboard/trainee">
                 <ProtectedRoute>
                   <Layout>
                     <TraineePages />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/dashboard/note"
             element={
-              <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
+              <RbacTest routeName="/dashboard/note">
                 <ProtectedRoute>
                   <Layout>
                     <NotesPage />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/dashboard/c/:classId/s/:id"
             element={
-              <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
+              <RbacTest routeName="/dashboard/c/:classId/s/:id">
                 <ProtectedRoute>
                   <Layout>
                     <Challange />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/dashboard/class/:batchId"
             element={
-              <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
+              <RbacTest routeName="/dashboard/class/:batchId">
                 <ProtectedRoute>
                   <Layout>
                     <ClassPage />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/dashboard/c/:classId/:batchId"
             element={
-              <Rbac allowedRoles={["ADMIN", "MENTOR"]}>
+              <RbacTest routeName="/dashboard/c/:classId/:batchId">
                 <ProtectedRoute>
                   <Layout>
                     <ClassDetails />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route path="/login/mentor" element={<MentorLogin />} />
@@ -303,109 +305,109 @@ function App() {
           <Route
             path="/trainee/class/:classId"
             element={
-              <Rbac allowedRoles={["ADMIN", "TRAINEE"]}>
+              <RbacTest routeName="/trainee/class/:classId">
                 <ProtectedRoute>
                   <Layout>
                     <TraineeMain />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/trainee/lesson/:id"
             element={
-              <Rbac allowedRoles={["ADMIN", "TRAINEE"]}>
+              <RbacTest routeName="/trainee/lesson/:id">
                 <ProtectedRoute>
                   <Layout>
                     <SubjectDetail />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/trainee/challenge/:id"
             element={
-              <Rbac allowedRoles={["ADMIN", "TRAINEE"]}>
+              <RbacTest routeName="/trainee/challenge/:id">
                 <ProtectedRoute>
                   <Layout>
                     <SubjectDetail />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/trainee/presentation/:id"
             element={
-              <Rbac allowedRoles={["ADMIN", "TRAINEE"]}>
+              <RbacTest routeName="/trainee/presentation/:id">
                 <ProtectedRoute>
                   <Layout>
                     <SubjectDetail />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/trainee/lesson"
             element={
-              <Rbac allowedRoles={["ADMIN", "TRAINEE"]}>
+              <RbacTest routeName="/trainee/lesson">
                 <ProtectedRoute>
                   <Layout>
                     <LessonsPage />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/trainee/challenge"
             element={
-              <Rbac allowedRoles={["ADMIN", "TRAINEE"]}>
+              <RbacTest routeName="/trainee/challenge">
                 <ProtectedRoute>
                   <Layout>
                     <ChallengesPage />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/trainee/notification"
             element={
-              <Rbac allowedRoles={["ADMIN", "TRAINEE"]}>
+              <RbacTest routeName="/trainee/notification">
                 <ProtectedRoute>
                   <Layout>
                     <NotificationPage />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/trainee/profile"
             element={
-              <Rbac allowedRoles={["TRAINEE", "ADMIN"]}>
+              <RbacTest routeName="/trainee/profile">
                 <ProtectedRoute>
                   <Layout>
                     <Profile />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
             path="/trainee/dashboard"
             element={
-              <Rbac allowedRoles={["TRAINEE", "ADMIN"]}>
+              <RbacTest routeName="/trainee/dashboard">
                 <ProtectedRoute>
                   <Layout>
                     <ClassesPage />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route path="/verify" element={<SkillPage />} />
@@ -413,13 +415,13 @@ function App() {
           <Route
             path="/admin/dashboard"
             element={
-              <Rbac allowedRoles={["ADMIN"]}>
+              <RbacTest routeName="/admin/dashboard">
                 <ProtectedRoute>
                   <Layout>
                     <DashboardAdmin />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
             }
           />
           <Route
@@ -433,13 +435,49 @@ function App() {
           <Route
             path="/examiner/dashboard"
             element={
-              <Rbac allowedRoles={["EXAMINER", "ADMIN"]}>
+              <RbacTest routeName="/examiner/dashboard">
                 <ProtectedRoute>
                   <Layout>
                     <ExaminerDashboard />
                   </Layout>
                 </ProtectedRoute>
-              </Rbac>
+              </RbacTest>
+            }
+          />
+          <Route
+            path="/examiner/class/:batchId"
+            element={
+              <RbacTest routeName="/examiner/class/:batchId">
+                <ProtectedRoute>
+                  <Layout>
+                    <ExaminerClassPage />
+                  </Layout>
+                </ProtectedRoute>
+              </RbacTest>
+            }
+          />
+          <Route
+            path="/examiner/c/:classId/:batchId"
+            element={
+              <RbacTest routeName="/examiner/c/:classId/:batchId">
+                <ProtectedRoute>
+                  <Layout>
+                    <ExaminerClassDetails />
+                  </Layout>
+                </ProtectedRoute>
+              </RbacTest>
+            }
+          />
+          <Route
+            path="/examiner/c/:classId/s/:id"
+            element={
+              <RbacTest routeName="/examiner/c/:classId/s/:id">
+                <ProtectedRoute>
+                  <Layout>
+                    <ExaminerSubmissionPage />
+                  </Layout>
+                </ProtectedRoute>
+              </RbacTest>
             }
           />
           {/* <Route

@@ -11,7 +11,9 @@ import { NoPresentation } from "./NothingHandle/NoPresentation";
 export default function TraineeMain() {
   const { classId } = useParams<{ classId: string }>();
   const [isFilterDropdownOpen, setFilterDropdownOpen] = useState(false);
-  const [filterOption, setFilterOption] = useState<string>("Featured");
+  const [filterOption, setFilterOption] = useState<"Newest" | "Oldest">(
+    "Newest"
+  );
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<
     "lesson" | "challenge" | "presentation"
@@ -21,8 +23,8 @@ export default function TraineeMain() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const classData = await fetchClassById(classId);
-        console.log("Class Data:", classData);
+        const order = filterOption === "Oldest" ? "desc" : "asc"; // Map filter to order
+        const classData = await fetchClassById(classId, order);
         setClasses(classData);
       } catch (error) {
         console.error("Failed to fetch class:", error);
@@ -30,7 +32,7 @@ export default function TraineeMain() {
     };
 
     fetchData();
-  }, []);
+  }, [classId, filterOption]); // Refetch on filter change
 
   const toggleFilterDropdown = () =>
     setFilterDropdownOpen(!isFilterDropdownOpen);
@@ -39,9 +41,7 @@ export default function TraineeMain() {
     setActiveTab(tab);
 
   const handleChallenge = (id: string) => navigate(`/trainee/challenge/${id}`);
-
   const handleLesson = (id: string) => navigate(`/trainee/lesson/${id}`);
-
   const handlePresentation = (id: string) =>
     navigate(`/trainee/presentation/${id}`);
 
@@ -56,36 +56,19 @@ export default function TraineeMain() {
 
       <div className="flex justify-between mt-8">
         <div className="flex space-x-3">
-          <button
-            className={`px-4 py-2 font-bold rounded-lg ${
-              activeTab === "lesson"
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-600"
-            }`}
-            onClick={() => handleTabClick("lesson")}
-          >
-            Lesson
-          </button>
-          <button
-            className={`px-4 py-2 font-bold rounded-lg ${
-              activeTab === "challenge"
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-600"
-            }`}
-            onClick={() => handleTabClick("challenge")}
-          >
-            Challenge
-          </button>
-          <button
-            className={`px-4 py-2 font-bold rounded-lg ${
-              activeTab === "presentation"
-                ? "bg-blue-700 text-white"
-                : "bg-gray-200 text-gray-600"
-            }`}
-            onClick={() => handleTabClick("presentation")}
-          >
-            Presentation
-          </button>
+          {["lesson", "challenge", "presentation"].map((tab) => (
+            <button
+              key={tab}
+              className={`px-4 py-2 font-bold rounded-lg ${
+                activeTab === tab
+                  ? "bg-blue-700 text-white"
+                  : "bg-gray-200 text-gray-600"
+              }`}
+              onClick={() => handleTabClick(tab as typeof activeTab)}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
         </div>
 
         <div className="relative">
@@ -95,11 +78,10 @@ export default function TraineeMain() {
           >
             <span>{filterOption}</span>
             <svg
-              className="w-4 h-4 text-gray-700"
+              className="w-4 h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
             >
               <path
                 strokeLinecap="round"
@@ -109,26 +91,21 @@ export default function TraineeMain() {
               />
             </svg>
           </button>
+
           {isFilterDropdownOpen && (
             <div className="absolute right-0 mt-2 w-40 bg-gray-100 rounded-lg shadow-lg border border-gray-300">
-              <button
-                onClick={() => {
-                  setFilterOption("Newest");
-                  setFilterDropdownOpen(false);
-                }}
-                className="block w-full px-4 py-2 text-left text-black hover:bg-gray-200"
-              >
-                Newest
-              </button>
-              <button
-                onClick={() => {
-                  setFilterOption("Oldest");
-                  setFilterDropdownOpen(false);
-                }}
-                className="block w-full px-4 py-2 text-left text-black hover:bg-gray-200"
-              >
-                Oldest
-              </button>
+              {["Newest", "Oldest"].map((option) => (
+                <button
+                  key={option}
+                  onClick={() => {
+                    setFilterOption(option as "Newest" | "Oldest");
+                    setFilterDropdownOpen(false);
+                  }}
+                  className="block w-full px-4 py-2 text-left hover:bg-gray-200"
+                >
+                  {option}
+                </button>
+              ))}
             </div>
           )}
         </div>
@@ -136,7 +113,7 @@ export default function TraineeMain() {
 
       <div className="mt-8 space-y-4 mb-16">
         {activeTab === "lesson" &&
-          (classes.every((classItem) => classItem.lessons.length === 0) ? (
+          (classes.every((c) => c.lessons.length === 0) ? (
             <NoLessons />
           ) : (
             classes.map((classItem) =>
@@ -148,13 +125,11 @@ export default function TraineeMain() {
                 >
                   <div className="flex items-start space-x-4 mb-8">
                     <div className="bg-white border border-black rounded-lg p-4">
-                      <FileText className="h-8 w-8 text-black" />
+                      <FileText className="h-8 w-8" />
                     </div>
                     <div className="flex-1">
                       <h3 className="text-xl font-bold">{lesson.title}</h3>
-                      <p className="text-sm font-semibold text-black-500">
-                        {lesson.description}
-                      </p>
+                      <p className="text-sm">{lesson.description}</p>
                     </div>
                   </div>
                 </div>

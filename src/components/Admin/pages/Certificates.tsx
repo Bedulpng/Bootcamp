@@ -6,6 +6,7 @@ import { Download } from "lucide-react";
 import { Certificate } from "@/types/Trainee";
 import { fetchAllCertificates } from "@/Api/FetchCertificate";
 import { CertificateModal } from "../Modal/CertModal";
+import NoSubmitted from "@/components/Examiner/Class/NoTask";
 
 
 export default function Certificates() {
@@ -47,34 +48,38 @@ export default function Certificates() {
           <CardTitle>Recent Certificates</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-center">#</TableHead>
-                <TableHead className="text-center">Student</TableHead>
-                <TableHead className="text-center">Class</TableHead>
-                <TableHead className="text-center">Batch</TableHead>
-                <TableHead className="text-center">Issued Date</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {certificates .map((cert, index) => (
-                <TableRow key={cert.id}>
-                  <TableCell className="text-center">{index + 1}</TableCell>
-                  <TableCell className="text-center">{cert.trainee.fullName}</TableCell>
-                  <TableCell className="text-center">{cert.class.className}</TableCell>
-                  <TableCell className="text-center">{cert.batch.batchTitle}</TableCell>
-                  <TableCell className="text-center">{cert.issuedAt}</TableCell>
-                  <TableCell className="text-center">
-                    <Button variant="ghost" size="icon">
-                      <Download className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
+          {certificates.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-center">#</TableHead>
+                  <TableHead className="text-center">Student</TableHead>
+                  <TableHead className="text-center">Class</TableHead>
+                  <TableHead className="text-center">Batch</TableHead>
+                  <TableHead className="text-center">Issued Date</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {certificates.map((cert, index) => (
+                  <TableRow key={cert.id}>
+                    <TableCell className="text-center">{index + 1}</TableCell>
+                    <TableCell className="text-center">{cert.trainee?.fullName ?? "N/A"}</TableCell>
+                    <TableCell className="text-center">{cert.class?.className ?? "N/A"}</TableCell>
+                    <TableCell className="text-center">{cert.batch?.batchTitle ?? "N/A"}</TableCell>
+                    <TableCell className="text-center">{cert.issuedAt ?? "N/A"}</TableCell>
+                    <TableCell className="text-center">
+                      <Button variant="ghost" size="icon">
+                        <Download className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <NoSubmitted/>
+          )}
         </CardContent>
       </Card>
     </div>

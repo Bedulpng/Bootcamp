@@ -13,10 +13,11 @@ import { Badge } from "@/components/ui/badge";
 import { ClassModal } from "../Modal/ClassModal";
 import { fetchClasses } from "@/Api/FetchingBatches&Classes";
 import { Class } from "@/types/Trainee";
-import { PenBoxIcon, Wallpaper } from "lucide-react";
+import { PenBoxIcon, Trash2Icon, Wallpaper } from "lucide-react";
 import { EditClassModal } from "../Modal/Edit-Modal/EditClassModal";
 import { ColorPickerModal } from "@/components/Mentor/ClassCard/ColorPickerModal";
 import { ImageCropModal } from "@/components/Mentor/ClassCard/ImageCropModal";
+import NoSubmitted from "@/components/Examiner/Class/NoTask";
 
 export default function Classes() {
   const [isClassModalOpen, setIsClassModalOpen] = useState(false);
@@ -54,7 +55,7 @@ export default function Classes() {
 
   const handleOpenEdit = (classId: string, classTitle: string) => {
     setSelectedClassId(classId); // Set the selected class ID
-    setSelectedClassTitle(classTitle)
+    setSelectedClassTitle(classTitle);
     setIsEditClassOpen(true);
   };
 
@@ -131,82 +132,104 @@ export default function Classes() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Today's Classes</CardTitle>
+          <CardTitle>Classes Available</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-center">#</TableHead>
-                <TableHead className="text-center">Name</TableHead>
-                <TableHead className="text-center">Participant</TableHead>
-                <TableHead className="text-center">Instructor</TableHead>
-                <TableHead className="text-center">Created At</TableHead>
-                <TableHead className="text-center">Status</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {fetchedClasses.map((classes, index) => (
-                <TableRow key={classes.id}>
-                  <TableCell className="text-center">{index + 1}</TableCell>
-                  <TableCell className="text-center">
-                    {classes.className}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {classes.participant}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {classes.mentors.length}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {new Date(classes.createdAt).toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Badge
-                      variant={
-                        classes.status === "Tba"
-                          ? "secondary"
-                          : classes.status === "Ongoing"
-                          ? "default"
-                          : "outline"
-                      }
-                    >
-                      {classes.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-yellow-600 hover:text-yellow-600"
-                      onClick={() => handleOpenEdit(classes.id, classes.className)} // Pass class ID here
-                    >
-                      <PenBoxIcon className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-green-600 hover:text-green-600"
-                      onClick={() => {
-                        handleEditCover(
-                          classes.id,
-                          classes.className,
-                          classes.cover.filePath
-                        );
-                      }} 
-                    >
-                      <Wallpaper className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
+          {fetchedClasses.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-center">#</TableHead>
+                  <TableHead className="text-center">Name</TableHead>
+                  <TableHead className="text-center">Participant</TableHead>
+                  <TableHead className="text-center">Instructor</TableHead>
+                  <TableHead className="text-center">Created At</TableHead>
+                  <TableHead className="text-center">Status</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {fetchedClasses.map((classes, index) => (
+                  <TableRow key={classes.id}>
+                    <TableCell className="text-center">{index + 1}</TableCell>
+                    <TableCell className="text-center">
+                      {classes.className ?? "N/A"}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {classes.participant ?? 0}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {classes.mentors?.length ?? 0}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {classes.createdAt
+                        ? new Date(classes.createdAt).toLocaleDateString(
+                            "en-GB",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            }
+                          )
+                        : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge
+                        variant={
+                          classes.status === "Tba"
+                            ? "secondary"
+                            : classes.status === "Ongoing"
+                            ? "default"
+                            : "outline"
+                        }
+                      >
+                        {classes.status ?? "Unknown"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-yellow-600 hover:text-yellow-600"
+                        onClick={() =>
+                          handleOpenEdit(classes.id, classes.className)
+                        }
+                      >
+                        <PenBoxIcon className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-green-600 hover:text-green-600"
+                        onClick={() =>
+                          handleEditCover(
+                            classes.id,
+                            classes.className,
+                            classes.cover?.filePath ?? ""
+                          )
+                        }
+                      >
+                        <Wallpaper className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 hover:text-red-500"
+                        onClick={() =>
+                          // handleOpenUserDelete(user.id, user.fullName ?? "-")
+                          console.log("waiwia")
+                        }
+                      >
+                        <Trash2Icon className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <NoSubmitted />
+          )}
         </CardContent>
       </Card>
     </div>

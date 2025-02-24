@@ -15,7 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Note, type File } from "@/types/Trainee";
+import { Note, type Files } from "@/types/Trainee";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
 import { getChallengeStatus, getLessonStatus, getPresentationStatus } from "@/Api/SubmitAssignment";
@@ -27,7 +27,7 @@ interface SubmissionFormProps {
 }
 
 export default function SubmissionForm({ itemId }: SubmissionFormProps) {
-  const [submissionFiles, setSubmissionFiles] = useState<File[]>([]);
+  const [submissionFiles, setSubmissionFiles] = useState<Files[]>([]);
   const [submissionNote, setSubmissionNote] = useState<Note[]>([]);
   const [files, setFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -111,23 +111,15 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
           }
           return true;
         })
-        .map((file) => ({
-          id: Math.random().toString(36).substr(2, 9),
-          filename: file.name,
-          filepath: URL.createObjectURL(file),
-          mimetype: file.type,
-          ...(itemType === "lesson"
-            ? { lessonId: itemId }
-            : { challengeId: itemId }),
-          file,
-        }));
+        .map((file) => file);
 
       setFiles((prevFiles) => [...prevFiles, ...newFiles]);
     }
   };
 
-  const handleRemoveFile = (id: string) => {
-    setFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
+
+  const handleRemoveFile = (file: File) => {
+    setFiles((prevFiles) => prevFiles.filter((f) => f !== file));
   };
 
   const handleSubmit = async (confirmed = false) => {
@@ -139,20 +131,20 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
     setIsSubmitting(true);
 
     const formData = new FormData();
-    formData.append("userId", userId);
-    files.forEach((file) => formData.append("files", file.filename));
+    formData.append("userId", String(userId));
+    files.forEach((file) => formData.append("files", file));
 
-    console.log("FormData entries:");
+    console.log("FormData entries:", );
     for (const [key, value] of formData.entries()) {
       console.log(`${key}:`, value);
     }
 
     const endpoint =
       itemType === "lesson"
-        ? `http://192.168.1.12:4000/complete/lesson/${itemId}`
+        ? `http://10.10.103.248:4000/complete/lesson/${itemId}`
         : itemType === "challenge"
-        ? `http://192.168.1.12:4000/complete/challenge/${itemId}`
-        : `http://192.168.1.12:4000/complete/presentation/${itemId}`;
+        ? `http://10.10.103.248:4000/complete/challenge/${itemId}`
+        : `http://10.10.103.248:4000/complete/presentation/${itemId}`;
 
     try {
       const response = await axios.post(endpoint, formData, {
@@ -245,23 +237,32 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
             >
               {files.map((file) => (
                 <motion.li
-                  key={file.id}
+                  key={file.name}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
                   transition={{ duration: 0.2 }}
                   className="flex items-center justify-between rounded-md border px-3 py-2 text-sm"
                 >
-                  <span className="truncate mr-2">{file.filename}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
-                    onClick={() => handleRemoveFile(file.id)}
-                  >
-                    <X className="h-4 w-4" />
-                    <span className="sr-only">Remove file</span>
-                  </Button>
+                  <span className="truncate mr-2">{file.name}</span>
+                  <div className="flex gap-2">
+                    {/* <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 p-0 hover:bg-primary/10"
+                      onClick={() => handlePreviewFile(file)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button> */}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                      onClick={() => handleRemoveFile(file)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </motion.li>
               ))}
             </motion.ul>

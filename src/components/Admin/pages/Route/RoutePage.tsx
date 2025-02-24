@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Plus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Plus, ArrowUp } from "lucide-react";
 import type { Route } from "./types/types";
 import { routes, groupRoutes } from "./data/Mock";
 import { RouteGroupComponent } from "./components/RouteGroup";
@@ -16,6 +16,29 @@ export default function RoutesPage() {
   const [routeData, setRouteData] = useState(routes);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showScrollButton, setShowScrollButton] = useState(false);
+
+  // Detect scrolling and manage scroll button visibility
+  useEffect(() => {
+    let hideTimeout: NodeJS.Timeout;
+
+    const handleScroll = () => {
+      setShowScrollButton(true);
+
+      // Clear previous timeout and set a new one (1 second delay)
+      clearTimeout(hideTimeout);
+      hideTimeout = setTimeout(() => {
+        setShowScrollButton(false);
+      }, 1000); // 1 second after scrolling stops
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(hideTimeout);
+    };
+  }, []);
 
   const handleRouteClick = (route: Route) => setSelectedRoute(route);
 
@@ -68,11 +91,11 @@ export default function RoutesPage() {
           isModalOpen ? "blur-sm pointer-events-none" : ""
         }`}
       >
-        <div className="sticky top-0 z-10 border-b bg-background/90 backdrop-blur">
+        {/* Header Controls - Removed Sticky & Lowered z-index */}
+        <div className="border-b bg-background/90">
           <div className="container mx-auto px-4 py-4 sm:px-6 lg:px-8">
-            {/* Header Controls */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex-1">
+              <div className="flex-1 z-10">
                 <SearchBar value={searchQuery} onChange={setSearchQuery} />
               </div>
               <div className="flex justify-center sm:justify-end">
@@ -111,6 +134,16 @@ export default function RoutesPage() {
           )}
         </div>
       </div>
+
+      {/* Scroll to Top Button */}
+      {showScrollButton && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-8 right-8 z-10 p-3 bg-blue-600 text-white rounded-full shadow-lg transition-opacity duration-300"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </button>
+      )}
 
       {/* Modals */}
       <RouteAccessModal

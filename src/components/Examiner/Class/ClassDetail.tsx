@@ -8,18 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Users,
-  BookOpen,
-  Trophy,
   ChevronRight,
   ArrowLeft,
   User2Icon,
   Presentation,
+  GraduationCap,
 } from "lucide-react";
 import { Class, File } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
-import LessonModal from "./Modal/LessonUpload";
-import ChallengeModal from "./Modal/ChallengeUpload";
-import PresentationModal from "./Modal/PresentationUpload";
 
 interface ItemDetails {
   id: string;
@@ -29,7 +25,7 @@ interface ItemDetails {
   deadline?: string;
 }
 
-export default function ClassDetails() {
+export default function ExaminerClassDetails() {
   const { classId } = useParams<{ classId: string }>();
   const [activeTab, setActiveTab] = useState("participants");
   const [isNavExpanded, setIsNavExpanded] = useState(true);
@@ -52,19 +48,14 @@ export default function ClassDetails() {
   }, [classId]);
 
   const navItems = [
-    { id: "participants", icon: Users, label: "Participants" },
-    { id: "challenges", icon: Trophy, label: "Challenges" },
-    { id: "lessons", icon: BookOpen, label: "Lessons" },
+    { id: "participants", icon: Users, label: "Trainee  " },
+    { id: "mentor", icon: GraduationCap, label: "Mentors" },
     { id: "presentations", icon: Presentation, label: "Presentations" },
   ];
 
   // Render items based on activeTab
   const renderItems = () => {
     switch (activeTab) {
-      case "challenges":
-        return classes.flatMap((classItem) => classItem.challenges ?? []);
-      case "lessons":
-        return classes.flatMap((classItem) => classItem.lessons ?? []);
       case "presentations":
         return classes.flatMap((classItem) => classItem.presentation ?? []);
       default:
@@ -72,30 +63,15 @@ export default function ClassDetails() {
     }
   };
 
-  // Modal based on activeTab
-  const renderModal = () => {
-    switch (activeTab) {
-      case "challenges":
-        return <ChallengeModal />;
-      case "lessons":
-        return <LessonModal />;
-      case "presentations":
-        return <PresentationModal />;
-      default:
-        return null;
-    }
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <Link to={`/dashboard/batch`}>
+        <Link to={`/examiner/dashboard`}>
           <Button variant="ghost" size="icon" className="rounded-full">
             <ArrowLeft className="h-6 w-6" />
             <span className="sr-only">Back to Classes</span>
           </Button>
         </Link>
-        <div className="top-4 right-4 z-50">{renderModal()}</div>
       </div>
 
       <div className="flex">
@@ -176,6 +152,34 @@ export default function ClassDetails() {
                   ))
                 )}
               </div>
+            ) : activeTab === "mentor" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {classes.map((classItem, index) =>
+                  classItem.mentors.map((user, userIndex) => (
+                    <Card key={`${index}-${userIndex}`} className="overflow-hidden">
+                      <CardContent className="p-4 flex items-center">
+                        {user.profiles?.[0]?.filepath ? (
+                          <img
+                            src={`http://10.10.103.248:4000${user.profiles[0].filepath
+                              .replace(/\\/g, "/")
+                              .replace("public", "")}`}
+                            alt={user.fullName || "No userName"}
+                            width={50}
+                            height={50}
+                            className="rounded-full mr-4"
+                          />
+                        ) : (
+                          <User2Icon className="w-12 h-12 text-gray-500 mr-4 rounded-full" />
+                        )}
+                        <div>
+                          <h3 className="font-semibold">{user.fullName || "No userName"}</h3>
+                          <p className="text-sm text-gray-600">{user.role || "Student"}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
             ) : (
               <div className="relative">
                 <ScrollArea className="h-[calc(100vh-200px)]">
@@ -190,8 +194,7 @@ export default function ClassDetails() {
                             selectedItem === item ? "shadow-lg" : ""
                           }`}
                           onClick={() =>
-                            activeTab !== "presentations" &&
-                            navigate(`/dashboard/c/${classId}/s/${item.id}`)
+                            navigate(`/examiner/c/${classId}/s/${item.id}`)
                           }                        >
                           <Card>
                             <CardHeader>

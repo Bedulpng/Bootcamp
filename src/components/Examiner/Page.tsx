@@ -36,6 +36,7 @@ import {
 } from "@/types/Trainee";
 import axios from "axios";
 import NotePresentation from "./NoteFinalPresentation";
+import BatchCards from "./Batch/BatchCard";
 
 export default function ExaminerDashboard() {
   const [selectedBatch, setSelectedBatch] = useState<string>("all");
@@ -72,7 +73,7 @@ export default function ExaminerDashboard() {
     const fetchBatches = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.12:4000/admin/batch"
+          "http://10.10.103.248:4000/admin/batch"
         );
         setBatches(response.data);
       } catch (error) {
@@ -86,7 +87,7 @@ export default function ExaminerDashboard() {
     const fetchClasses = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.12:4000/admin/class"
+          "http://10.10.103.248:4000/admin/class"
         );
         setClasses(response.data);
       } catch (error) {
@@ -104,7 +105,7 @@ export default function ExaminerDashboard() {
         if (selectedClass !== "all") params.classId = selectedClass;
 
         const response = await axios.get(
-          "http://192.168.1.12:4000/examiner/presentations/completions",
+          "http://10.10.103.248:4000/examiner/presentations/completions",
           { params }
         );
 
@@ -132,81 +133,6 @@ export default function ExaminerDashboard() {
   const pendingPresentations = presentations.filter(
     (p) => p.status === "NOTSUBMITTED" || p.status === "LATE"
   ).length;
-
-  const FilePreview: React.FC<{ file: Files }> = ({ file }) => {
-    const [, setAspectRatio] = useState<{
-      width: number;
-      height: number;
-    } | null>(null);
-
-    useEffect(() => {
-      if (file.mimetype === "video/mp4") {
-        const video = document.createElement("video");
-        video.src = file.filepath;
-        video.preload = "metadata";
-
-        video.onloadedmetadata = () => {
-          setAspectRatio({
-            width: video.videoWidth,
-            height: video.videoHeight,
-          });
-        };
-      }
-    }, [file]);
-
-    const renderVideo = () => (
-      <div className="w-full aspect-video bg-black flex items-center justify-center">
-        <video
-          src={`http://192.168.1.12:4000${file.filepath
-            .replace(/\\/g, "/")
-            .replace("public", "")}`}
-          controls
-          className="w-full h-full"
-          aria-label="Video preview"
-        >
-          Your browser does not support the video tag.
-        </video>
-      </div>
-    );
-
-    const renderPDF = () => (
-      <iframe
-        // src={`file.filepath.replace`}
-        src={`http://192.168.1.12:4000${file.filepath
-          .replace(/\\/g, "/")
-          .replace("public", "")}`}
-        title={`Preview of ${file.filename}`}
-        className="w-full h-[80vh]"
-        aria-label="PDF preview"
-      />
-    );
-
-    const renderUnsupported = () => (
-      <div className="w-full h-[80vh] flex items-center justify-center bg-gray-100">
-        <div className="text-center">
-          <p className="mb-4">
-            Preview not available for {file.mimetype.toUpperCase()} files
-          </p>
-          <Button asChild>
-            <a href={file.filename} download>
-              Download File
-            </a>
-          </Button>
-        </div>
-      </div>
-    );
-
-    switch (file.mimetype) {
-      case "video/mp4":
-        return renderVideo();
-      case "image/jpeg":
-      case "image/png":
-      case "application/pdf":
-        return renderPDF();
-      default:
-        return renderUnsupported();
-    }
-  };
 
   return (
     <div className="min-h-screen p-6">
@@ -258,182 +184,176 @@ export default function ExaminerDashboard() {
             </CardContent>
           </Card>
         </div>
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-          <div className="p-6 bg-gray-50 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-800">
-              Presentations
-            </h2>
-            <p className="text-sm text-gray-600 mt-1">
-              Manage and grade student final presentations across all batches
-              and classes.
-            </p>
-          </div>
-          <div className="p-6">
-            <div className="flex flex-col md:flex-row justify-between mb-6 gap-4">
-              <div className="flex flex-col md:flex-row gap-4">
-                <Select value={selectedBatch} onValueChange={setSelectedBatch}>
-                  <SelectTrigger className="w-[180px] bg-white">
-                    <SelectValue placeholder="Select Batch" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Batches</SelectItem>
-                    {batches.map((batch) => (
-                      <SelectItem key={batch.id} value={batch.id}>
-                        {batch.batchTitle}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={selectedClass} onValueChange={setSelectedClass}>
-                  <SelectTrigger className="w-[180px] bg-white">
-                    <SelectValue placeholder="Select Class" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Classes</SelectItem>
-                    {classes.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.className}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              {/* <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <Input
-                  type="search"
-                  placeholder="Search presentations..."
-                  className="pl-10 w-full md:w-[300px] bg-white"
-                />
-              </div> */}
+        <BatchCards batches={batches} />
+
+          {/* <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div className="p-6 bg-gray-50 border-b border-gray-200">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Presentations
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Manage and grade student final presentations across all batches
+                and classes.
+              </p>
             </div>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-gray-50">
-                    <TableHead className="font-semibold">Student</TableHead>
-                    <TableHead className="font-semibold">Batch</TableHead>
-                    <TableHead className="font-semibold">Class</TableHead>
-                    <TableHead className="font-semibold">
-                      Final Presentation
-                    </TableHead>
-                    <TableHead className="font-semibold">Status</TableHead>
-                    <TableHead className="font-semibold">Action</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {isLoading
-                    ? Array.from({ length: 5 }).map((_, index) => (
-                        <TableRow key={index}>
-                          <TableCell>
-                            <Skeleton className="h-6 w-32" />
-                          </TableCell>
-                          <TableCell>
-                            <Skeleton className="h-6 w-20" />
-                          </TableCell>
-                          <TableCell>
-                            <Skeleton className="h-6 w-28" />
-                          </TableCell>
-                          <TableCell>
-                            <Skeleton className="h-6 w-40" />
-                          </TableCell>
-                          <TableCell>
-                            <Skeleton className="h-6 w-24" />
-                          </TableCell>
-                          <TableCell>
-                            <Skeleton className="h-8 w-20" />
-                          </TableCell>
-                        </TableRow>
-                      ))
-                    : presentations.map((presentation) => (
-                        <TableRow
-                          key={presentation.id}
-                          className="hover:bg-gray-50"
-                        >
-                          <TableCell className="font-medium">
-                            {presentation.user.fullName}
-                          </TableCell>
-                          <TableCell>
-                            {presentation.final.batch.batchTitle}
-                          </TableCell>
-                          <TableCell>
-                            {presentation.final.class.className}
-                          </TableCell>
-                          <TableCell>
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button
-                                  variant="link"
-                                  className="p-0 h-auto font-normal"
-                                >
-                                  {presentation.submissionFiles.map(
-                                    (f) => f.filename
-                                  )}
-                                  <Eye className="ml-2 h-4 w-4" />
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent className="max-w-[60vw] w-full max-h-[90vh] overflow-hidden">
-                                <DialogHeader className="p-6 bg-white border-b">
-                                  <DialogTitle>
+            <div className="p-6">
+              <div className="flex flex-col md:flex-row justify-between mb-6 gap-4">
+                <div className="flex flex-col md:flex-row gap-4">
+                  <Select value={selectedBatch} onValueChange={setSelectedBatch}>
+                    <SelectTrigger className="w-[180px] bg-white">
+                      <SelectValue placeholder="Select Batch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Batches</SelectItem>
+                      {batches.map((batch) => (
+                        <SelectItem key={batch.id} value={batch.id}>
+                          {batch.batchTitle}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={selectedClass} onValueChange={setSelectedClass}>
+                    <SelectTrigger className="w-[180px] bg-white">
+                      <SelectValue placeholder="Select Class" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Classes</SelectItem>
+                      {classes.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.className}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-gray-50">
+                      <TableHead className="font-semibold">Student</TableHead>
+                      <TableHead className="font-semibold">Batch</TableHead>
+                      <TableHead className="font-semibold">Class</TableHead>
+                      <TableHead className="font-semibold">
+                        Final Presentation
+                      </TableHead>
+                      <TableHead className="font-semibold">Status</TableHead>
+                      <TableHead className="font-semibold">Action</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {isLoading
+                      ? Array.from({ length: 5 }).map((_, index) => (
+                          <TableRow key={index}>
+                            <TableCell>
+                              <Skeleton className="h-6 w-32" />
+                            </TableCell>
+                            <TableCell>
+                              <Skeleton className="h-6 w-20" />
+                            </TableCell>
+                            <TableCell>
+                              <Skeleton className="h-6 w-28" />
+                            </TableCell>
+                            <TableCell>
+                              <Skeleton className="h-6 w-40" />
+                            </TableCell>
+                            <TableCell>
+                              <Skeleton className="h-6 w-24" />
+                            </TableCell>
+                            <TableCell>
+                              <Skeleton className="h-8 w-20" />
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      : presentations.map((presentation) => (
+                          <TableRow
+                            key={presentation.id}
+                            className="hover:bg-gray-50"
+                          >
+                            <TableCell className="font-medium">
+                              {presentation.user.fullName}
+                            </TableCell>
+                            <TableCell>
+                              {presentation.final.batch.batchTitle}
+                            </TableCell>
+                            <TableCell>
+                              {presentation.final.class.className}
+                            </TableCell>
+                            <TableCell>
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    variant="link"
+                                    className="p-0 h-auto font-normal"
+                                  >
                                     {presentation.submissionFiles.map(
                                       (f) => f.filename
                                     )}
-                                  </DialogTitle>
-                                </DialogHeader>
-                                <div className="flex-grow overflow-auto">
-                                  <FilePreview
-                                    file={presentation.submissionFiles[0]}
-                                  />
-                                </div>
-                              </DialogContent>
-                            </Dialog>
-                          </TableCell>
-                          <TableCell>
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                presentation.status === "SUBMITTED"
-                                  ? "bg-amber-100 text-amber-800"
-                                  : "bg-green-100 text-green-800"
-                              }`}
-                            >
-                              {presentation.status}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              variant="default"
-                              size="sm"
-                              className="bg-indigo-600 hover:bg-indigo-700"
-                              onClick={() =>
-                                handleGradeClick(
-                                  presentation.user,
-                                  presentation.id
-                                )
-                              }
-                            >
-                              Grade
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                </TableBody>
-                <Dialog open={showNoteForm} onOpenChange={setShowNoteForm}>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Grade Submisson</DialogTitle>
-                    </DialogHeader>
-                    <NotePresentation
-                      addNote={addNote}
-                      selectedTrainee={selectedTrainee}
-                      onCancel={handleCancel}
-                      presentationId={presentationId}
-                    />
-                  </DialogContent>
-                </Dialog>
-              </Table>
+                                    <Eye className="ml-2 h-4 w-4" />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-[60vw] w-full max-h-[90vh] overflow-hidden">
+                                  <DialogHeader className="p-6 bg-white border-b">
+                                    <DialogTitle>
+                                      {presentation.submissionFiles.map(
+                                        (f) => f.filename
+                                      )}
+                                    </DialogTitle>
+                                  </DialogHeader>
+                                  <div className="flex-grow overflow-auto">
+                                    <FilePreview
+                                      file={presentation.submissionFiles[0]}
+                                    />
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                            </TableCell>
+                            <TableCell>
+                              <span
+                                className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  presentation.status === "SUBMITTED"
+                                    ? "bg-amber-100 text-amber-800"
+                                    : "bg-green-100 text-green-800"
+                                }`}
+                              >
+                                {presentation.status}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="default"
+                                size="sm"
+                                className="bg-indigo-600 hover:bg-indigo-700"
+                                onClick={() =>
+                                  handleGradeClick(
+                                    presentation.user,
+                                    presentation.id
+                                  )
+                                }
+                              >
+                                Grade
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                  </TableBody>
+                  <Dialog open={showNoteForm} onOpenChange={setShowNoteForm}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Grade Submisson</DialogTitle>
+                      </DialogHeader>
+                      <NotePresentation
+                        addNote={addNote}
+                        selectedTrainee={selectedTrainee}
+                        onCancel={handleCancel}
+                        presentationId={presentationId}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                </Table>
+              </div>
             </div>
-          </div>
-        </div>
+          </div> */}
       </main>
     </div>
   );

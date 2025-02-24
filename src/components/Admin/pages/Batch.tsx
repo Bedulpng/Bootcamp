@@ -12,10 +12,11 @@ import {
 import { BatchEdit } from "../Modal/Edit-Modal/EditBatchModal";
 import { fetchBatches } from "@/Api/FetchingBatches&Classes";
 import { Batch } from "@/types/Trainee";
-import { PenBoxIcon, Wallpaper } from "lucide-react";
+import { PenBoxIcon, Trash2Icon, Wallpaper } from "lucide-react";
 import { BatchModal } from "../Modal/BatchModal";
 import { ColorPickerModal } from "@/components/Mentor/Batch/EditCover";
 import { ImageCropModal } from "@/components/Mentor/Batch/ImageCrop";
+import NoSubmitted from "@/components/Examiner/Class/NoTask";
 
 export default function BatchAdmin() {
   const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
@@ -128,61 +129,78 @@ export default function BatchAdmin() {
           <CardTitle>Active Batches</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="text-center">#</TableHead>
-                <TableHead className="text-center">Batch Number</TableHead>
-                <TableHead className="text-center">Batch Title</TableHead>
-                <TableHead className="text-center">Participants</TableHead>
-                <TableHead className="text-center">Status</TableHead>
-                <TableHead className="text-center">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {fetchedBatch.map((batch, index) => (
-                <TableRow key={batch.id}>
-                  <TableCell className="text-center">{index + 1}</TableCell>
-                  <TableCell className="text-center">
-                    {batch.batchNum}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {batch.batchTitle}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {batch.participants.length}
-                  </TableCell>
-                  <TableCell className="text-center">{batch.status}</TableCell>
-                  <TableCell className="text-center">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-yellow-600 hover:text-yellow-600"
-                      onClick={() => {
-                        handleEditBatch(batch.id, batch.batchTitle);
-                      }} 
-                    >
-                      <PenBoxIcon className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-green-600 hover:text-green-600"
-                      onClick={() => {
-                        handleEditCover(
-                          batch.id,
-                          batch.batchTitle,
-                          batch.cover.filePath
-                        );
-                      }} 
-                    >
-                      <Wallpaper className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
+          {fetchedBatch.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-center">#</TableHead>
+                  <TableHead className="text-center">Batch Number</TableHead>
+                  <TableHead className="text-center">Batch Title</TableHead>
+                  <TableHead className="text-center">Participants</TableHead>
+                  <TableHead className="text-center">Status</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {fetchedBatch.map((batch, index) => (
+                  <TableRow key={batch.id}>
+                    <TableCell className="text-center">{index + 1}</TableCell>
+                    <TableCell className="text-center">
+                      {batch.batchNum}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {batch.batchTitle}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {batch.participants?.length ?? 0}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {batch.status}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-yellow-600 hover:text-yellow-600"
+                        onClick={() =>
+                          handleEditBatch(batch.id, batch.batchTitle)
+                        }
+                      >
+                        <PenBoxIcon className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-green-600 hover:text-green-600"
+                        onClick={() =>
+                          handleEditCover(
+                            batch.id,
+                            batch.batchTitle,
+                            batch.cover?.filePath ?? ""
+                          )
+                        }
+                      >
+                        <Wallpaper className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-500 hover:text-red-500"
+                        onClick={() =>
+                          // handleOpenUserDelete(user.id, user.fullName ?? "-")
+                          console.log("waiwia")
+                        }
+                      >
+                        <Trash2Icon className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <NoSubmitted />
+          )}
         </CardContent>
       </Card>
     </div>

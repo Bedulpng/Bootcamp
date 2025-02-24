@@ -39,7 +39,7 @@
             onClick={async () => {
                 try {
                 const response = await fetch(
-                    `http://192.168.1.12:4000/admin/batchs/${batch.id}`
+                    `http://10.10.103.248:4000/admin/batchs/${batch.id}`
                 );
                 if (!response.ok) {
                     throw new Error(`Failed to fetch batch with ID: ${batch.id}`);

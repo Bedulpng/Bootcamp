@@ -2,7 +2,13 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { FaRegUserCircle } from "react-icons/fa";
 import { ChevronRight, ChevronLeft, Eye } from "lucide-react";
-import { Class, Completions, Files, Trainee } from "@/types/Trainee";
+import {
+  Class,
+  Completions,
+  Files,
+  Trainee,
+  PresentationCompletion,
+} from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
 import axios from "axios";
 import {
@@ -11,11 +17,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import NoteLesson from "./Notes/NoteLesson";
+import NoteLesson from "./NoteLesson";
 import FilePreview from "./FilePreview";
 import NoSubmitted from "./NoTask";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 
-function Challenge() {
+function ExaminerSubmissionPage() {
   const { classId, id } = useParams<{
     classId: string;
     id: string;
@@ -33,13 +40,10 @@ function Challenge() {
   const [completionId, setCompletionId] = useState<string | undefined>(
     undefined
   );
-  const [previewedFile, setPreviewedFile] = useState<string | null>(null);
   const [filteredStatus, setFilteredStatus] = useState<string | null>(null);
-
-  // Function to handle file preview
-  const handlePreviewFile = (filePath: string) => {
-    setPreviewedFile(filePath);
-  };
+  const [presentations, setPresentations] = useState<PresentationCompletion[]>(
+    []
+  );
 
   const toggleExpand = () => {
     setExpanded(!expanded);
@@ -63,35 +67,41 @@ function Challenge() {
     const fetchCompletion = async () => {
       try {
         const completionData = await axios.get(
-          `http://10.10.103.248:4000/mentor/lesson/${id}/completions`
+          `http://10.10.103.248:4000/examiner/presentation/${id}/completions`
         );
         setCompletions(completionData.data); // Set the entire response data
+        setPresentations(completionData.data.completions); // Set the presentations data
         console.log("Completions:", completionData.data);
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          // Narrow down the error type to AxiosError
-          if (error.response && error.response.status === 404) {
-            console.log("Lesson not found, falling back to challenge route...");
-            try {
-              const challengeData = await axios.get(
-                `http://10.10.103.248:4000/mentor/challenge/${id}/completions`
-              );
-              setCompletions(challengeData.data); // Set the data from the challenge route
-              console.log("Challenge completions:", challengeData.data);
-            } catch (challengeError) {
-              console.error("Failed to fetch challenge:", challengeError);
-            }
-          } else {
-            console.error("Failed to fetch lesson:", error);
-          }
-        } else {
-          console.error("An unexpected error occurred:", error);
-        }
+        console.error("An unexpected error occurred:");
       }
     };
 
     fetchCompletion();
   }, [id]);
+
+//   useEffect(() => {
+//     const fetchFinalPresentations = async () => {
+//       try {
+//         if (!classId) {
+//           return;
+//         }
+
+//         const params: Record<string, string> = { classId };
+
+//         const response = await axios.get(
+//           "http://10.10.103.248:4000/examiner/presentations/completions",
+//           { params }
+//         );
+
+//         setPresentations(response.data);
+//       } catch (err) {
+//         console.error("Failed to fetch final presentations:", err);
+//       }
+//     };
+
+//     fetchFinalPresentations();
+//   }, [classId]);
 
   // Pagination logic
   const startIndex = (page - 1) * itemsPerPage;
@@ -119,16 +129,15 @@ function Challenge() {
     setSelectedTrainee(null); // Reset selected trainee
   };
 
+  const handleFilterStatus = (status: string) => {
+    setFilteredStatus(status);
+  };
 
-const handleFilterStatus = (status: string) => {
-  setFilteredStatus(status);
-};
-
-// Determine the displayed students based on the selected filter
-const filteredStudents =
-  filteredStatus !== null
-    ? displayedStudents.filter((student) => student.status === filteredStatus)
-    : displayedStudents;
+  // Determine the displayed students based on the selected filter
+  const filteredStudents =
+    filteredStatus !== null
+      ? displayedStudents.filter((student) => student.status === filteredStatus)
+      : displayedStudents;
 
   return (
     <div className="flex h-screen p-4">
@@ -152,9 +161,7 @@ const filteredStudents =
         </h2>
         {expanded && (
           <div>
-            <p className="cursor-pointer mb-3">
-            {trainees.length} Assigned
-          </p>
+            <p className="cursor-pointer mb-3">{trainees.length} Assigned</p>
             {classes.map((t) => (
               <div key={t.id}>
                 {t.users.map((user) => (
@@ -173,13 +180,19 @@ const filteredStudents =
       <div className="flex-1 p-6 bg-white shadow-md rounded-lg transition-all duration-300">
         <h1 className="text-xl font-bold mb-4"> Submission </h1>
         <div className="flex items-center gap-8">
-          <p className="cursor-pointer hover:text-blue-500" onClick={() => handleFilterStatus("SUBMITTED")}>
+          <p
+            className="cursor-pointer hover:text-blue-500"
+            onClick={() => handleFilterStatus("SUBMITTED")}
+          >
             {completions?.completions.filter(
               (completion) => completion.status === "SUBMITTED"
             ).length || 0}{" "}
             Submitted
           </p>
-          <p className="cursor-pointer hover:text-blue-500" onClick={() => handleFilterStatus("GRADED")}>
+          <p
+            className="cursor-pointer hover:text-blue-500"
+            onClick={() => handleFilterStatus("GRADED")}
+          >
             {completions?.completions.filter(
               (completion) => completion.status === "GRADED"
             ).length || 0}{" "}
@@ -231,16 +244,36 @@ const filteredStudents =
                   <div className="mt-2">
                     <h3 className="text-sm font-medium">Files:</h3>
                     <ul className="list-disc pl-4">
-                      {student.files.map((file : Files) => (
+                      {student.files.map((file: Files) => (
                         <li key={file.id} className="flex items-center gap-2">
                           <span>{file.filename}</span>
-                          <button
-                            className="p-1 text-muted-foreground hover:text-primary transition"
-                            onClick={() => handlePreviewFile(file.filepath)}
-                            aria-label="Preview file"
-                          >
-                            <Eye className="w-5 h-5" />
-                          </button>
+                          {presentations.map(
+                            (presentations, index) =>
+                              index === 0 && ( // Only render the Eye for the first presentation
+                                <Dialog key={presentations.id}>
+                                  <DialogTrigger>
+                                    <button className="p-1 text-muted-foreground hover:text-primary transition">
+                                      <Eye className="w-5 h-5" />
+                                    </button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-[60vw] w-full max-h-[90vh] overflow-hidden">
+                                    <DialogHeader className="p-6 bg-white border-b">
+                                      <DialogTitle>
+                                        {presentations.submissionFiles.map(
+                                          (f) => f.filename
+                                        )}
+                                      </DialogTitle>
+                                    </DialogHeader>
+                                    <div className="flex-grow overflow-auto">
+                                    {/* {console.log("File passed to FilePreview:", presentations.submissionFiles[0])} */}
+                                      <FilePreview
+                                        file={presentations.submissionFiles[0]}
+                                      />
+                                    </div>
+                                  </DialogContent>
+                                </Dialog>
+                              )
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -248,12 +281,6 @@ const filteredStudents =
                 )}
 
                 {/* Inline Preview */}
-                {previewedFile && (
-                  <FilePreview
-                    filePath={previewedFile}
-                    onClose={() => setPreviewedFile(null)}
-                  />
-                )}
               </div>
             ))
           )}
@@ -297,4 +324,4 @@ const filteredStudents =
   );
 }
 
-export default Challenge;
+export default ExaminerSubmissionPage;

@@ -510,7 +510,7 @@ function App() {
           <Route
             path="/examiner/profile"
             element={
-              <Rbac routeName="/examiner/c/:classId/s/:id">
+              <Rbac routeName="/examiner/profile">
                 <ProtectedRoute>
                   <Layout>
                     <Profile />
@@ -522,7 +522,7 @@ function App() {
           <Route
             path="/examiner/presentation"
             element={
-              <Rbac routeName="/examiner/c/:classId/s/:id">
+              <Rbac routeName="/examiner/presentation">
                 <ProtectedRoute>
                   <Layout>
                     <ExaminerPresentations />

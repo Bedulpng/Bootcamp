@@ -10,10 +10,10 @@ import { Skills } from "./Skills/skills"
 import { StepHeader } from "./step-header"
 import axios from "axios"
 import "react-phone-number-input/style.css"
-import { Button } from "@/components/ui/button"
 import { X } from "lucide-react" // Close icon
+import { ReviewModal } from "./ReviewForm"
 
-const steps = ["Personal", "Education", "Skills"]
+const steps = ["Personal", "Education", "Skills", "Review"]
 
 interface FormData {
   personal: Record<string, any>
@@ -77,6 +77,7 @@ export const MultiStepFormModal: React.FC<MultiStepFormModalProps> = ({ isOpen, 
     }))
   }
 
+  console.log(formData)
   const handleSubmit = async () => {
     const token = localStorage.getItem("refreshToken")
     if (!token) {
@@ -116,7 +117,7 @@ export const MultiStepFormModal: React.FC<MultiStepFormModalProps> = ({ isOpen, 
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.8 }}
         className="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl relative"
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button className="absolute top-4 right-4 text-gray-500 hover:text-gray-700" onClick={onClose}>
@@ -144,21 +145,20 @@ export const MultiStepFormModal: React.FC<MultiStepFormModalProps> = ({ isOpen, 
           {currentStep === 2 && (
             <Skills
               key="skills"
+              onNext={handleNextStep}
               onPrev={handlePrevStep}
               updateFormData={(data) => updateFormData("skills", data)}
+            />
+          )}
+          {currentStep === 3 && (
+            <ReviewModal
+              key="review"
               formData={formData}
+              onSubmit={handleSubmit} // Pass handleSubmit for submission
+              onClose={() => setCurrentStep(0)} // Go back to the previous step
             />
           )}
         </AnimatePresence>
-
-        {/* Submit Button */}
-        {currentStep === 2 && (
-          <div className="flex justify-between mt-8">
-            <Button type="submit" onClick={handleSubmit}>
-              Submit
-            </Button>
-          </div>
-        )}
       </motion.div>
     </div>
   )

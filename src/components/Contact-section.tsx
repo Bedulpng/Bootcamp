@@ -1,43 +1,51 @@
-import { MessageCircleMoreIcon } from 'lucide-react';
+"use client"
+import { MessageCircleMoreIcon } from "lucide-react"
 
-export default function ContactSect() {
+export default function ContactSection() {
   return (
-    <div className="font-montserrat">
-      {/* Banner Section */}
-    <section className="relative overflow-hidden bg-white h-screen">
-    <div className="relative mx-auto max-w-[1440px] h-full">
-        <div className="grid h-full grid-cols-1 lg:grid-cols-2">
-        {/* Left Content */}
-        <div className="flex flex-col justify-center bg-black p-6 lg:p-8 clip-path-polygon">
-            <div className="max-w-[520px]">
-            <h1 className="mb-4 inline-block text-4xl font-bold text-white lg:text-5xl">
-                <span className="relative">
-                Contact
-                <span className="absolute -bottom-1 left-0 h-0.5 w-full bg-blue-500"></span>
-                </span>
-            </h1>
+    <div className="eastman-roman-bold">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800">
+        <div className="relative mx-auto max-w-[1440px] mt-[100px]">
+          <div className="grid min-h-[70vh] grid-cols-1 lg:grid-cols-2">
+            {/* Left Content */}
+            <div className="flex flex-col justify-center p-8 lg:p-12">
+              <div className="max-w-[520px] space-y-6">
+                <div className="inline-flex items-center space-x-2 rounded-full bg-blue-500/10 px-3 py-1 text-sm text-blue-500">
+                  <span className="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+                  <span>Contact Us</span>
+                </div>
+                <h1 className="text-4xl font-bold tracking-tight text-white lg:text-6xl">
+                  Let's build something <span className="text-blue-500">amazing</span> together
+                </h1>
+                <p className="text-lg text-slate-300">
+                  Ready to transform your digital presence? Get in touch with our team of experts and let's create
+                  something extraordinary.
+                </p>
+              </div>
             </div>
-        </div>
 
-        {/* Right Content - Full Image */}
-        <div className="relative bg-gradient-to-br from-blue-100 to-blue-50 p-0 lg:p-0">
-            <img
-            src="/contact.png"
-            alt="Illustration"
-            className="w-full h-full object-cover rounded-none"
-            />
-        </div>
+            {/* Right Content */}
+            <div className="relative flex items-center p-8 lg:p-12">
+              <div className="relative h-full w-full overflow-hidden rounded-2xl">
+                <img
+                  src="/contact.png"
+                  alt="Contact Illustration"
+                  width={800}
+                  height={600}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Decorative Elements */}
-        <div className="absolute bottom-0 left-1/2 h-px w-full bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-        <div className="absolute -left-4 top-1/4 h-48 w-px bg-gradient-to-b from-transparent via-blue-500 to-transparent" />
-        <div className="absolute -right-4 bottom-1/4 h-48 w-px bg-gradient-to-b from-transparent via-yellow-500 to-transparent" />
-    </div>
-    </section>
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(0,51,255,0.1),transparent_50%)]" />
+      </section>
 
-    {/* Contact Form Section */}
-    <section className="w-full min-h-screen bg-[#0033FF] py-24 px-8">
+      {/* Contact Form Section */}
+      <section className="w-full min-h-screen bg-[#0033FF] py-24 px-8">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
         {/* Left Column - Chat Section */}
         <div className="space-y-12">
@@ -139,5 +147,6 @@ export default function ContactSect() {
       </div>
     </section>
     </div>
-  );
+  )
 }
+

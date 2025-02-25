@@ -12,7 +12,6 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useNotifications } from '../../../hooks/useNotifications';
 import { Notification } from '../../../types/Notification';
-import { useLocation, useNavigate } from 'react-router-dom';
 
 const iconMap: { [key: string]: React.ReactNode } = {
   Lesson: <BookCheck className="h-4 w-4" />,
@@ -23,15 +22,9 @@ export function NotificationPopup() {
   const { notifications, markAsRead, markAllAsRead } = useNotifications();
   const [showAll, setShowAll] = useState(false);
   const [scrollAreaHeight, setScrollAreaHeight] = useState(300);
-  const location = useLocation(); // Hook to get the current pathname
-  const navigate = useNavigate(); // Hook to programmatically navigate
 
   const handleButtonClick = () => {
-    if (location.pathname.startsWith('/trainee')) {
-      navigate('/trainee/notification');
-    } else {
       setShowAll(!showAll);
-    }
   };
 
   // Filter out read notifications

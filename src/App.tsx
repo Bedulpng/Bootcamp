@@ -24,7 +24,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NotesPage from "./components/Mentor/Notes/page";
 import NotificationPage from "./components/Trainee/pages/secondpge/top/Notification";
 import Profile from "./components/Trainee/pages/secondpge/top/profile";
-import RegisPage from "./components/Trainee/pages/firstpage/skill";
 import DashboardAdmin from "./components/Admin/pages/Dashboard";
 import NavbarAdmin from "./components/Admin/pages/Navbar";
 import SidebarAdmin from "./components/Admin/Modal/Sidebar";
@@ -35,7 +34,6 @@ import Certificates from "./components/Admin/pages/Certificates";
 import { LoginForm } from "./components/Login/LoginFormAdmin";
 import NotAuthorized from "./components/Unauthorized";
 import NotesManagement from "./components/Admin/pages/ManageNotes/Notes-Management";
-import SkillPage from "./components/Trainee/pages/firstpage/skill";
 import ClassDetails from "./components/Mentor/ClassPage";
 import TraineeMain from "./components/Trainee/pages/secondpge/ClassDetail";
 import ClassesPage from "./components/Trainee/pages/secondpge/ClassPage";
@@ -51,12 +49,13 @@ import { ExaminerLogin } from "./components/Login/ExaminerLogin";
 import ExaminerDashboard from "./components/Examiner/Page";
 import NavbarExaminer from "./components/Examiner/Navbar";
 import RoutesPage from "./components/Admin/pages/Route/RoutePage";
-import RbacTest from "./components/RbacTesting";
+import Rbac from "./components/RbacRoute";
 import ExaminerClassPage from "./components/Examiner/Class/ClassPage";
 import ExaminerClassDetails from "./components/Examiner/Class/ClassDetail";
 import ExaminerSubmissionPage from "./components/Examiner/Class/Submission";
 import { SidebarExaminer } from "./components/Examiner/SidebarExaminer";
 import { DotSpinner } from "./components/SpinnerLoading";
+import ExaminerPresentations from "./components/Examiner/Presentations";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const isMentor = window.location.pathname.startsWith("/mentor");
@@ -68,6 +67,13 @@ function Layout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpenTrainee, setIsSidebarOpenTrainee] = useState(true);
   const [isSidebarOpenExaminer, setIsSidebarOpenExaminer] = useState(true);
   const [currentPage, setCurrentPage] = useState("dashboard");
+
+  const shouldHideFooter = [
+    "/contact",
+    "/programs/fullstack",
+    "/programs/qualityassurance",
+    "/about",
+  ].includes(window.location.pathname);
 
   const renderAdminPage = () => {
     switch (currentPage) {
@@ -83,7 +89,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         return <Certificates />;
       case "notes":
         return <NotesManagement />;
-      case "access" :
+      case "access":
         return <RoutesPage />;
       default:
         return <DashboardAdmin />;
@@ -141,20 +147,18 @@ function Layout({ children }: { children: React.ReactNode }) {
             </main>
 
             {/* Footer */}
-            <div className="w-full">
-              {isAdmin || isMentor || isTrainee || isExaminer ? (
-                <FooterMentor />
-              ) : (
-                <Footer />
-              )}
-            </div>
+            {!shouldHideFooter && (isAdmin || isMentor || isTrainee || isExaminer ? (
+              <FooterMentor />
+            ) : (
+              <Footer />
+            ))}
           </div>
         </div>
       ) : (
         <>
           <Navbar />
           {children}
-          <Footer />
+          {!shouldHideFooter && <Footer />}
         </>
       )}
       <ScrollTop />
@@ -243,85 +247,85 @@ function App() {
           <Route
             path="/mentor/dashboard"
             element={
-              <RbacTest routeName="/mentor/dashboard">
+              <Rbac routeName="/mentor/dashboard">
                 <ProtectedRoute>
                   <Layout>
                     <MentorDb />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/mentor/batch"
             element={
-              <RbacTest routeName="/mentor/batch">
+              <Rbac routeName="/mentor/batch">
                 <ProtectedRoute>
                   <Layout>
                     <Batch />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/mentor/trainee"
             element={
-              <RbacTest routeName="/mentor/trainee">
+              <Rbac routeName="/mentor/trainee">
                 <ProtectedRoute>
                   <Layout>
                     <TraineePages />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/mentor/note"
             element={
-              <RbacTest routeName="/dashboard/note">
+              <Rbac routeName="/dashboard/note">
                 <ProtectedRoute>
                   <Layout>
                     <NotesPage />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/mentor/c/:classId/s/:id"
             element={
-              <RbacTest routeName="/mentor/c/:classId/s/:id">
+              <Rbac routeName="/mentor/c/:classId/s/:id">
                 <ProtectedRoute>
                   <Layout>
                     <Challange />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/mentor/class/:batchId"
             element={
-              <RbacTest routeName="/mentor/class/:batchId">
+              <Rbac routeName="/mentor/class/:batchId">
                 <ProtectedRoute>
                   <Layout>
                     <ClassPage />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/mentor/c/:classId/:batchId"
             element={
-              <RbacTest routeName="/mentor/c/:classId/:batchId">
+              <Rbac routeName="/mentor/c/:classId/:batchId">
                 <ProtectedRoute>
                   <Layout>
                     <ClassDetails />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route path="/login/mentor" element={<MentorLogin />} />
@@ -330,123 +334,121 @@ function App() {
           <Route
             path="/trainee/class/:classId"
             element={
-              <RbacTest routeName="/trainee/class/:classId">
+              <Rbac routeName="/trainee/class/:classId">
                 <ProtectedRoute>
                   <Layout>
                     <TraineeMain />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/trainee/lesson/:id"
             element={
-              <RbacTest routeName="/trainee/lesson/:id">
+              <Rbac routeName="/trainee/lesson/:id">
                 <ProtectedRoute>
                   <Layout>
                     <SubjectDetail />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/trainee/challenge/:id"
             element={
-              <RbacTest routeName="/trainee/challenge/:id">
+              <Rbac routeName="/trainee/challenge/:id">
                 <ProtectedRoute>
                   <Layout>
                     <SubjectDetail />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/trainee/presentation/:id"
             element={
-              <RbacTest routeName="/trainee/presentation/:id">
+              <Rbac routeName="/trainee/presentation/:id">
                 <ProtectedRoute>
                   <Layout>
                     <SubjectDetail />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/trainee/lesson"
             element={
-              <RbacTest routeName="/trainee/lesson">
+              <Rbac routeName="/trainee/lesson">
                 <ProtectedRoute>
                   <Layout>
                     <LessonsPage />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/trainee/challenge"
             element={
-              <RbacTest routeName="/trainee/challenge">
+              <Rbac routeName="/trainee/challenge">
                 <ProtectedRoute>
                   <Layout>
                     <ChallengesPage />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/trainee/notification"
             element={
-              <RbacTest routeName="/trainee/notification">
+              <Rbac routeName="/trainee/notification">
                 <ProtectedRoute>
                   <Layout>
                     <NotificationPage />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/trainee/profile"
             element={
-              <RbacTest routeName="/trainee/profile">
+              <Rbac routeName="/trainee/profile">
                 <ProtectedRoute>
                   <Layout>
                     <Profile />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/trainee/dashboard"
             element={
-              <RbacTest routeName="/trainee/dashboard">
+              <Rbac routeName="/trainee/dashboard">
                 <ProtectedRoute>
                   <Layout>
                     <ClassesPage />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
-          <Route path="/verify" element={<SkillPage />} />
-          <Route path="/login-trainee" element={<RegisPage />} />
           <Route
             path="/admin/dashboard"
             element={
-              <RbacTest routeName="/admin/dashboard">
+              <Rbac routeName="/admin/dashboard">
                 <ProtectedRoute>
                   <Layout>
                     <DashboardAdmin />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
@@ -460,59 +462,75 @@ function App() {
           <Route
             path="/examiner/dashboard"
             element={
-              <RbacTest routeName="/examiner/dashboard">
+              <Rbac routeName="/examiner/dashboard">
                 <ProtectedRoute>
                   <Layout>
                     <ExaminerDashboard />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/examiner/class/:batchId"
             element={
-              <RbacTest routeName="/examiner/class/:batchId">
+              <Rbac routeName="/examiner/class/:batchId">
                 <ProtectedRoute>
                   <Layout>
                     <ExaminerClassPage />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/examiner/c/:classId/:batchId"
             element={
-              <RbacTest routeName="/examiner/c/:classId/:batchId">
+              <Rbac routeName="/examiner/c/:classId/:batchId">
                 <ProtectedRoute>
                   <Layout>
                     <ExaminerClassDetails />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
           <Route
             path="/examiner/c/:classId/s/:id"
             element={
-              <RbacTest routeName="/examiner/c/:classId/s/:id">
+              <Rbac routeName="/examiner/c/:classId/s/:id">
                 <ProtectedRoute>
                   <Layout>
                     <ExaminerSubmissionPage />
                   </Layout>
                 </ProtectedRoute>
-              </RbacTest>
+              </Rbac>
             }
           />
-          {/* <Route
-            path="/abcd"
+          <Route
+            path="/examiner/profile"
             element={
-              <RbacTest routeName="/abcd">
-                    <RoutesPage />
-              </RbacTest>
+              <Rbac routeName="/examiner/c/:classId/s/:id">
+                <ProtectedRoute>
+                  <Layout>
+                    <Profile />
+                  </Layout>
+                </ProtectedRoute>
+              </Rbac>
             }
-          /> */}
+          />
+          <Route
+            path="/examiner/presentation"
+            element={
+              <Rbac routeName="/examiner/c/:classId/s/:id">
+                <ProtectedRoute>
+                  <Layout>
+                    <ExaminerPresentations />
+                  </Layout>
+                </ProtectedRoute>
+              </Rbac>
+            }
+          />
           <Route path="/unauthorized" element={<NotAuthorized />} />
           {/* Route without Layout */}
           <Route path="*" element={<NotFound />} />

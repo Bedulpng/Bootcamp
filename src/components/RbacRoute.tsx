@@ -1,19 +1,67 @@
 // src/components/RoleBasedRoute.tsx
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-import { isAuthenticated, verifyRoles } from './utils/middleware';
+import React, { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
+import { isAuthenticated } from "./utils/middleware";
+import { DotSpinner } from "./SpinnerLoading";
 
 interface RoleBasedRouteProps {
   children: React.ReactNode;
-  allowedRoles: string[];
+  routeName: string;
 }
 
-const Rbac: React.FC<RoleBasedRouteProps> = ({ children, allowedRoles }) => {
-  if (!isAuthenticated()) {
-    return <Navigate to="/unauthorized" />;
-  }
+interface DecodedToken {
+  role: string;
+  exp: number;
+}
 
-  if (!verifyRoles(allowedRoles)) {
+const getUserRole = (): string | null => {
+  const token = localStorage.getItem("refreshToken");
+  if (!token) return null;
+
+  try {
+    const decoded = jwtDecode<DecodedToken>(token);
+    return decoded.role || null;
+  } catch (error) {
+    console.error("Failed to decode token:", error);
+    return null;
+  }
+};
+
+const Rbac: React.FC<RoleBasedRouteProps> = ({ children, routeName }) => {
+  const [allowedRoles, setAllowedRoles] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const userRole = getUserRole();
+  console.log("current role", userRole);
+
+  useEffect(() => {
+    const fetchAllowedRoles = async () => {
+      try {
+        const response = await axios.get(
+          `http://10.10.103.248:4000/api/allowed?route=${routeName}`
+        );
+        setAllowedRoles(response.data.allowedRoles);
+      } catch (error) {
+        console.error("Failed to fetch allowed roles:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllowedRoles();
+  }, [routeName]);
+
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <DotSpinner />
+      </div>
+    );
+
+  const hasAccess = userRole && allowedRoles.includes(userRole);
+
+  if (!isAuthenticated() || !hasAccess) {
     return <Navigate to="/unauthorized" />;
   }
 

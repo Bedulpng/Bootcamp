@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, ChevronRight, Home, BookOpen, Settings, LogOut, ListChecks } from "lucide-react";
+import { ChevronLeft, ChevronRight, Home, Settings, LogOut, Presentation } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
@@ -63,9 +63,8 @@ export function SidebarExaminer({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
       <ScrollArea className="flex-1 px-3 py-4">
         <nav className="space-y-2">
           <NavItem icon={Home} label="Dashboard" to="/examiner/dashboard" isOpen={isOpen} />
-          <NavItem icon={BookOpen} label="Lessons" to="/trainee/lesson" isOpen={isOpen} />
-          <NavItem icon={ListChecks} label="Challenges" to="/trainee/challenge" isOpen={isOpen} />
-          <NavItem icon={Settings} label="Settings" to="/trainee/profile" isOpen={isOpen} />
+          <NavItem icon={Presentation} label="Presentations" to="/examiner/presentation" isOpen={isOpen} />
+          <NavItem icon={Settings} label="Settings" to="/examiner/profile" isOpen={isOpen} />
         </nav>
       </ScrollArea>
       <div className="p-3 border-t border-primary-foreground/20">

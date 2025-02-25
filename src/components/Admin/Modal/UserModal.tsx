@@ -37,7 +37,7 @@ type UserModalFormProps = {
 }
 
 export default function UserModalForm({ open, setOpen }: UserModalFormProps) {
-  const [roles, setRoles] = useState<string[]>([])  // State to store roles
+  const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
   const [selectedRole, setSelectedRole] = useState<string>('') 
   const form = useForm<FormData>({
     defaultValues: {
@@ -54,15 +54,16 @@ export default function UserModalForm({ open, setOpen }: UserModalFormProps) {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await axios.get('http://10.10.103.248:4000/admin/role/roles')
-        setRoles(response.data.roles)  // Assuming the response has a roles array
+        const { data } = await axios.get("http://10.10.103.248:4000/admin/role/roles");
+        const fetchedRoles = data.tableRoles.map((role: any) => ({ id: role.id, name: role.name }));
+        setRoles(fetchedRoles); // Ensure it's an array of objects
       } catch (error) {
-        console.error('Failed to fetch roles:', error)
+        console.error("Failed to fetch roles:", error);
       }
-    }
-
-    fetchRoles()
-  }, [])
+    };
+  
+    fetchRoles();
+  }, []);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -174,39 +175,40 @@ export default function UserModalForm({ open, setOpen }: UserModalFormProps) {
               )}
             />
             <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Role</FormLabel>
-                  <FormControl>
-                    <div>
-                      {roles.length > 0 ? (
-                        roles.map((role, index) => (
-                          <label key={index} className="flex items-center mb-2">
-                            <input
-                              type="radio"
-                              name="role"
-                              value={role}
-                              checked={selectedRole === role}
-                              onChange={() => {
-                                setSelectedRole(role) 
-                                field.onChange(role)  
-                              }}
-                              className="mr-2"
-                            />
-                            {role}
-                          </label>
-                        ))
-                      ) : (
-                        <p>Loading roles...</p>
-                      )}
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+  control={form.control}
+  name="role"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Role</FormLabel>
+      <FormControl>
+        <div>
+          {roles.length > 0 ? (
+            roles.map((role) => (
+              <label key={role.id} className="flex items-center mb-2">
+                <input
+                  type="radio"
+                  name="role"
+                  value={role.name} // Extract 'name' from the role object
+                  checked={selectedRole === role.name}
+                  onChange={() => {
+                    setSelectedRole(role.name); 
+                    field.onChange(role.name);  
+                  }}
+                  className="mr-2"
+                />
+                {role.name} {/* Display the role name properly */}
+              </label>
+            ))
+          ) : (
+            <p>Loading roles...</p>
+          )}
+        </div>
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
+
             <div className="col-span-2">
               <Button type="submit" className="w-full">Submit</Button>
             </div>

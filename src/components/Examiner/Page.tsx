@@ -1,73 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BarChart, Calendar, Eye, GraduationCap } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { BarChart, Calendar, GraduationCap } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   Batch,
-  Class,
-  Files,
   PresentationCompletion,
-  Trainee,
 } from "@/types/Trainee";
 import axios from "axios";
-import NotePresentation from "./NoteFinalPresentation";
 import BatchCards from "./Batch/BatchCard";
 
 export default function ExaminerDashboard() {
-  const [selectedBatch, setSelectedBatch] = useState<string>("all");
-  const [selectedClass, setSelectedClass] = useState<string>("all");
+
   const [presentations, setPresentations] = useState<PresentationCompletion[]>(
     []
   );
   const [batches, setBatches] = useState<Batch[]>([]);
-  const [classes, setClasses] = useState<Class[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedTrainee, setSelectedTrainee] = useState<Trainee | null>(null);
-  const [showNoteForm, setShowNoteForm] = useState(false);
-  const [presentationId, setPresentationId] = useState<string | undefined>(
-    undefined
-  );
-
-  const addNote = (note: any) => {
-    console.log("Note added:", note);
-    setShowNoteForm(false); // Close the modal after adding a note
-  };
-
-  const handleCancel = () => {
-    setShowNoteForm(false);
-    setSelectedTrainee(null); // Reset selected trainee
-  };
-
-  const handleGradeClick = (trainee: Trainee, presentationId: string) => {
-    setSelectedTrainee(trainee);
-    setPresentationId(presentationId);
-    setShowNoteForm(true);
-  };
 
   useEffect(() => {
     const fetchBatches = async () => {
@@ -84,25 +34,9 @@ export default function ExaminerDashboard() {
   }, []);
 
   useEffect(() => {
-    const fetchClasses = async () => {
-      try {
-        const response = await axios.get(
-          "http://10.10.103.248:4000/admin/class"
-        );
-        setClasses(response.data);
-      } catch (error) {
-        console.error("Error fetching batches:", error);
-      }
-    };
-    fetchClasses();
-  }, []);
-
-  useEffect(() => {
     const fetchFinalPresentations = async () => {
       try {
         const params: Record<string, string> = {};
-        if (selectedBatch !== "all") params.batchId = selectedBatch;
-        if (selectedClass !== "all") params.classId = selectedClass;
 
         const response = await axios.get(
           "http://10.10.103.248:4000/examiner/presentations/completions",
@@ -117,7 +51,7 @@ export default function ExaminerDashboard() {
     };
 
     fetchFinalPresentations();
-  }, [selectedBatch, selectedClass]);
+  }, []);
 
   useEffect(() => {
     // Simulate API call

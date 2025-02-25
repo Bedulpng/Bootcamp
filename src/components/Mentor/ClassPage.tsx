@@ -89,7 +89,7 @@ export default function ClassDetails() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <Link to={`/dashboard/batch`}>
+        <Link to={`/mentor/batch`}>
           <Button variant="ghost" size="icon" className="rounded-full">
             <ArrowLeft className="h-6 w-6" />
             <span className="sr-only">Back to Classes</span>
@@ -156,7 +156,7 @@ export default function ClassDetails() {
                       <CardContent className="p-4 flex items-center">
                         {user.profiles?.[0]?.filepath ? (
                           <img
-                            src={`http://192.168.1.12:4000${user.profiles[0].filepath
+                            src={`http://10.10.103.248:4000${user.profiles[0].filepath
                               .replace(/\\/g, "/")
                               .replace("public", "")}`}
                             alt={user.fullName || "No userName"}
@@ -191,7 +191,7 @@ export default function ClassDetails() {
                           }`}
                           onClick={() =>
                             activeTab !== "presentations" &&
-                            navigate(`/dashboard/c/${classId}/s/${item.id}`)
+                            navigate(`/mentor/c/${classId}/s/${item.id}`)
                           }                        >
                           <Card>
                             <CardHeader>

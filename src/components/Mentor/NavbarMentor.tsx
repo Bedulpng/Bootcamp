@@ -36,14 +36,14 @@ export default function NavbarMentor() {
 
         // Fetch mentor details
         const response = await axios.get(
-          `http://192.168.1.12:4000/admin/mentor/${userId}`
+          `http://10.10.103.248:4000/admin/mentor/${userId}`
         );
         setMentorName(response.data.fullName);
         setMentorRole(response.data.role);
 
         // Fetch the professional profile image
         const profileResponse = await axios.get(
-          `http://192.168.1.12:4000/trainee/${userId}/pro`
+          `http://10.10.103.248:4000/trainee/${userId}/pro`
         );
         if (profileResponse.data && profileResponse.data.profileImage) {
           setProfileImage(profileResponse.data.profileImage); // Store the profile image path
@@ -60,9 +60,9 @@ export default function NavbarMentor() {
   }, [navigate]);
 
   const navItems = [
-    { path: "/dashboard", label: "Dashboard" },
-    { path: "/dashboard/batch", label: "Explore Batch" },
-    { path: "/dashboard/trainee", label: "Trainee" },
+    { path: "/mentor/dashboard", label: "Dashboard" },
+    { path: "/mentor/batch", label: "Explore Batch" },
+    { path: "/mentor/trainee", label: "Trainee" },
   ];
 
   const handleLogout = async () => {
@@ -76,7 +76,7 @@ export default function NavbarMentor() {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.12:4000/trainee/logout",
+        "http://10.10.103.248:4000/trainee/logout",
         {
           accessToken,
         }
@@ -98,7 +98,7 @@ export default function NavbarMentor() {
     <header className="border-b">
       <div className="container relative flex h-16 items-center px-8 justify-between">
         {/* Logo */}
-        <Link to="/dashboard" className="flex-shrink-0">
+        <Link to="/mentor" className="flex-shrink-0">
           <img
             src="/Logo_black_big.png"
             alt="Logo"
@@ -113,8 +113,8 @@ export default function NavbarMentor() {
           {navItems.map((item) => {
             const isActive =
               activeNav === item.path ||
-              (item.path === "/dashboard/batch" &&
-                activeNav.startsWith("/dashboard/batch"));
+              (item.path === "/mentor/batch" &&
+                activeNav.startsWith("/mentor/batch"));
 
             return (
               <Link
@@ -141,7 +141,7 @@ export default function NavbarMentor() {
               <Button variant="ghost" className="flex items-center gap-2 p-1">
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
                   <AvatarImage
-                    src={`http://192.168.1.12:4000${profileImage}`}
+                    src={`http://10.10.103.248:4000${profileImage}`}
                     alt="Mentor"
                   />
                   <AvatarFallback>

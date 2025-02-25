@@ -39,7 +39,7 @@ const RbacTest: React.FC<RoleBasedRouteProps> = ({ children, routeName }) => {
     const fetchAllowedRoles = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.1.12:4000/api/allowed?route=${routeName}`
+          `http://10.10.103.248:4000/api/allowed?route=${routeName}`
         );
         setAllowedRoles(response.data.allowedRoles);
       } catch (error) {

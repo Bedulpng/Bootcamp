@@ -30,7 +30,7 @@ export default function ExploreBatch() {
     const fetchBatches = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.12:4000/admin/batch"
+          "http://10.10.103.248:4000/admin/batch"
         );
         setBatches(response.data);
         setTimeout(() => {
@@ -53,7 +53,7 @@ export default function ExploreBatch() {
         const mentorId = decodedToken.id;
         if (!mentorId) return;
         const response = await axios.get(
-          `http://192.168.1.12:4000/admin/batch/${mentorId}`
+          `http://10.10.103.248:4000/admin/batch/${mentorId}`
         );
         setMentorBatches(response.data);
         setTimeout(() => {
@@ -97,7 +97,7 @@ export default function ExploreBatch() {
 
   const handleFilterChange = (filter: "all-batch" | "my-batch") => {
     setActiveFilter(filter);
-    navigate(`/dashboard/batch?filter=${filter}`);
+    navigate(`/mentor/batch?filter=${filter}`);
   };
 
   if (loading) {
@@ -139,7 +139,7 @@ export default function ExploreBatch() {
                   onClick={async () => {
                     try {
                       const response = await fetch(
-                        `http://192.168.1.12:4000/admin/batchs/${batch.id}`
+                        `http://10.10.103.248:4000/admin/batchs/${batch.id}`
                       );
                       if (!response.ok) {
                         throw new Error(
@@ -148,7 +148,7 @@ export default function ExploreBatch() {
                       }
                       const data = await response.json();
                       console.log("Fetched batch:", data);
-                      navigate(`/dashboard/class/${batch.id}`, {
+                      navigate(`/mentor/class/${batch.id}`, {
                         state: { batchData: data },
                       });
                     } catch (error) {

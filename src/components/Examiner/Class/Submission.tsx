@@ -67,7 +67,7 @@ function ExaminerSubmissionPage() {
     const fetchCompletion = async () => {
       try {
         const completionData = await axios.get(
-          `http://192.168.1.12:4000/examiner/presentation/${id}/completions`
+          `http://10.10.103.248:4000/examiner/presentation/${id}/completions`
         );
         setCompletions(completionData.data); // Set the entire response data
         setPresentations(completionData.data.completions); // Set the presentations data
@@ -90,7 +90,7 @@ function ExaminerSubmissionPage() {
 //         const params: Record<string, string> = { classId };
 
 //         const response = await axios.get(
-//           "http://192.168.1.12:4000/examiner/presentations/completions",
+//           "http://10.10.103.248:4000/examiner/presentations/completions",
 //           { params }
 //         );
 

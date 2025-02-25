@@ -212,3 +212,15 @@ export interface Batch {
   certificates: Certificate[];
   cover: BatchCover;
 }
+
+export interface Roles {
+  id: string;
+  name: string;
+  permissions: RoutePermissions[]
+}
+
+export interface RoutePermissions {
+  id: string;
+  route: string;
+  role: Roles[]
+}

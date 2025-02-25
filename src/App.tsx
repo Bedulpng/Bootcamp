@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "./components/Navbar";
 import { Hero } from "./components/Hero";
 import { Testimonial } from "./components/Testimonial";
@@ -56,9 +56,10 @@ import ExaminerClassPage from "./components/Examiner/Class/ClassPage";
 import ExaminerClassDetails from "./components/Examiner/Class/ClassDetail";
 import ExaminerSubmissionPage from "./components/Examiner/Class/Submission";
 import { SidebarExaminer } from "./components/Examiner/SidebarExaminer";
+import { DotSpinner } from "./components/SpinnerLoading";
 
 function Layout({ children }: { children: React.ReactNode }) {
-  const isDashboard = window.location.pathname.startsWith("/dashboard");
+  const isMentor = window.location.pathname.startsWith("/mentor");
   const isAdmin = window.location.pathname.startsWith("/admin");
   const isTrainee = window.location.pathname.startsWith("/trainee");
   const isExaminer = window.location.pathname.startsWith("/examiner");
@@ -92,12 +93,12 @@ function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={`min-h-screen ${
-        isAdmin || isDashboard || isTrainee || isExaminer
+        isAdmin || isMentor || isTrainee || isExaminer
           ? "bg-white dark:bg-gray-900"
           : "bg-white"
       }`}
     >
-      {isAdmin || isDashboard || isTrainee || isExaminer ? (
+      {isAdmin || isMentor || isTrainee || isExaminer ? (
         <div className="flex h-screen overflow-x-hidden">
           {/* Sidebar */}
           {isAdmin && (
@@ -141,7 +142,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 
             {/* Footer */}
             <div className="w-full">
-              {isAdmin || isDashboard || isTrainee || isExaminer ? (
+              {isAdmin || isMentor || isTrainee || isExaminer ? (
                 <FooterMentor />
               ) : (
                 <Footer />
@@ -164,6 +165,22 @@ function Layout({ children }: { children: React.ReactNode }) {
 
 // Main content component to keep the code organized
 function MainContent() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulating data fetch or component readiness
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <DotSpinner />
+      </div>
+    );
+  }
+
   return (
     <>
       <Hero />
@@ -224,9 +241,9 @@ function App() {
             }
           />
           <Route
-            path="/dashboard"
+            path="/mentor/dashboard"
             element={
-              <RbacTest routeName="/dashboard">
+              <RbacTest routeName="/mentor/dashboard">
                 <ProtectedRoute>
                   <Layout>
                     <MentorDb />
@@ -236,9 +253,9 @@ function App() {
             }
           />
           <Route
-            path="/dashboard/batch"
+            path="/mentor/batch"
             element={
-              <RbacTest routeName="/dashboard/batch">
+              <RbacTest routeName="/mentor/batch">
                 <ProtectedRoute>
                   <Layout>
                     <Batch />
@@ -248,9 +265,9 @@ function App() {
             }
           />
           <Route
-            path="/dashboard/trainee"
+            path="/mentor/trainee"
             element={
-              <RbacTest routeName="/dashboard/trainee">
+              <RbacTest routeName="/mentor/trainee">
                 <ProtectedRoute>
                   <Layout>
                     <TraineePages />
@@ -260,7 +277,7 @@ function App() {
             }
           />
           <Route
-            path="/dashboard/note"
+            path="/mentor/note"
             element={
               <RbacTest routeName="/dashboard/note">
                 <ProtectedRoute>
@@ -272,9 +289,9 @@ function App() {
             }
           />
           <Route
-            path="/dashboard/c/:classId/s/:id"
+            path="/mentor/c/:classId/s/:id"
             element={
-              <RbacTest routeName="/dashboard/c/:classId/s/:id">
+              <RbacTest routeName="/mentor/c/:classId/s/:id">
                 <ProtectedRoute>
                   <Layout>
                     <Challange />
@@ -284,9 +301,9 @@ function App() {
             }
           />
           <Route
-            path="/dashboard/class/:batchId"
+            path="/mentor/class/:batchId"
             element={
-              <RbacTest routeName="/dashboard/class/:batchId">
+              <RbacTest routeName="/mentor/class/:batchId">
                 <ProtectedRoute>
                   <Layout>
                     <ClassPage />
@@ -296,9 +313,9 @@ function App() {
             }
           />
           <Route
-            path="/dashboard/c/:classId/:batchId"
+            path="/mentor/c/:classId/:batchId"
             element={
-              <RbacTest routeName="/dashboard/c/:classId/:batchId">
+              <RbacTest routeName="/mentor/c/:classId/:batchId">
                 <ProtectedRoute>
                   <Layout>
                     <ClassDetails />

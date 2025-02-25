@@ -20,7 +20,7 @@ export function MentorLogin() {
     };
 
     try {
-      const response = await fetch('http://192.168.1.12:4000/trainee/login', {
+      const response = await fetch('http://10.10.103.248:4000/trainee/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export function MentorLogin() {
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
 
-        navigate('/dashboard');
+        navigate('/mentor/dashboard');
       } else {
         const errorData = await response.json();
         toast.error(`Login failed: ${errorData.message}`);

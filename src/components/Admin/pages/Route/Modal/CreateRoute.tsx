@@ -27,52 +27,51 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { allRoles } from "../data/Mock";
+import axios from "axios";
 
 interface CreateRouteModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (path: string, baseRole: string, accessRoles: string[]) => void;
+  allRoles: { id: string; name: string }[];
 }
 
 export function CreateRouteModal({
   isOpen,
   onClose,
-  onSave,
+  allRoles,
 }: CreateRouteModalProps) {
   const [routePath, setRoutePath] = useState("");
-  const [baseRole, setBaseRole] = useState("");
-  const [openBaseRole, setOpenBaseRole] = useState(false);
-  const [selectedAccessRoles, setSelectedAccessRoles] = useState<string[]>([]);
+  const [selectedAccessRoleIds, setSelectedAccessRoleIds] = useState<string[]>(
+    []
+  );
   const [openAccessRoles, setOpenAccessRoles] = useState(false);
 
-  const handleSave = () => {
-    if (routePath && baseRole) {
-      // Ensure the base role is always included in access roles
-      const accessRoles = Array.from(
-        new Set([baseRole, ...selectedAccessRoles])
-      );
-      onSave(
-        routePath.startsWith("/") ? routePath : `/${routePath}`,
-        baseRole,
-        accessRoles
-      );
+  const handleSave = async () => {
+    if (!routePath || selectedAccessRoleIds.length === 0) return;
+
+    try {
+      await axios.post("http://10.10.103.248:4000/api/route-permissions", {
+        route: routePath.startsWith("/") ? routePath : `/${routePath}`,
+        roleIds: selectedAccessRoleIds,
+      });
+
       handleClose();
+    } catch (error) {
+      console.error("Failed to create route permissions:", error);
     }
   };
 
   const handleClose = () => {
     setRoutePath("");
-    setBaseRole("");
-    setSelectedAccessRoles([]);
+    setSelectedAccessRoleIds([]);
     onClose();
   };
 
-  const toggleAccessRole = (role: string) => {
-    setSelectedAccessRoles((current) =>
-      current.includes(role)
-        ? current.filter((r) => r !== role)
-        : [...current, role]
+  const toggleAccessRole = (roleId: string) => {
+    setSelectedAccessRoleIds((prev) =>
+      prev.includes(roleId)
+        ? prev.filter((id) => id !== roleId) // Remove if already selected
+        : [...prev, roleId] // Add if not selected
     );
   };
 
@@ -101,55 +100,6 @@ export function CreateRouteModal({
           </div>
 
           <div className="grid gap-2">
-            <label className="text-sm font-medium">Base Role</label>
-            <Popover open={openBaseRole} onOpenChange={setOpenBaseRole}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={openBaseRole}
-                  className="justify-between"
-                >
-                  {baseRole ? baseRole : "Select base role..."}
-                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-full p-0 z-[9999]"
-                align="start"
-                forceMount
-              >
-                <Command shouldFilter={false}>
-                  <CommandInput placeholder="Search role..." />
-                  <CommandList>
-                    <CommandEmpty>No role found.</CommandEmpty>
-                    <CommandGroup>
-                      {allRoles.map((role) => (
-                        <CommandItem
-                          key={role}
-                          value={role}
-                          onSelect={(value) => {
-                            setBaseRole(value);
-                            setOpenBaseRole(false);
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              baseRole === role ? "opacity-100" : "opacity-0"
-                            )}
-                          />
-                          {role}
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="grid gap-2">
             <label className="text-sm font-medium">Role Access</label>
             <Popover open={openAccessRoles} onOpenChange={setOpenAccessRoles}>
               <PopoverTrigger asChild>
@@ -159,9 +109,14 @@ export function CreateRouteModal({
                   aria-expanded={openAccessRoles}
                   className="justify-between"
                 >
-                  {selectedAccessRoles.length > 0
-                    ? `${selectedAccessRoles.length} role(s) selected`
-                    : "Select roles..."}
+                  {selectedAccessRoleIds.length > 0
+                    ? allRoles
+                        .filter((role) =>
+                          selectedAccessRoleIds.includes(role.id)
+                        )
+                        .map((role) => role.name)
+                        .join(", ")
+                    : "Select roles"}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
@@ -177,21 +132,18 @@ export function CreateRouteModal({
                     <CommandGroup>
                       {allRoles.map((role) => (
                         <CommandItem
-                          key={role}
-                          value={role}
-                          onSelect={() => toggleAccessRole(role)}
+                          key={role.id}
+                          onSelect={() => toggleAccessRole(role.id)}
                         >
-                          <div className="flex items-center">
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                selectedAccessRoles.includes(role)
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {role}
-                          </div>
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedAccessRoleIds.includes(role.id)
+                                ? "opacity-100"
+                                : "opacity-0"
+                            )}
+                          />
+                          {role.name}
                         </CommandItem>
                       ))}
                     </CommandGroup>
@@ -211,7 +163,7 @@ export function CreateRouteModal({
           </Button>
           <Button
             onClick={handleSave}
-            disabled={!routePath || !baseRole}
+            disabled={!routePath || selectedAccessRoleIds.length === 0}
             className="flex-1 sm:flex-none"
           >
             Create Route

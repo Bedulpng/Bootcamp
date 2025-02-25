@@ -54,7 +54,7 @@ export default function UserModalForm({ open, setOpen }: UserModalFormProps) {
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const { data } = await axios.get("http://10.10.103.248:4000/admin/role/roles");
+        const { data } = await axios.get("http://192.168.1.12:4000/admin/role/roles");
         const fetchedRoles = data.tableRoles.map((role: any) => ({ id: role.id, name: role.name }));
         setRoles(fetchedRoles); // Ensure it's an array of objects
       } catch (error) {
@@ -76,7 +76,7 @@ export default function UserModalForm({ open, setOpen }: UserModalFormProps) {
 
       // Sending the POST request with the form data and authorization header
       const response = await axios.post(
-        'http://10.10.103.248:4000/admin/create-user',
+        'http://192.168.1.12:4000/admin/create-user',
         {
           email: data.email,
           dob: data.dob,

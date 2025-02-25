@@ -22,7 +22,7 @@ export default function ExaminerClassPage() {
     const fetchClasses = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://10.10.103.248:4000/admin/class/${batchId}/batch`);
+        const response = await fetch(`http://192.168.1.12:4000/admin/class/${batchId}/batch`);
         if (!response.ok) {
         }
         const data: Class[] = await response.json();

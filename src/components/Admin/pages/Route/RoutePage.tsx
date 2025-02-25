@@ -21,7 +21,7 @@ export default function RoutesPage() {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await axios.get("http://10.10.103.248:4000/admin/role/roles");
+        const response = await axios.get("http://192.168.1.12:4000/admin/role/roles");
         const roles = response.data.tableRoles.map((role: Roles) => ({
           id: role.id,
           name: role.name,

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { AlertTriangle } from "lucide-react";
 
 import type { RoutePermissions } from "@/types/Trainee";
 import { Button } from "@/components/ui/button";
@@ -15,16 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
 
 interface RouteAccessModalProps {
@@ -41,27 +30,31 @@ export function RouteAccessModal({
 }: RouteAccessModalProps) {
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [allRoles, setAllRoles] = useState<{ id: string; name: string }[]>([]);
-  const [showConfirmation, setShowConfirmation] = useState(false);
-console.log("selected Route", route?.id)
+  const [isLoading, setIsLoading] = useState(false); // Added loading state
+
   // Fetch roles from API
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const { data } = await axios.get("http://10.10.103.248:4000/admin/role/roles");
-        const roles = data.tableRoles.map((role: any) => ({ id: role.id, name: role.name }));
-        setAllRoles(roles); // Ensure it's an array of objects
+        const { data } = await axios.get(
+          "http://192.168.1.12:4000/admin/role/roles"
+        );
+        const roles = data.tableRoles.map((role: any) => ({
+          id: role.id,
+          name: role.name,
+        }));
+        setAllRoles(roles);
       } catch (error) {
         console.error("Failed to fetch roles:", error);
       }
     };
-  
+
     fetchRoles();
   }, []);
-  
 
   useEffect(() => {
     if (route) {
-      setSelectedRoles(route.role.map((r) => r.id)); // Extract role IDs
+      setSelectedRoles(route.role.map((r) => r.id));
     }
   }, [route]);
 
@@ -78,41 +71,41 @@ console.log("selected Route", route?.id)
     JSON.stringify(selectedRoles.sort()) !==
       JSON.stringify(route.role.map((r) => r.id).sort());
 
-  const handleSave = () => {
-    if (hasChanges) {
-      setShowConfirmation(true);
-    } else {
-      onClose();
-    }
-  };
-  
   const handleConfirm = async () => {
     if (hasChanges && route) {
+      setIsLoading(true);
       try {
         const previousRoles = route.role.map((r) => r.id);
-        const rolesToAdd = selectedRoles.filter((id) => !previousRoles.includes(id));
-        const rolesToRemove = previousRoles.filter((id) => !selectedRoles.includes(id));
-  
+        const rolesToAdd = selectedRoles.filter(
+          (id) => !previousRoles.includes(id)
+        );
+        const rolesToRemove = previousRoles.filter(
+          (id) => !selectedRoles.includes(id)
+        );
+
         if (rolesToAdd.length === 0 && rolesToRemove.length === 0) {
           onClose();
           return;
         }
-  
-        await axios.put(`http://10.10.103.248:4000/api/route-permissions/${route.id}`, {
-          addRoleIds: rolesToAdd,
-          removeRoleIds: rolesToRemove,
-        });
-  
-        setShowConfirmation(false);
+
+        await axios.put(
+          `http://192.168.1.12:4000/api/route-permissions/${route.id}`,
+          {
+            addRoleIds: rolesToAdd,
+            removeRoleIds: rolesToRemove,
+          }
+        );
+
         onClose();
       } catch (error) {
         console.error("Failed to update route permissions:", error);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       onClose();
     }
   };
-  
 
   const handleCancel = () => {
     setSelectedRoles(route?.role.map((r) => r.id) || []);
@@ -175,44 +168,20 @@ console.log("selected Route", route?.id)
               variant="outline"
               onClick={handleCancel}
               className="flex-1 sm:flex-none"
+              disabled={isLoading}
             >
               Cancel
             </Button>
             <Button
-              onClick={handleSave}
-              disabled={!hasChanges}
+              onClick={handleConfirm}
+              disabled={!hasChanges || isLoading}
               className="flex-1 sm:flex-none"
             >
-              Save changes
+              {isLoading ? "Saving..." : "Save changes"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <AlertDialog open={showConfirmation} onOpenChange={setShowConfirmation}>
-        <AlertDialogContent className="w-[calc(100%-2rem)] p-4 sm:p-6">
-          <AlertDialogHeader className="space-y-2 sm:space-y-3">
-            <AlertDialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
-              <AlertTriangle className="h-5 w-5 text-destructive" />
-              Are you sure?
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-sm">
-              This change could lead to future issues with access control.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="sm:space-x-2">
-            <AlertDialogCancel className="flex-1 sm:flex-none">
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="flex-1 sm:flex-none bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={handleConfirm}
-            >
-              Proceed
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 }

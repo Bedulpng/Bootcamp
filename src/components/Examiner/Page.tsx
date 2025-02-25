@@ -23,7 +23,7 @@ export default function ExaminerDashboard() {
     const fetchBatches = async () => {
       try {
         const response = await axios.get(
-          "http://10.10.103.248:4000/admin/batch"
+          "http://192.168.1.12:4000/admin/batch"
         );
         setBatches(response.data);
       } catch (error) {
@@ -39,7 +39,7 @@ export default function ExaminerDashboard() {
         const params: Record<string, string> = {};
 
         const response = await axios.get(
-          "http://10.10.103.248:4000/examiner/presentations/completions",
+          "http://192.168.1.12:4000/examiner/presentations/completions",
           { params }
         );
 

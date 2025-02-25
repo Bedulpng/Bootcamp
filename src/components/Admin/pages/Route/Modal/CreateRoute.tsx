@@ -50,7 +50,7 @@ export function CreateRouteModal({
     if (!routePath || selectedAccessRoleIds.length === 0) return;
 
     try {
-      await axios.post("http://10.10.103.248:4000/api/route-permissions", {
+      await axios.post("http://192.168.1.12:4000/api/route-permissions", {
         route: routePath.startsWith("/") ? routePath : `/${routePath}`,
         roleIds: selectedAccessRoleIds,
       });

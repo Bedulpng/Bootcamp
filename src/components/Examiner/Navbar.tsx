@@ -33,14 +33,14 @@ const NavbarExaminer: React.FC = () => {
 
         // Fetch mentor details
         const response = await axios.get(
-          `http://10.10.103.248:4000/admin/mentor/${userId}`
+          `http://192.168.1.12:4000/admin/mentor/${userId}`
         );
         setTraineeName(response.data.fullName);
         setTraineeRole(response.data.role);
 
         // Fetch the professional profile image
         const profileResponse = await axios.get(
-          `http://10.10.103.248:4000/trainee/${userId}/pro`
+          `http://192.168.1.12:4000/trainee/${userId}/pro`
         );
         if (profileResponse.data && profileResponse.data.profileImage) {
           setProfileImage(profileResponse.data.profileImage); // Store the profile image path
@@ -79,7 +79,7 @@ const NavbarExaminer: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://10.10.103.248:4000/trainee/logout",
+        "http://192.168.1.12:4000/trainee/logout",
         {
           accessToken,
         }
@@ -123,7 +123,7 @@ const NavbarExaminer: React.FC = () => {
               <Button variant="ghost" className="flex items-center gap-2 p-1">
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
                   <AvatarImage
-                    src={`http://10.10.103.248:4000${profileImage}`}
+                    src={`http://192.168.1.12:4000${profileImage}`}
                     alt="Trainee"
                   />
                   <AvatarFallback>

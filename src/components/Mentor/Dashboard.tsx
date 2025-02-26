@@ -284,12 +284,12 @@ export default function MentorDb() {
   const displayedPresentValue = Math.round(chartData[0].value);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col items-center justify-center">
       <div className="min-h-screen flex flex-col">
         {/* Main Content */}
         <main className="flex-1 py-8">
           <div className="container px-4">
-            <div className="grid gap-8 md:grid-cols-4 max-w-7xl mx-auto">
+            <div className="grid gap-8 md:grid-cols-4 mx-auto">
               {/* Left Content (3 columns) */}
               <div className="md:col-span-3 space-y-8">
                 {/* Top Row - Metric Cards */}

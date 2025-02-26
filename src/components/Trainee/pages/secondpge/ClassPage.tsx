@@ -5,6 +5,7 @@ import { Class } from "../../../../types/Trainee";
 import { fetchClassesByUserId } from "@/Api/FetchUsers";
 import { jwtDecode } from "jwt-decode";
 import ClassesPageSkeleton from "../../Skeleton/ClassPage";
+import NoClassIllustration from "./NothingHandle/NoClass";
 
 export default function ClassesPage() {
   const navigate = useNavigate();
@@ -79,19 +80,23 @@ export default function ClassesPage() {
 
   return (
     <div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-12 place-items-center cursor-pointer">
-        {classes.map((cls) => {
-          const transformedClass = transformClassData(cls);
-          return (
-            <ClassCard
-              key={cls.id}
-              {...transformedClass}
-              onClick={() => handleClassClick(cls.id)
-              }
-            />
-          );
-        })}
-      </div>
+      {classes.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-12 place-items-center cursor-pointer">
+          {classes.map((cls) => {
+            const transformedClass = transformClassData(cls);
+            return (
+              <ClassCard
+                key={cls.id}
+                {...transformedClass}
+                onClick={() => handleClassClick(cls.id)}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <NoClassIllustration />
+      )}
     </div>
   );
+  
 }

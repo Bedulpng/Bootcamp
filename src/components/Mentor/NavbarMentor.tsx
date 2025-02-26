@@ -95,8 +95,8 @@ export default function NavbarMentor() {
   };
 
   return (
-    <header className="border-b">
-      <div className="container relative flex h-16 items-center px-8 justify-between">
+    <header className="bg-white dark:bg-gray-800 shadow-sm">
+      <div className="flex items-center justify-between px-6 py-4">
         {/* Logo */}
         <Link to="/mentor" className="flex-shrink-0">
           <img

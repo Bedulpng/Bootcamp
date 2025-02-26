@@ -7,6 +7,7 @@ import { ClassCardSkeleton } from "./ClassCardSkeleton";
 // import { ColorPickerModal } from "./ColorPickerModal";
 // import { ImageCropModal } from "./ImageCropModal";
 import { Class } from "@/types/Trainee";
+import NoClassIllustration from "@/components/Trainee/pages/secondpge/NothingHandle/NoClass";
 
 export default function ExaminerClassPage() {
   const { batchId } = useParams<{ batchId: string }>();
@@ -61,48 +62,34 @@ export default function ExaminerClassPage() {
 //     setIsImageCropOpen(false);
 //   };
 
-  return (
-    <div className="container mx-auto px-4 py-8">      
-      {error && <p className="text-red-500">{error}</p>}
+return (
+  <div className="container mx-auto px-4 py-8 flex flex-col items-center justify-center min-h-[50vh]">
+    {error && <p className="text-red-500">{error}</p>}
 
+    {loading ? (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-        {loading
-          ? Array.from({ length: 3 }).map((_, index) => <ClassCardSkeleton key={index} />)
-          : classes.length > 0
-          ? classes.map((classItem) => (
-              <ClassCard
-                key={classItem.id}
-                id={classItem.id}
-                batchId={batchId}
-                className={classItem.className}
-                createdAt={classItem.createdAt}
-                coverImage={classItem.cover?.filePath}
-              />
-            ))
-          : <p>No classes available.</p>
-        }
+        {Array.from({ length: 3 }).map((_, index) => (
+          <ClassCardSkeleton key={index} />
+        ))}
       </div>
-
-      {/* {isColorPickerOpen && editingClassId && (
-        <ColorPickerModal
-          isOpen={isColorPickerOpen}
-          onClose={() => setIsColorPickerOpen(false)}
-          onImageUpload={handleImageUpload}
-          currentCoverImage={classes.find((c) => c.id === editingClassId)?.cover.filePath}
-          className={classes.find((c) => c.id === editingClassId)?.className || ""}
-          classId={classes.find((c) => c.id === editingClassId)?.id || ""}
-        />
-      )}
-
-      {isImageCropOpen && tempImageUrl && (
-        <ImageCropModal
-          isOpen={isImageCropOpen}
-          onClose={() => setIsImageCropOpen(false)}
-          imageUrl={tempImageUrl}
-          onCropComplete={handleCropComplete}
-          classId={classes.find((c) => c.id === editingClassId)?.id || ""}
-        />
-      )} */}
-    </div>
-  );
+    ) : classes.length > 0 ? (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        {classes.map((classItem) => (
+          <ClassCard
+            key={classItem.id}
+            id={classItem.id}
+            batchId={batchId}
+            className={classItem.className}
+            createdAt={classItem.createdAt}
+            coverImage={classItem.cover?.filePath}
+          />
+        ))}
+      </div>
+    ) : (
+      <div className="flex flex-col items-center justify-center h-[50vh]">
+        <NoClassIllustration />
+      </div>
+    )}
+  </div>
+);
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
@@ -57,7 +57,7 @@ const NavbarExaminer: React.FC = () => {
   }, [navigate]);
 
   const handleProfileClick = () => {
-    navigate("/trainee/profile");
+    navigate("/examiner/profile");
   };
 
   const logoutClick = () => {
@@ -98,23 +98,13 @@ const NavbarExaminer: React.FC = () => {
   };
 
   return (
-    <header className="border-b bg-white shadow">
-      <div className="container relative flex h-16 items-center px-8 justify-between">
+    <header className="bg-white dark:bg-gray-800 shadow-sm">
+      <div className="flex items-center justify-between px-6 py-4">
         {/* Logo */}
-        <div className="flex-shrink-0">
-          {/* <Link to="/examiner/dashboard" className="flex-shrink-0">
-            <img
-              src="/Logo_black_big.png"
-              alt="Logo"
-              width={150}
-              height={50}
-              className="rounded"
-            />
-          </Link> */}
-        </div>
-
-        {/* User Menu */}
-        <div className="flex-shrink-0 flex items-center gap-4">
+        <div className="flex-shrink-0"></div>
+  
+        {/* User Menu - Moved to the right */}
+        <div className="flex-shrink-0 flex items-center gap-4 ml-auto">
           <Button variant="ghost" size="icon" className="h-10 w-10">
             <NotificationPopup />
           </Button>
@@ -165,6 +155,7 @@ const NavbarExaminer: React.FC = () => {
       </div>
     </header>
   );
+  
 };
 
 export default NavbarExaminer;

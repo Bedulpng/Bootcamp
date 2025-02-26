@@ -12,6 +12,7 @@ import { jwtDecode } from "jwt-decode";
 import BatchCards from "./BatchCard";
 import { BatchCover } from "./BatchCover";
 import { BatchExploreSkeleton } from "./Skeleton";
+import NoBatchIllustration from "@/components/Trainee/pages/secondpge/NothingHandle/NoBatch";
 
 export default function ExploreBatch() {
   const navigate = useNavigate();
@@ -106,125 +107,132 @@ export default function ExploreBatch() {
 
   return (
     <div className="container mx-auto px-4 py-10 mb-24">
-      <div className="grid gap-6 md:grid-cols-[1fr_200px]">
-        <div className="relative">
-          <div className="absolute top-2 left-0 text-2xl font-bold text-gray-800">
-            Explore Batch
-          </div>
-          <div className="mb-4 flex justify-end">
-            <div className="relative w-64">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-500" />
-              <Input
-                className="pl-10"
-                placeholder="Find batch..."
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+      {batches.length > 0 ? (
+        <div className="grid gap-6 md:grid-cols-[1fr_200px]">
+          <div className="relative">
+            <div className="absolute top-2 left-0 text-2xl font-bold text-gray-800">
+              Explore Batch
             </div>
-          </div>
-
-          {/* Carousel */}
-          <div className="relative h-[300px] overflow-hidden rounded-xl">
-            <div
-              className={`flex w-full h-full cursor-pointer transition-transform duration-500 ease-in-out ${
-                isAnimating ? "" : "transition-none"
-              }`}
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            >
-              {batches.map((batch, index) => (
-                <div
-                  key={index}
-                  className="min-w-full h-full flex items-end" // Ensure proper alignment
-                  onClick={async () => {
-                    try {
-                      const response = await fetch(
-                        `http://192.168.1.12:4000/admin/batchs/${batch.id}`
-                      );
-                      if (!response.ok) {
-                        throw new Error(
-                          `Failed to fetch batch with ID: ${batch.id}`
+            <div className="mb-4 flex justify-end">
+              <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-500" />
+                <Input
+                  className="pl-10"
+                  placeholder="Find batch..."
+                  type="search"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
+  
+            {/* Carousel */}
+            <div className="relative h-[300px] overflow-hidden rounded-xl">
+              <div
+                className={`flex w-full h-full cursor-pointer transition-transform duration-500 ease-in-out ${
+                  isAnimating ? "" : "transition-none"
+                }`}
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              >
+                {batches.map((batch, index) => (
+                  <div
+                    key={index}
+                    className="min-w-full h-full flex items-end"
+                    onClick={async () => {
+                      try {
+                        const response = await fetch(
+                          `http://192.168.1.12:4000/admin/batchs/${batch.id}`
+                        );
+                        if (!response.ok) {
+                          throw new Error(
+                            `Failed to fetch batch with ID: ${batch.id}`
+                          );
+                        }
+                        const data = await response.json();
+                        console.log("Fetched batch:", data);
+                        navigate(`/mentor/class/${batch.id}`, {
+                          state: { batchData: data },
+                        });
+                      } catch (error) {
+                        console.error(
+                          "Error fetching batch:",
+                          error instanceof Error ? error.message : error
                         );
                       }
-                      const data = await response.json();
-                      console.log("Fetched batch:", data);
-                      navigate(`/mentor/class/${batch.id}`, {
-                        state: { batchData: data },
-                      });
-                    } catch (error) {
-                      console.error(
-                        "Error fetching batch:",
-                        error instanceof Error ? error.message : error
-                      );
-                    }
-                  }}
-                >
-                  {/* Ensure BatchCover takes full height */}
-                  <BatchCover
-                    batchTitle={batch.batchTitle}
-                    coverImage={batch.cover?.filePath}
-                  />
-                </div>
-              ))}
+                    }}
+                  >
+                    <BatchCover
+                      batchTitle={batch.batchTitle}
+                      coverImage={batch.cover?.filePath}
+                    />
+                  </div>
+                ))}
+              </div>
+  
+              {/* Navigation Buttons */}
+              <Button
+                className="absolute left-4 top-1/2 -translate-y-1/2 transform rounded-full z-20"
+                onClick={handlePrevSlide}
+                size="icon"
+                variant="secondary"
+              >
+                <ChevronLeft className="h-6 w-6" />
+                <span className="sr-only">Previous slide</span>
+              </Button>
+              <Button
+                className="absolute right-4 top-1/2 -translate-y-1/2 transform rounded-full z-20"
+                onClick={handleNextSlide}
+                size="icon"
+                variant="secondary"
+              >
+                <ChevronRight className="h-6 w-6" />
+                <span className="sr-only">Next slide</span>
+              </Button>
             </div>
-
-            {/* Navigation Buttons */}
-            <Button
-              className="absolute left-4 top-1/2 -translate-y-1/2 transform rounded-full z-20"
-              onClick={handlePrevSlide}
-              size="icon"
-              variant="secondary"
-            >
-              <ChevronLeft className="h-6 w-6" />
-              <span className="sr-only">Previous slide</span>
-            </Button>
-            <Button
-              className="absolute right-4 top-1/2 -translate-y-1/2 transform rounded-full z-20"
-              onClick={handleNextSlide}
-              size="icon"
-              variant="secondary"
-            >
-              <ChevronRight className="h-6 w-6" />
-              <span className="sr-only">Next slide</span>
-            </Button>
+  
+            <div className="mt-2 text-right text-sm text-gray-600">
+              Showing{" "}
+              {(activeFilter === "all-batch" ? batches : mentorBatches).length}{" "}
+              Batch
+            </div>
           </div>
-
-          <div className="mt-2 text-right text-sm text-gray-600">
-            Showing{" "}
-            {(activeFilter === "all-batch" ? batches : mentorBatches).length}{" "}
-            Batch
-          </div>
-        </div>
-        <div className="mt-[52px] rounded-lg bg-white p-1 shadow-sm">
-          <div className="flex flex-col gap-2">
-            <button
-              className={cn(
-                "w-full rounded-md px-2 py-1.5 text-sm font-medium transition-colors",
-                activeFilter === "all-batch"
-                  ? "bg-blue-500 text-white"
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-              onClick={() => handleFilterChange("all-batch")}
-            >
-              All Batch
-            </button>
-            <button
-              className={cn(
-                "w-full rounded-md px-2 py-1.5 text-sm font-medium transition-colors",
-                activeFilter === "my-batch"
-                  ? "bg-blue-500 text-white"
-                  : "text-gray-600 hover:bg-gray-100"
-              )}
-              onClick={() => handleFilterChange("my-batch")}
-            >
-              My Batch
-            </button>
+          <div className="mt-[52px] rounded-lg bg-white p-1 shadow-sm">
+            <div className="flex flex-col gap-2">
+              <button
+                className={cn(
+                  "w-full rounded-md px-2 py-1.5 text-sm font-medium transition-colors",
+                  activeFilter === "all-batch"
+                    ? "bg-blue-500 text-white"
+                    : "text-gray-600 hover:bg-gray-100"
+                )}
+                onClick={() => handleFilterChange("all-batch")}
+              >
+                All Batch
+              </button>
+              <button
+                className={cn(
+                  "w-full rounded-md px-2 py-1.5 text-sm font-medium transition-colors",
+                  activeFilter === "my-batch"
+                    ? "bg-blue-500 text-white"
+                    : "text-gray-600 hover:bg-gray-100"
+                )}
+                onClick={() => handleFilterChange("my-batch")}
+              >
+                My Batch
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <BatchCards
-        batches={activeFilter === "all-batch" ? batches : mentorBatches}
-      />
+      ) : (
+        <NoBatchIllustration />
+      )}
+  
+      {batches.length > 0 ? (
+        <BatchCards
+          batches={activeFilter === "all-batch" ? batches : mentorBatches}
+        />
+      ) : null}
     </div>
   );
+  
 }

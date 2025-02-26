@@ -237,7 +237,7 @@ export const BatchEdit: React.FC<BatchModalProps> = ({
                             {classItem.className}
                           </div>
                           {Array.isArray(classItem.mentors)
-                            ? classItem.mentors.join(" - ")
+                            ? classItem.mentors.map((m) => m.fullName).join(" - ")
                             : "No mentors available"}
                         </div>
                       </button>

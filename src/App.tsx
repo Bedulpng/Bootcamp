@@ -283,7 +283,7 @@ function App() {
           <Route
             path="/mentor/note"
             element={
-              <Rbac routeName="/dashboard/note">
+              <Rbac routeName="/mentor/note">
                 <ProtectedRoute>
                   <Layout>
                     <NotesPage />

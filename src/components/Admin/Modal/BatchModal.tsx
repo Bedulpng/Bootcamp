@@ -113,7 +113,7 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
       };
 
       const batchResponse = await axios.post(
-        "http://192.168.1.12:4000/admin/batch",
+        "http://10.10.103.195:4000/admin/batch",
         batchPayload,
         {
           headers: {
@@ -148,7 +148,7 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
       console.log("got color: ", fileName);
 
       await axios.post(
-        "http://192.168.1.12:4000/uploads/batch-cover",
+        "http://10.10.103.195:4000/uploads/batch-cover",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

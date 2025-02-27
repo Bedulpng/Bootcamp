@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle, Binary, Code2, Terminal, Server } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -24,6 +25,8 @@ export default function RmFs() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
+
+  const navigate = useNavigate()
 
   return (
     <div className="font-montserrat bg-[#0B1121] min-h-screen overflow-hidden">
@@ -261,10 +264,10 @@ export default function RmFs() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="mt-12"
             >
-              <button className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white transition duration-300 ease-out rounded-full group">
+              <button className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white transition duration-300 ease-out rounded-full group" onClick={() => navigate("/")}>
                 <span className="absolute inset-0 bg-gradient-to-r from-[#4169E1] to-[#9333EA] opacity-70 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
                 <span className="relative flex items-center space-x-2">
-                  <span>Enroll Now</span>
+                  <span>Start Your Journey</span>
                   <svg
                     className="w-6 h-6 transition-transform duration-300 transform group-hover:translate-x-1"
                     fill="none"

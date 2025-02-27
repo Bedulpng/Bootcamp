@@ -4,7 +4,7 @@ import { Trainee } from '../types/Trainee';
 // Axios function to fetch trainees with the fixed role "TRAINEE"
 export async function fetchTrainees(): Promise<Trainee[]> {
   try {
-    const response = await axios.get('http://192.168.1.12:4000/admin/users/TRAINEE');
+    const response = await axios.get('http://10.10.103.195:4000/admin/users/TRAINEE');
     return response.data;
   } catch (error) {
     console.error("Error fetching trainees:", error);
@@ -14,7 +14,7 @@ export async function fetchTrainees(): Promise<Trainee[]> {
 
 export async function fetchMentors(): Promise<Trainee[]> {
   try {
-    const response = await axios.get('http://192.168.1.12:4000/admin/users/MENTOR');
+    const response = await axios.get('http://10.10.103.195:4000/admin/users/MENTOR');
     return response.data;
   } catch (error) {
     console.error("Error fetching mentor:", error);

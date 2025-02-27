@@ -11,7 +11,7 @@ export function BatchCover({ batchTitle, coverImage }: BatchCoverProps) {
       <div className="absolute inset-0">
         {coverImage ? (
           <img
-            src={`http://192.168.1.12:4000${coverImage.replace("/public", "")}`}
+            src={`http://10.10.103.195:4000${coverImage.replace("/public", "")}`}
             alt={`Cover for ${batchTitle}`}
             className="w-full h-full object-cover"
             loading="eager"

@@ -67,7 +67,7 @@ export default function ExaminerPresentations() {
     const fetchBatches = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.12:4000/admin/batch"
+          "http://10.10.103.195:4000/admin/batch"
         );
         setBatches(response.data);
       } catch (error) {
@@ -81,7 +81,7 @@ export default function ExaminerPresentations() {
     const fetchClasses = async () => {
       try {
         const response = await axios.get(
-          "http://192.168.1.12:4000/admin/class"
+          "http://10.10.103.195:4000/admin/class"
         );
         setClasses(response.data);
       } catch (error) {
@@ -99,7 +99,7 @@ export default function ExaminerPresentations() {
         if (selectedClass !== "all") params.classId = selectedClass;
 
         const response = await axios.get(
-          "http://192.168.1.12:4000/examiner/presentations/completions",
+          "http://10.10.103.195:4000/examiner/presentations/completions",
           { params }
         );
 

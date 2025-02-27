@@ -27,7 +27,7 @@ export default function AboutSection() {
           <motion.h2 variants={fadeIn} className="text-5xl md:text-6xl font-bold text-white mb-6">
             About Our {" "}
             <span className="bg-gradient-to-r from-[#4169E1] to-[#9333EA] bg-clip-text text-transparent">
-              Full-Stack Program
+              Programs
             </span>
           </motion.h2>
           <motion.p variants={fadeIn} className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
@@ -41,7 +41,7 @@ export default function AboutSection() {
               title: "Comprehensive Curriculum",
               icon: Code,
               content:
-                "Our program covers both frontend and backend technologies, ensuring you're prepared for the full spectrum of web development challenges.",
+                "Our program covers both frontend and backend technologies, ensuring our trainees are prepared to work on full-stack projects and quality assurance",
             },
             {
               title: "Industry-Driven Approach",
@@ -95,11 +95,9 @@ export default function AboutSection() {
           <div className="flex flex-wrap justify-center gap-4 px-6">
             {[
               "Flexible Learning",
-              "1-on-1 Mentorship",
               "Career Support",
               "Project-Based Learning",
               "Industry Partnerships",
-              "Lifetime Access",
             ].map((feature, index) => (
               <Badge key={index} variant="secondary" className="relative group overflow-hidden px-6 py-3 text-lg">
                 <div className="absolute inset-0 bg-gradient-to-r from-[#4169E1]/20 to-[#9333EA]/20 group-hover:from-[#4169E1]/40 group-hover:to-[#9333EA]/40 transition-all duration-300" />

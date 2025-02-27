@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CheckCircle, Database, Layout, Server, Cloud } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -24,6 +25,8 @@ export default function FullStackDev() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
+
+  const navigate = useNavigate()
 
   return (
     <div className="font-montserrat bg-[#0B1121] min-h-screen overflow-hidden">
@@ -47,7 +50,7 @@ export default function FullStackDev() {
                 </span>
               </motion.div>
               <motion.div variants={fadeIn} className="space-y-2">
-                <h1 className="text-6xl md:text-8xl font-bold text-white leading-none tracking-tight">
+                <h1 className="text-4xl md:text-7xl font-bold text-white leading-none tracking-tight">
                   Full Stack{" "}
                   <span className="bg-gradient-to-r from-[#4169E1] to-[#9333EA] bg-clip-text text-transparent">
                     Development
@@ -99,7 +102,7 @@ export default function FullStackDev() {
                       className="aspect-square flex flex-col items-center justify-center gap-3 bg-gradient-to-r from-[#4169E1]/10 to-[#9333EA]/10 rounded-xl border border-white/5"
                     >
                       <Icon className="w-12 h-12 text-[#4169E1]" />
-                      <span className="text-black/70 text-sm">{label}</span>
+                      <span className="text-white/70 text-sm">{label}</span>
                     </motion.div>
                   ))}
                 </div>
@@ -269,7 +272,7 @@ export default function FullStackDev() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="mt-12"
             >
-              <button className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white transition duration-300 ease-out rounded-full group">
+              <button className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white transition duration-300 ease-out rounded-full group" onClick={() => navigate("/")}>
                 <span className="absolute inset-0 bg-gradient-to-r from-[#4169E1] to-[#9333EA] opacity-70 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
                 <span className="relative flex items-center space-x-2">
                   <span>Start Your Journey</span>

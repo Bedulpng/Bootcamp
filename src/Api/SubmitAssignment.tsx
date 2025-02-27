@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://192.168.1.12:4000";
+const API_URL = "http://10.10.103.195:4000";
 
 export async function submitLessonCompletion(
   userId: string,

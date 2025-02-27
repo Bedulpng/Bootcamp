@@ -43,7 +43,7 @@ export const isVerified = async (): Promise<boolean> => {
     const token = localStorage.getItem("refreshToken");
     if (!token) return false;
 
-    const response = await axios.get("http://192.168.1.12:4000/trainee/status", {
+    const response = await axios.get("http://10.10.103.195:4000/trainee/status", {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -83,7 +83,7 @@ export const checkTokenValidity = async (): Promise<boolean> => {
 
   try {
     await axios.post(
-      'http://192.168.1.12:4000/api/check-token',
+      'http://10.10.103.195:4000/api/check-token',
       {}, 
       {
         headers: {

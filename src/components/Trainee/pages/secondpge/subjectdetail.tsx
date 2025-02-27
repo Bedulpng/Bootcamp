@@ -33,7 +33,7 @@ export default function SubjectDetail() {
 
       try {
         const response = await axios.get(
-          `http://192.168.1.12:4000/trainee/${currentType}/${id}`
+          `http://10.10.103.195:4000/trainee/${currentType}/${id}`
         );
         setData(response.data);
         console.log(`${currentType} data:`, response.data);

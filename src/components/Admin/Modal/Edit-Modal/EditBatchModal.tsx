@@ -115,7 +115,7 @@ export const BatchEdit: React.FC<BatchModalProps> = ({
 
       // Make the API request
       await axios.put(
-        `http://192.168.1.12:4000/admin/batch/${batchId}`,
+        `http://10.10.103.195:4000/admin/batch/${batchId}`,
         payload,
         {
           headers: {

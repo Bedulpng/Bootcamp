@@ -107,7 +107,7 @@ export const ClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) => {
         users: participants.map((p) => p.id),
       };
       const classResponse = await axios.post(
-        "http://192.168.1.12:4000/admin/class",
+        "http://10.10.103.195:4000/admin/class",
         payload,
         {
           headers: {
@@ -134,7 +134,7 @@ export const ClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) => {
       formData.append('fileName', fileName);
       console.log("got color: ", fileName)
     
-      await axios.post('http://192.168.1.12:4000/uploads/class-cover', formData, {
+      await axios.post('http://10.10.103.195:4000/uploads/class-cover', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
     

@@ -41,7 +41,7 @@ export function ClassCard({
       <div className="relative">
         <Avatar className="absolute -top-10 right-4 h-20 w-20 border-4 border-white shadow-lg z-20">
           <AvatarImage
-            src={`http://192.168.1.12:4000${mentorProfile
+            src={`http://10.10.103.195:4000${mentorProfile
               .replace(/\\/g, "/")
               .replace("public", "")}`}
             alt={mentorName}

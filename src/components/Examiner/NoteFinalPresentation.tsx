@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Note, Trainee } from "@/types/Trainee";
 import { toast } from "react-hot-toast";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 type NoteLessonProps = {
   addNote: (note: Note) => void;
@@ -39,7 +40,7 @@ export default function NotePresentation({ addNote, selectedTrainee, presentatio
       }
 
       const response = await axios.post(
-        `http://10.10.103.195:4000/examiner/note/${presentationId}/presentation`,
+        `http://${apiUrl}/examiner/note/${presentationId}/presentation`,
         {
           content,
           visibility,

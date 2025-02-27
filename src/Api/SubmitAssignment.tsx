@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const API_URL = "http://10.10.103.195:4000";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export async function submitLessonCompletion(
   userId: string,
@@ -23,7 +22,7 @@ export async function submitLessonCompletion(
     }
 
     const response = await axios.post(
-      `${API_URL}/complete/lesson/${lessonId}`,
+      `${apiUrl}/complete/lesson/${lessonId}`,
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },
@@ -63,7 +62,7 @@ export async function submitChallengeCompletion(
     }
 
     const response = await axios.post(
-      `${API_URL}/complete/challenge/${challengeId}`,
+      `${apiUrl}/complete/challenge/${challengeId}`,
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },
@@ -84,7 +83,7 @@ export async function submitChallengeCompletion(
 
 export const getLessonStatus = async (lessonId: string, userId: string) => {
   try {
-    const response = await axios.get(`${API_URL}/complete/lesson/${lessonId}/${userId}/status`);
+    const response = await axios.get(`http://${apiUrl}/complete/lesson/${lessonId}/${userId}/status`);
     return response.data; // Expected response: { status: "SUBMITTED" | "NOTSUBMITTED" }
   } catch (error: any) {
     if (error.response?.status === 404) {
@@ -98,7 +97,7 @@ export const getLessonStatus = async (lessonId: string, userId: string) => {
 
 export const getChallengeStatus = async (challengeId: string, userId: string) => {
   try {
-    const response = await axios.get(`${API_URL}/complete/challenge/${challengeId}/${userId}/status`);
+    const response = await axios.get(`http://${apiUrl}/complete/challenge/${challengeId}/${userId}/status`);
     return response.data; // Expected response: { status: "SUBMITTED" | "NOTSUBMITTED" }
   } catch (error: any) {
     if (error.response?.status === 404) {
@@ -112,7 +111,7 @@ export const getChallengeStatus = async (challengeId: string, userId: string) =>
 
 export const getPresentationStatus = async (presentationId: string, userId: string) => {
   try {
-    const response = await axios.get(`${API_URL}/complete/presentation/${presentationId}/${userId}/status`);
+    const response = await axios.get(`http://${apiUrl}/complete/presentation/${presentationId}/${userId}/status`);
     return response.data; // Expected response: { status: "SUBMITTED" | "NOTSUBMITTED" }
   } catch (error: any) {
     if (error.response?.status === 404) {

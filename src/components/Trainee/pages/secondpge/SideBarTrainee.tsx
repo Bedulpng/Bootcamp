@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import LogoutModal from "../Modal/Logout";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export function SidebarTrainee({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (value: boolean) => void }) {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export function SidebarTrainee({ isOpen, setIsOpen }: { isOpen: boolean; setIsOp
     }
 
     try {
-      const response = await axios.post("http://10.10.103.195:4000/trainee/logout", {
+      const response = await axios.post(`http://${apiUrl}/trainee/logout`, {
         accessToken,
       });
 

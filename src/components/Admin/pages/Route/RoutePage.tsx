@@ -8,6 +8,7 @@ import { RouteAccessModal } from "./Modal/RouteAccess";
 import { CreateRouteModal } from "./Modal/CreateRoute";
 import { SearchBar } from "./components/SearchBar";
 import { Button } from "@/components/ui/button";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function RoutesPage() {
   const [selectedRoute, setSelectedRoute] = useState<RoutePermissions | null>(null);
@@ -21,7 +22,7 @@ export default function RoutesPage() {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await axios.get("http://10.10.103.195:4000/admin/role/roles");
+        const response = await axios.get(`http://${apiUrl}/admin/role/roles`);
         const roles = response.data.tableRoles.map((role: Roles) => ({
           id: role.id,
           name: role.name,

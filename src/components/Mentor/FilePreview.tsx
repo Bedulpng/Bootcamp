@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface FilePreviewProps {
   filePath: string | undefined
@@ -15,7 +16,7 @@ export default function FilePreview({ filePath, onClose }: FilePreviewProps) {
     if (!filePath) return
 
     const formattedPath = filePath.replace(/\\/g, "/").replace("public", "")
-    const url = `http://10.10.103.195:4000${formattedPath}`
+    const url = `http://${apiUrl}${formattedPath}`
     setPreviewUrl(url)
 
     const img = new Image()

@@ -11,6 +11,7 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { jwtDecode } from "jwt-decode"
 import toast from "react-hot-toast"
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface presentationUploadFormProps {
   onSuccess: () => void
@@ -79,7 +80,7 @@ export default function PresentationUpload({ onSuccess, classId, batchId }: pres
     files.forEach((file) => formData.append("files", file));
   
     try {
-      const response = await fetch("http://10.10.103.195:4000/uploads/presentation", {
+      const response = await fetch(`http://${apiUrl}/uploads/presentation`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${refreshToken}`, 

@@ -5,6 +5,7 @@ import { Challenge, Lesson, Presentation } from "@/types/Trainee";
 import { NoLessons } from "./LessonChallenge/LessonPage";
 import axios from "axios";
 import SubmissionForm from "./CompletionButton";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 type DataType = Challenge | Lesson | Presentation | null;
 
@@ -33,7 +34,7 @@ export default function SubjectDetail() {
 
       try {
         const response = await axios.get(
-          `http://10.10.103.195:4000/trainee/${currentType}/${id}`
+          `http://${apiUrl}/trainee/${currentType}/${id}`
         );
         setData(response.data);
         console.log(`${currentType} data:`, response.data);

@@ -6,6 +6,7 @@ import { fetchTrainees, fetchMentors } from "@/Api/FetchUsersByRole";
 import { colors } from "@/components/Mentor/Batch/EditCover";
 import { toast } from "react-hot-toast"
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ClassModalProps {
   isOpen: boolean;
@@ -107,7 +108,7 @@ export const ClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) => {
         users: participants.map((p) => p.id),
       };
       const classResponse = await axios.post(
-        "http://10.10.103.195:4000/admin/class",
+        `http://${apiUrl}/admin/class`,
         payload,
         {
           headers: {
@@ -134,7 +135,7 @@ export const ClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose }) => {
       formData.append('fileName', fileName);
       console.log("got color: ", fileName)
     
-      await axios.post('http://10.10.103.195:4000/uploads/class-cover', formData, {
+      await axios.post(`http://${apiUrl}/uploads/class-cover`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
     

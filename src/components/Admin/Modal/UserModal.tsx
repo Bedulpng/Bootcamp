@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import { useForm } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -16,99 +16,116 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import axios from 'axios'
-import { useState, useEffect } from 'react'
-
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import axios from "axios";
+import { useState, useEffect } from "react";
+const apiUrl = import.meta.env.VITE_API_URL;
+import { toast } from "react-hot-toast";
 
 type FormData = {
-  email: string
-  mobile: string
-  dob: string
-  pob: string
-  password: string
-  role: string
-}
+  email: string;
+  mobile: string;
+  dob: string;
+  pob: string;
+  password: string;
+  role: string;
+};
 
 type UserModalFormProps = {
-    open: boolean
-    setOpen: (open: boolean) => void
-}
+  open: boolean;
+  setOpen: (open: boolean) => void;
+};
 
 export default function UserModalForm({ open, setOpen }: UserModalFormProps) {
   const [roles, setRoles] = useState<{ id: string; name: string }[]>([]);
-  const [selectedRole, setSelectedRole] = useState<string>('') 
+  const [selectedRole, setSelectedRole] = useState<string>("");
   const form = useForm<FormData>({
     defaultValues: {
-      email: '',
-      mobile: '',
-      dob: '',
-      pob: '',
-      password: '',
-      role: ''
+      email: "",
+      mobile: "",
+      dob: "",
+      pob: "",
+      password: "",
+      role: "",
     },
-  }) // State to store selected role
+  }); // State to store selected role
 
   // Fetch roles when component mounts
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const { data } = await axios.get("http://10.10.103.195:4000/admin/role/roles");
-        const fetchedRoles = data.tableRoles.map((role: any) => ({ id: role.id, name: role.name }));
+        const { data } = await axios.get(`http://${apiUrl}/admin/role/roles`);
+        const fetchedRoles = data.tableRoles.map((role: any) => ({
+          id: role.id,
+          name: role.name,
+        }));
         setRoles(fetchedRoles); // Ensure it's an array of objects
       } catch (error) {
         console.error("Failed to fetch roles:", error);
       }
     };
-  
+
     fetchRoles();
   }, []);
 
   const onSubmit = async (data: FormData) => {
     try {
-      const refreshToken = localStorage.getItem('refreshToken') // Get the refresh token from localStorage
-
+      const refreshToken = localStorage.getItem("refreshToken"); // Get the refresh token from localStorage
+  
       if (!refreshToken) {
-        console.error('No refresh token found')
-        return
+        console.error("No refresh token found");
+        return;
       }
-
+  
       // Sending the POST request with the form data and authorization header
       const response = await axios.post(
-        'http://10.10.103.195:4000/admin/create-user',
+        `http://${apiUrl}/admin/create-user`,
         {
           email: data.email,
           dob: data.dob,
           pob: data.pob,
           mobile: data.mobile,
-          password: data.password, 
-          role: data.role,           
+          password: data.password,
+          role: data.role,
         },
         {
           headers: {
             Authorization: `Bearer ${refreshToken}`, // Add refresh token to the Authorization header
           },
         }
-      )
-
-      console.log('User created successfully:', response.data)
-      setOpen(false)
+      );
+  
+      toast.success("User created successfully!"); // Success toast
+  
+      setOpen(false); // Close modal or form
     } catch (error) {
-      console.error('Error creating user:', error)
+      console.error("Error creating user:", error);
+  
+      let errorMessage = "An unknown error occurred"; // Default error message
+  
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || "Something went wrong";
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+  
+      toast.error(`Error: ${errorMessage}`); // Error toast
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-      </DialogTrigger>
+      <DialogTrigger asChild></DialogTrigger>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className='mb-4'>Add New User</DialogTitle>
+          <DialogTitle className="mb-4">Add New User</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="grid grid-cols-2 gap-4"
+          >
             <FormField
               control={form.control}
               name="email"
@@ -175,47 +192,51 @@ export default function UserModalForm({ open, setOpen }: UserModalFormProps) {
               )}
             />
             <FormField
-  control={form.control}
-  name="role"
-  render={({ field }) => (
-    <FormItem>
-      <FormLabel>Role</FormLabel>
-      <FormControl>
-        <div>
-          {roles.length > 0 ? (
-            roles.map((role) => (
-              <label key={role.id} className="flex items-center mb-2">
-                <input
-                  type="radio"
-                  name="role"
-                  value={role.name} // Extract 'name' from the role object
-                  checked={selectedRole === role.name}
-                  onChange={() => {
-                    setSelectedRole(role.name); 
-                    field.onChange(role.name);  
-                  }}
-                  className="mr-2"
-                />
-                {role.name} {/* Display the role name properly */}
-              </label>
-            ))
-          ) : (
-            <p>Loading roles...</p>
-          )}
-        </div>
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Role</FormLabel>
+                  <FormControl>
+                    <div>
+                      {roles.length > 0 ? (
+                        roles.map((role) => (
+                          <label
+                            key={role.id}
+                            className="flex items-center mb-2"
+                          >
+                            <input
+                              type="radio"
+                              name="role"
+                              value={role.name} // Extract 'name' from the role object
+                              checked={selectedRole === role.name}
+                              onChange={() => {
+                                setSelectedRole(role.name);
+                                field.onChange(role.name);
+                              }}
+                              className="mr-2"
+                            />
+                            {role.name} {/* Display the role name properly */}
+                          </label>
+                        ))
+                      ) : (
+                        <p>Loading roles...</p>
+                      )}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <div className="col-span-2">
-              <Button type="submit" className="w-full">Submit</Button>
+              <Button type="submit" className="w-full">
+                Submit
+              </Button>
             </div>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
-
+  );
 }

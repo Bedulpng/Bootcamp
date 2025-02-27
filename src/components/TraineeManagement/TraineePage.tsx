@@ -60,7 +60,7 @@ export function TraineePages() {
             Trainee List
           </h1>
           <Button
-            onClick={() => navigate('/dashboard/note')}
+            onClick={() => navigate('/mentor/note')}
             className="px-6 py-3 bg-wgs-blue"
           >
             Notes Management 📝

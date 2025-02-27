@@ -8,6 +8,7 @@ import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { NotificationPopup } from '../../Mentor/Notification/Notification';
 import ProfileEditor from '@/components/Mentor/Modal/ProfileEdit';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const NavbarAdmin = () => {
   const navigate = useNavigate();
@@ -24,12 +25,12 @@ const NavbarAdmin = () => {
         const userId = decodedToken.id; // Assuming the user ID is stored in 'id'
         
         // Fetch mentor details
-        const response = await axios.get(`http://10.10.103.195:4000/admin/mentor/${userId}`);
+        const response = await axios.get(`http://${apiUrl}/admin/mentor/${userId}`);
         setAdminName(response.data.fullName);
         setAdminRole(response.data.role);
 
         // Fetch the professional profile image
-        const profileResponse = await axios.get(`http://10.10.103.195:4000/trainee/${userId}/pro`);
+        const profileResponse = await axios.get(`http://${apiUrl}/trainee/${userId}/pro`);
         if (profileResponse.data && profileResponse.data.profileImage) {
           setProfileImage(profileResponse.data.profileImage); // Store the profile image path
         } else {
@@ -67,7 +68,7 @@ const NavbarAdmin = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 p-1">
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
-                  <AvatarImage src={`http://10.10.103.195:4000${profileImage}`} alt="Mentor" />
+                  <AvatarImage src={`http://${apiUrl}${profileImage}`} alt="Mentor" />
                   <AvatarFallback>
                     {AdminName
                       ? AdminName

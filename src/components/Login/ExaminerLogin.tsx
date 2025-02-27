@@ -4,6 +4,7 @@ import { Users } from 'lucide-react';
 import { LoginLayout } from './LoginLayout';
 import { ExaminerMentorForm } from './ExaminerMentorForm';
 import toast from 'react-hot-toast';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export function ExaminerLogin() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export function ExaminerLogin() {
     };
 
     try {
-      const response = await fetch('http://10.10.103.195:4000/trainee/login', {
+      const response = await fetch(`http://${apiUrl}/trainee/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

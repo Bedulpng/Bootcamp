@@ -15,6 +15,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "react-hot-toast";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ColorPickerModalProps {
   isOpen: boolean;
@@ -100,7 +101,7 @@ export function ColorPickerModal({
       }
 
       await axios.post(
-        `http://10.10.103.195:4000/uploads/batch-cover`,
+        `http://${apiUrl}/uploads/batch-cover`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

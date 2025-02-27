@@ -1,9 +1,10 @@
 // src/utils/axiosInstance.ts
 import axios from 'axios';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 // Create Axios instance
 const axiosInstance = axios.create({
-  baseURL: 'http://10.10.103.195:4000', // Replace with your backend URL
+  baseURL: `http://${apiUrl}`, // Replace with your backend URL
 });
 
 // Request interceptor to include Authorization header

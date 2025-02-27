@@ -1,12 +1,8 @@
-// import { useState } from "react";
-// import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-// import { Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Batch } from "@/types/Trainee";
 import { BatchCover } from "./BatchCover";
-// import { ColorPickerModal } from "./EditCover";
-// import { ImageCropModal } from "./ImageCrop";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface BatchCardsProps {
 batches: Batch[];
@@ -23,7 +19,7 @@ return (
         onClick={async () => {
             try {
             const response = await fetch(
-                `http://10.10.103.195:4000/admin/batchs/${batch.id}`
+                `http://${apiUrl}/admin/batchs/${batch.id}`
             );
             if (!response.ok) {
                 throw new Error(`Failed to fetch batch with ID: ${batch.id}`);

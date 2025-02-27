@@ -3,6 +3,7 @@ export interface Certificate {
   id: string;
   traineeId: string;
   issuedAt: string;
+  filepath: string;
   trainee: {
     fullName: string;
   };
@@ -93,6 +94,7 @@ export interface PresentationCompletion {
   user: Trainee;
   final : Presentation;
   submissionFiles: Files[];
+  notes: Note[]
 }
 
 
@@ -152,15 +154,26 @@ export interface Note {
     nickname: string;
     role: string;
   };
-  trainee: {
-    id: string;
-    fullName: string;
-    nickname: string;
-    email: string;
-  };
+  trainee: Trainee
   class: {
     id: string;
     className: string;
+  }
+  batch: {
+    id: string;
+    batchTitle: string;
+  }
+  lessonCompletion: {
+    id: string
+    lesson: {
+      title: string;
+    }
+  }
+  challengeCompletion: {
+    id: string
+    challenge: {
+      title: string;
+    }
   }
 }
 

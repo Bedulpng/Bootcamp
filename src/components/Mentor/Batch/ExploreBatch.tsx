@@ -13,6 +13,7 @@ import BatchCards from "./BatchCard";
 import { BatchCover } from "./BatchCover";
 import { BatchExploreSkeleton } from "./Skeleton";
 import NoBatchIllustration from "@/components/Trainee/pages/secondpge/NothingHandle/NoBatch";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function ExploreBatch() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export default function ExploreBatch() {
     const fetchBatches = async () => {
       try {
         const response = await axios.get(
-          "http://10.10.103.195:4000/admin/batch"
+          `http://${apiUrl}/admin/batch`
         );
         setBatches(response.data);
         setTimeout(() => {
@@ -54,7 +55,7 @@ export default function ExploreBatch() {
         const mentorId = decodedToken.id;
         if (!mentorId) return;
         const response = await axios.get(
-          `http://10.10.103.195:4000/admin/batch/${mentorId}`
+          `http://${apiUrl}/admin/batch/${mentorId}`
         );
         setMentorBatches(response.data);
         setTimeout(() => {
@@ -141,7 +142,7 @@ export default function ExploreBatch() {
                     onClick={async () => {
                       try {
                         const response = await fetch(
-                          `http://10.10.103.195:4000/admin/batchs/${batch.id}`
+                          `http://${apiUrl}/admin/batchs/${batch.id}`
                         );
                         if (!response.ok) {
                           throw new Error(

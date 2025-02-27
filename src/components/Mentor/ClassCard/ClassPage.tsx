@@ -7,6 +7,7 @@ import { ClassCardSkeleton } from "./ClassCardSkeleton";
 import { ColorPickerModal } from "./ColorPickerModal";
 import { ImageCropModal } from "./ImageCropModal";
 import { Class } from "@/types/Trainee";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function ClassPage() {
   const { batchId } = useParams<{ batchId: string }>();
@@ -22,7 +23,7 @@ export default function ClassPage() {
     const fetchClasses = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://10.10.103.195:4000/admin/class/${batchId}/batch`);
+        const response = await fetch(`http://${apiUrl}/admin/class/${batchId}/batch`);
         if (!response.ok) {
           throw new Error(`Failed to fetch classes for batch with ID: ${batchId}`);
         }

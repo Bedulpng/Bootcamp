@@ -7,6 +7,7 @@ import { FileText } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 import { Challenge } from "@/types/Trainee";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export function NoChallenge() {
   return (
@@ -81,7 +82,7 @@ export default function ChallengesPage() {
         const decodedToken = jwtDecode<{ id: string }>(refreshToken);
         const userId = decodedToken.id;
 
-        const response = await axios.get(`http://10.10.103.195:4000/trainee/class/user/${userId}`);
+        const response = await axios.get(`http://${apiUrl}/trainee/class/user/${userId}`);
         setClassList(response.data.map((cls: { id: string; className: string }) => ({
           id: cls.id,
           className: cls.className,
@@ -104,7 +105,7 @@ export default function ChallengesPage() {
         const decodedToken = jwtDecode<{ id: string }>(refreshToken);
         const userId = decodedToken.id;
 
-        let url = `http://10.10.103.195:4000/mentor/class-challenge/${userId}`;
+        let url = `http://${apiUrl}/mentor/class-challenge/${userId}`;
 
         // Only add query params if "ALL" is not selected
         if (selectedStatus !== "ALL" || selectedClass !== "all") {

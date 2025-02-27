@@ -6,6 +6,7 @@ import { Class, Mentor } from "@/types/Trainee";
 import { colors } from "@/components/Mentor/Batch/EditCover";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface BatchModalProps {
   isOpen: boolean;
@@ -113,7 +114,7 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
       };
 
       const batchResponse = await axios.post(
-        "http://10.10.103.195:4000/admin/batch",
+        `http://${apiUrl}/admin/batch`,
         batchPayload,
         {
           headers: {
@@ -148,7 +149,7 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
       console.log("got color: ", fileName);
 
       await axios.post(
-        "http://10.10.103.195:4000/uploads/batch-cover",
+        `http://${apiUrl}/uploads/batch-cover`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -159,8 +160,17 @@ export const BatchModal: React.FC<BatchModalProps> = ({ isOpen, onClose }) => {
       onClose();
     } catch (error) {
       console.error("Error during batch creation or cover upload:", error);
-      toast.error("Failed to create batch or upload cover.");
-    }
+    
+      let errorMessage = "An unknown error occurred"; // Default fallback
+    
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || "Something went wrong"; // Extract message from response
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+    
+      toast.error(`Error: ${errorMessage}`);
+    }    
   };
 
   const removeMentor = (id: string) => {

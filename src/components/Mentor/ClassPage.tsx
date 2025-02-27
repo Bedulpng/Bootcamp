@@ -20,6 +20,7 @@ import { fetchClassById } from "@/Api/FetchBatchbyMentor";
 import LessonModal from "./Modal/LessonUpload";
 import ChallengeModal from "./Modal/ChallengeUpload";
 import PresentationModal from "./Modal/PresentationUpload";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ItemDetails {
   id: string;
@@ -156,7 +157,7 @@ export default function ClassDetails() {
                       <CardContent className="p-4 flex items-center">
                         {user.profiles?.[0]?.filepath ? (
                           <img
-                            src={`http://10.10.103.195:4000${user.profiles[0].filepath
+                            src={`http://${apiUrl}${user.profiles[0].filepath
                               .replace(/\\/g, "/")
                               .replace("public", "")}`}
                             alt={user.fullName || "No userName"}

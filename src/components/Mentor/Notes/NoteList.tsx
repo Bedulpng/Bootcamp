@@ -1,114 +1,325 @@
-import { Note } from "../../../types/Trainee";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { User, Lock, Trash } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Batch, Class, Note } from "@/types/Trainee";
 import axios from "axios";
+import NoSubmitted from "@/components/Examiner/Class/NoTask";
+import TraineeSearch from "./TraineeSearch";
+const apiUrl = import.meta.env.VITE_API_URL;
 
-type NoteListProps = {
-  notes: Note[]; // All notes
-  filter: "All" | "FOR_TRAINEE" | "FOR_GRADER"; // Current filter state
-  setFilter: (value: "All" | "FOR_TRAINEE" | "FOR_GRADER") => void; // Function to update the filter
-  onDelete: (noteId: string) => void; // Callback to update notes after deletion
-};
+export default function ExaminerNotes() {
+  const [selectedBatch, setSelectedBatch] = useState<string>("all");
+  const [selectedClass, setSelectedClass] = useState<string>("all");
+  const [selectedLesson, setSelectedLesson] = useState<string>("all");
+  const [selectedChallenge, setSelectedChallenge] = useState<string>("all");
+  const [Notes, setNotes] = useState<Note[]>([]);
+  const [batches, setBatches] = useState<Batch[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [showNoteDialog, setShowNoteDialog] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-export default function NoteList({ notes, filter, setFilter, onDelete }: NoteListProps) {
-  const handleDelete = async (noteId: string) => {
-    try {
-      const token = localStorage.getItem("refreshToken");
-      if (!token) {
-        alert("You must be logged in to delete a note.");
-        return;
-      }
-
-      // Make the delete API request
-      await axios.delete(`http://10.10.103.195:4000/mentor/notes/${noteId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // Update the parent component's state
-      onDelete(noteId);
-    } catch (error) {
-      console.error("Error deleting note:", error);
-      alert("Failed to delete note. Please try again.");
-    }
+  const handleNoteClick = (notes: Note) => {
+    setSelectedNote(notes);
+    setShowNoteDialog(true);
   };
 
-  const filteredNotes = notes.filter((note) => {
-    if (filter === "All") return true; // Show all notes
-    return note.visibility === filter; // Show only notes matching the filter type
-  });
+  const filteredNotes = Notes.filter((note) =>
+    note.trainee.fullName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        const response = await axios.get(`http://${apiUrl}/admin/batch`);
+        setBatches(response.data);
+      } catch (error) {
+        console.error("Error fetching batches:", error);
+      }
+    };
+    fetchBatches();
+  }, []);
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const response = await axios.get(`http://${apiUrl}/admin/class`);
+        setClasses(response.data);
+      } catch (error) {
+        console.error("Error fetching batches:", error);
+      }
+    };
+    fetchClasses();
+  }, []);
+
+  useEffect(() => {
+    const fetchFinalNotes = async () => {
+      try {
+        const params: Record<string, string> = {};
+        if (selectedBatch !== "all") params.batchId = selectedBatch;
+        if (selectedClass !== "all") params.classId = selectedClass;
+
+        const response = await axios.get(`http://${apiUrl}/mentor/note/notes`, {
+          params,
+        });
+
+        setNotes(response.data);
+      } catch (err) {
+        console.error("Failed to fetch final Notes:", err);
+      } finally {
+      }
+    };
+
+    fetchFinalNotes();
+  }, [selectedBatch, selectedClass]);
+
+  useEffect(() => {
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+  }, []);
 
   return (
-    <div className="space-y-4">
-      {/* Filter Dropdown */}
-      <div className="flex justify-end">
-        <Select
-          value={filter}
-          onValueChange={(value) => setFilter(value as "All" | "FOR_TRAINEE" | "FOR_GRADER")}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter notes" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="All">All Notes</SelectItem>
-            <SelectItem value="FOR_TRAINEE">Trainee Notes</SelectItem>
-            <SelectItem value="FOR_GRADER">Grader Notes</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* Notes List */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredNotes.map((note) => (
-          <Card key={note.id} className="overflow-hidden relative">
-            <CardContent className="p-4">
-              {/* Delete Icon */}
-              <Trash
-                className="w-5 h-5 text-red-500 absolute top-2 right-2 cursor-pointer hover:text-red-700"
-                onClick={() => handleDelete(note.id)}
-                // title="Delete Note"
-              />
-              <div className="flex justify-between items-start mb-2">
-                <Badge
-                  variant={note.visibility === "FOR_TRAINEE" ? "default" : "destructive"}
-                  className="mb-2"
+    <div className="min-h-screen p-6">
+      <main className="max-w-6xl mx-auto">
+        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+          <div className="p-6 bg-gray-50 border-b border-gray-200">
+            <h2 className="text-xl font-semibold text-gray-800">Notes</h2>
+            <p className="text-sm text-gray-600 mt-1">
+              Manage and grade student final Notes across all batches and
+              classes.
+            </p>
+          </div>
+          <div className="p-6">
+            <TraineeSearch
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+            />
+            <div className="flex flex-col md:flex-row justify-between mb-6 gap-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                <Select value={selectedBatch} onValueChange={setSelectedBatch}>
+                  <SelectTrigger className="w-[180px] bg-white">
+                    <SelectValue placeholder="Select Batch" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Batches</SelectItem>
+                    {batches.map((batch) => (
+                      <SelectItem key={batch.id} value={batch.id}>
+                        {batch.batchTitle}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={selectedClass} onValueChange={setSelectedClass}>
+                  <SelectTrigger className="w-[180px] bg-white">
+                    <SelectValue placeholder="Select Class" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Classes</SelectItem>
+                    {classes.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.className}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={selectedLesson}
+                  onValueChange={setSelectedLesson}
                 >
-                  {note.visibility === "FOR_TRAINEE" ? (
-                    <>
-                      <User className="w-4 h-4 mr-1" /> Trainee
-                    </>
+                  <SelectTrigger className="w-[180px] bg-white">
+                    <SelectValue placeholder="Select Lesson" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Lessons</SelectItem>
+                    {classes.find((c) => c.id === selectedClass)?.lessons
+                      .length ? (
+                      classes
+                        .find((c) => c.id === selectedClass)
+                        ?.lessons.map((lesson) => (
+                          <SelectItem key={lesson.id} value={lesson.id}>
+                            {lesson.title}
+                          </SelectItem>
+                        ))
+                    ) : (
+                      <SelectItem disabled value="no-lesson">
+                        No Lesson Found
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+                <Select
+                  value={selectedChallenge}
+                  onValueChange={setSelectedChallenge}
+                >
+                  <SelectTrigger className="w-[180px] bg-white">
+                    <SelectValue placeholder="Select Challenge" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Challenges</SelectItem>
+                    {classes.find((c) => c.id === selectedClass)?.challenges
+                      .length ? (
+                      classes
+                        .find((c) => c.id === selectedClass)
+                        ?.challenges.map((challenge) => (
+                          <SelectItem key={challenge.id} value={challenge.id}>
+                            {challenge.title}
+                          </SelectItem>
+                        ))
+                    ) : (
+                      <SelectItem disabled value="no-challenge">
+                        No Challenge Found
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="font-semibold text-center">
+                      Student
+                    </TableHead>
+                    <TableHead className="font-semibold text-center">
+                      Batch
+                    </TableHead>
+                    <TableHead className="font-semibold text-center">
+                      Class
+                    </TableHead>
+                    <TableHead className="font-semibold text-center">
+                      Lesson
+                    </TableHead>
+                    <TableHead className="font-semibold text-center">
+                      Challenge
+                    </TableHead>
+                    <TableHead className="font-semibold text-center">
+                      Action
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoading ? (
+                    Array.from({ length: 5 }).map((_, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="text-center">
+                          <Skeleton className="h-6 w-32" />
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Skeleton className="h-6 w-20" />
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Skeleton className="h-6 w-28" />
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Skeleton className="h-6 w-40" />
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : filteredNotes.length > 0 ? (
+                    filteredNotes.map((n) => (
+                      <TableRow key={n.id} className="hover:bg-gray-50">
+                        <TableCell className="font-medium text-center">
+                          {n.trainee.fullName}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {n.batch?.batchTitle ? (
+                            n.batch.batchTitle
+                          ) : (
+                            <span className="text-gray-500 italic">None</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {n.class?.className ? (
+                            n.class.className
+                          ) : (
+                            <span className="text-gray-500 italic">None</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {n.lessonCompletion?.lesson.title ? (
+                            n.lessonCompletion.lesson.title
+                          ) : (
+                            <span className="text-gray-500 italic">None</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {n.challengeCompletion?.challenge.title ? (
+                            n.challengeCompletion.challenge.title
+                          ) : (
+                            <span className="text-gray-500 italic">None</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            variant="default"
+                            size="sm"
+                            className="bg-indigo-600 hover:bg-indigo-700 mx-auto"
+                            onClick={() => handleNoteClick(n)}
+                          >
+                            View Note
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
                   ) : (
-                    <>
-                      <Lock className="w-4 h-4 mr-1" /> Grader
-                    </>
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-4">
+                        <NoSubmitted />
+                      </TableCell>
+                    </TableRow>
                   )}
-                </Badge>
-              </div>
-              {note.visibility === "FOR_TRAINEE" && note.trainee.fullName && (
-                <div className="text-sm text-gray-500 mb-2">
-                <p>
-                  Note for : <span className="font-bold">{note.trainee.fullName}</span>
-                </p>
-                <p className="mb-4">{note.trainee.email}</p>
-              </div>
-              )}
-              {note.visibility === "FOR_GRADER" && note.grader.fullName && (
-                <div className="text-sm text-gray-500 mb-2">
-                <p>
-                  Note for : <span className="font-bold">{note.trainee.fullName}</span>
-                </p>
-                <p className="mb-4">{note.trainee.email}</p>
-              </div>
-              )}
-              <p className="text-gray-700">{note.content}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                </TableBody>
 
-      {/* Empty State */}
-      {filteredNotes.length === 0 && <p className="text-gray-500">No notes found.</p>}
+                <Dialog open={showNoteDialog} onOpenChange={setShowNoteDialog}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Presentation Notes</DialogTitle>
+                    </DialogHeader>
+                    <div className="p-4 space-y-2">
+                      {selectedNote && selectedNote.content ? (
+                        <div className="p-3 bg-gray-100 rounded-lg border">
+                          <p className="text-gray-700">
+                            {selectedNote.content}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-gray-500">No notes available.</p>
+                      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </Table>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

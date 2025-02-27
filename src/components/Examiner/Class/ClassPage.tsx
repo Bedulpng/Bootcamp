@@ -4,26 +4,21 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ClassCard } from "./ClassCard";
 import { ClassCardSkeleton } from "./ClassCardSkeleton";
-// import { ColorPickerModal } from "./ColorPickerModal";
-// import { ImageCropModal } from "./ImageCropModal";
 import { Class } from "@/types/Trainee";
 import NoClassIllustration from "@/components/Trainee/pages/secondpge/NothingHandle/NoClass";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function ExaminerClassPage() {
   const { batchId } = useParams<{ batchId: string }>();
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
-//   const [editingClassId, setEditingClassId] = useState<string | null>(null);
-//   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
-//   const [isImageCropOpen, setIsImageCropOpen] = useState(false);
-//   const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
     const fetchClasses = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://10.10.103.195:4000/admin/class/${batchId}/batch`);
+        const response = await fetch(`http://${apiUrl}/admin/class/${batchId}/batch`);
         if (!response.ok) {
         }
         const data: Class[] = await response.json();
@@ -38,29 +33,6 @@ export default function ExaminerClassPage() {
 
     if (batchId) fetchClasses();
   }, [batchId]);
-
-//   const handleEditColors = (classId: string) => {
-//     setEditingClassId(classId);
-//     setIsColorPickerOpen(true);
-//   };
-
-//   const handleImageUpload = (file: File) => {
-//     const imageUrl = URL.createObjectURL(file);
-//     setTempImageUrl(imageUrl);
-//     setIsImageCropOpen(true);
-//   };
-
-//   const handleCropComplete = (croppedImageUrl: string) => {
-//     if (editingClassId) {
-//       setClasses((prevClasses) =>
-//         prevClasses.map((c) =>
-//           c.id === editingClassId ? { ...c, coverImage: croppedImageUrl, gradientColors: undefined } : c
-//         )
-//       );
-//     }
-//     setIsColorPickerOpen(false);
-//     setIsImageCropOpen(false);
-//   };
 
 return (
   <div className="container mx-auto px-4 py-8 flex flex-col items-center justify-center min-h-[50vh]">

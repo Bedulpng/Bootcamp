@@ -1,7 +1,7 @@
   "use client";
 
   import { useState, useEffect } from "react";
-  import { LogIn, ChevronDown, User2, Users, X } from "lucide-react";
+  import { LogIn, ChevronDown, User2, Users, X, Shield } from "lucide-react";
   import { Link, useNavigate } from "react-router-dom";
   import { motion, AnimatePresence } from "framer-motion";
   import { createPortal } from "react-dom";
@@ -55,6 +55,13 @@
                 >
                   <Users className="h-5 w-5 mr-2" />
                   Grader
+                </button>
+                <button
+                  className="flex items-center px-4 py-2 bg-gray-100 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors"
+                  onClick={() => navigate("/admin/login")}
+                >
+                  <Shield className="h-5 w-5 mr-2" />
+                  Admin
                 </button>
               </div>
             </motion.div>

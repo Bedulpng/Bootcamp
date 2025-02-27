@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { jwtDecode } from 'jwt-decode';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ProfileEditorProps {
   open: boolean;
@@ -87,7 +88,7 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
 
     try {
       const response = await axios.post(
-        'http://10.10.103.195:4000/uploads/profile',
+        `http://${apiUrl}/uploads/profile`,
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
@@ -134,7 +135,7 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
       const id = decodedToken.id; // Assuming the user ID is stored in 'id'
       // Send the updated profile data
       const response = await axios.put(
-        `http://10.10.103.195:4000/trainee/edit/${id}`,
+        `http://${apiUrl}/trainee/edit/${id}`,
         payload,
         {
           headers: {
@@ -168,7 +169,7 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
 
 
         // Fetch the professional profile image
-        const profileResponse = await axios.get(`http://10.10.103.195:4000/trainee/${userId}/pro`);
+        const profileResponse = await axios.get(`http://${apiUrl}/trainee/${userId}/pro`);
   
         // Check if profile image exists
         if (profileResponse.data.profileImage) {
@@ -244,7 +245,7 @@ export default function ProfileEdit({ open, onOpenChange }: ProfileEditorProps) 
                 <Avatar className="h-24 w-24">
                     {profileImage ? (
                       // If profileImage exists, render it
-                      <AvatarImage src={`http://10.10.103.195:4000${profileImage}`} alt="Image" />
+                      <AvatarImage src={`http://${apiUrl}${profileImage}`} alt="Image" />
                     ) : (
                        // If profileImage doesn't exist, render imagePreview
                       <AvatarImage src={imagePreview || undefined} alt="Image Preview" />

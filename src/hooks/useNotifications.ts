@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import axios from 'axios';
 import {jwtDecode} from 'jwt-decode'; // Fixed import: jwtDecode is default export
 import { Notification } from '@/types/Notification';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export function useNotifications(initialNotifications: Notification[] = []) {
   const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
@@ -13,7 +14,7 @@ export function useNotifications(initialNotifications: Notification[] = []) {
     const fetchNotifications = async () => {
       try {
         const refreshToken = localStorage.getItem('refreshToken');
-        const response = await axios.get('http://10.10.103.195:4000/mentor/notifications', {
+        const response = await axios.get(`http://${apiUrl}/mentor/notifications`, {
           headers: {
             Authorization: `Bearer ${refreshToken}`, // Add Authorization header
           },
@@ -30,7 +31,7 @@ export function useNotifications(initialNotifications: Notification[] = []) {
     const decodedToken = jwtDecode<{ id: string }>(refreshToken);
 
     // Set up Socket.IO connection using WebSocket only
-    const socket = io('http://10.10.103.195:4000', {
+    const socket = io(`http://${apiUrl}`, {
       transports: ['websocket'], // Force WebSocket transport
     }); // Replace with your backend's WebSocket URL
 
@@ -64,7 +65,7 @@ export function useNotifications(initialNotifications: Notification[] = []) {
 
   const markAsRead = useCallback(async (id: string) => {
     try {
-      await axios.put(`http://10.10.103.195:4000/mentor/notification/${id}/read`);
+      await axios.put(`http://${apiUrl}/mentor/notification/${id}/read`);
       setNotifications((prev) => prev.filter((notif) => notif.id !== id));
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
@@ -78,7 +79,7 @@ export function useNotifications(initialNotifications: Notification[] = []) {
         const decodedToken: any = jwtDecode(token as string);
         const mentorId = decodedToken.id;
 
-      await axios.put('http://10.10.103.195:4000/mentor/notifications/read-all');
+      await axios.put(`http://${apiUrl}/mentor/notifications/read-all`);
 
       setNotifications((prev) =>
         prev.filter((notif) => notif.userId !== mentorId) // Remove all unread notifications

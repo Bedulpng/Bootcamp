@@ -10,6 +10,7 @@ import { fetchClasses } from "@/Api/FetchingBatches&Classes";
 import { fetchMentors, fetchTrainees } from "@/Api/FetchUsersByRole";
 import { Class, Mentor } from "@/types/Trainee";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface BatchModalProps {
   isOpen: boolean;
@@ -115,7 +116,7 @@ export const BatchEdit: React.FC<BatchModalProps> = ({
 
       // Make the API request
       await axios.put(
-        `http://10.10.103.195:4000/admin/batch/${batchId}`,
+        `http://${apiUrl}/admin/batch/${batchId}`,
         payload,
         {
           headers: {

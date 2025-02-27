@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Class, File } from "@/types/Trainee";
 import { fetchClassById } from "@/Api/FetchBatchbyMentor";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ItemDetails {
   id: string;
@@ -132,7 +133,7 @@ export default function ExaminerClassDetails() {
                       <CardContent className="p-4 flex items-center">
                         {user.profiles?.[0]?.filepath ? (
                           <img
-                            src={`http://10.10.103.195:4000${user.profiles[0].filepath
+                            src={`http://${apiUrl}${user.profiles[0].filepath
                               .replace(/\\/g, "/")
                               .replace("public", "")}`}
                             alt={user.fullName || "No userName"}
@@ -160,7 +161,7 @@ export default function ExaminerClassDetails() {
                       <CardContent className="p-4 flex items-center">
                         {user.profiles?.[0]?.filepath ? (
                           <img
-                            src={`http://10.10.103.195:4000${user.profiles[0].filepath
+                            src={`http://${apiUrl}${user.profiles[0].filepath
                               .replace(/\\/g, "/")
                               .replace("public", "")}`}
                             alt={user.fullName || "No userName"}

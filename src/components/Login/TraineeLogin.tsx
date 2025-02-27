@@ -6,6 +6,7 @@ import { LoginForm } from "./LoginForm";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { DotSpinner } from "../SpinnerLoading";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 // Tipe untuk login data
 type LoginData = {
@@ -28,7 +29,7 @@ export function TraineeLogin() {
 
     try {
       const response = await axios.post(
-        "http://10.10.103.195:4000/trainee/login",
+        `http://${apiUrl}/trainee/login`,
         {
           ...loginData,
           role: "TRAINEE", // Menambahkan role TRAINEE secara default

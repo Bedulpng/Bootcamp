@@ -6,6 +6,7 @@ import "react-image-crop/dist/ReactCrop.css"
 import { X } from "lucide-react"
 import axios from "axios";
 import { toast } from "react-hot-toast";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ImageCropModalProps {
   isOpen: boolean
@@ -65,7 +66,7 @@ export function ImageCropModal({ isOpen, onClose, imageUrl, onCropComplete, clas
               formData.append("coverImage", blob, "cropped-image.jpg");
 
               try {
-                await axios.post("http://10.10.103.195:4000/uploads/class-cover", formData, {
+                await axios.post(`http://${apiUrl}/uploads/class-cover`, formData, {
                   headers: {
                     "Content-Type": "multipart/form-data",
                   },

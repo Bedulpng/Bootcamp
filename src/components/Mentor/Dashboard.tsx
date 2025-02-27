@@ -15,6 +15,7 @@ import { Batch, Trainee } from "../../types/Trainee";
 import { fetchTrainees } from "@/Api/FetchUsersByRole";
 import { format } from "date-fns";
 import { ScheduleClassModal } from "./Modal/Schedule-Class";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ScheduleItem {
   date: string;
@@ -52,7 +53,7 @@ export default function MentorDb() {
         }
 
         const response = await fetch(
-          "http://10.10.103.195:4000/mentor/schedule",
+          `http://${apiUrl}/mentor/schedule`,
           {
             method: "GET",
             headers: {
@@ -105,7 +106,7 @@ export default function MentorDb() {
     const fetchBatches = async () => {
       try {
         const response = await axios.get(
-          "http://10.10.103.195:4000/admin/batch"
+          `http://${apiUrl}/admin/batch`
         ); // Replace with your API URL
         setBatches(response.data);
       } catch (error) {
@@ -128,7 +129,7 @@ export default function MentorDb() {
         if (!mentorId) return;
 
         const response = await axios.get(
-          `http://10.10.103.195:4000/admin/batch/${mentorId}`
+          `http://${apiUrl}/admin/batch/${mentorId}`
         );
         if (!response.data || response.data.length === 0) {
           setMyBatch(null); // Set null if no batches are found
@@ -153,7 +154,7 @@ export default function MentorDb() {
       try {
         const refreshToken = localStorage.getItem("refreshToken"); // Retrieve the refresh token from localStorage
         const response = await axios.get(
-          "http://10.10.103.195:4000/mentor/completion-percentage",
+          `http://${apiUrl}/mentor/completion-percentage`,
           {
             headers: {
               Authorization: `Bearer ${refreshToken}`, // Use Authorization header
@@ -212,14 +213,14 @@ export default function MentorDb() {
 
         // Fetch mentor details
         const response = await axios.get(
-          `http://10.10.103.195:4000/admin/mentor/${userId}`
+          `http://${apiUrl}/admin/mentor/${userId}`
         );
         setMentorName(response.data.fullName);
         setMentorRole(response.data.role);
 
         // Fetch the professional profile image
         const profileResponse = await axios.get(
-          `http://10.10.103.195:4000/trainee/${userId}/pro`
+          `http://${apiUrl}/trainee/${userId}/pro`
         );
 
         // Check if profile image exists
@@ -240,7 +241,7 @@ export default function MentorDb() {
     const fetchClasses = async () => {
       try {
         const response = await axios.get(
-          "http://10.10.103.195:4000/admin/class"
+          `http://${apiUrl}/admin/class`
         ); // Replace with your API URL
         setClasses(response.data);
         console.log(response.data)
@@ -284,7 +285,7 @@ export default function MentorDb() {
   const displayedPresentValue = Math.round(chartData[0].value);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
+    <div className="min-h-screen flex flex-col items-center justify-center ml-[50px]">
       <div className="min-h-screen flex flex-col">
         {/* Main Content */}
         <main className="flex-1 py-8">
@@ -533,7 +534,7 @@ export default function MentorDb() {
                       <div className="w-17 h-17 rounded-full border-2 border-gray-200 flex items-center justify-center mb-6">
                         <Avatar className="h-16 w-16 border-gray-800 rounded-full">
                           <AvatarImage
-                            src={`http://10.10.103.195:4000${profileImage}`}
+                            src={`http://${apiUrl}${profileImage}`}
                             alt="Mentor"
                           />
                           <AvatarFallback>

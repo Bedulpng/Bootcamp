@@ -1,5 +1,6 @@
 "use client";
 
+const apiUrl = import.meta.env.VITE_API_URL;
 interface BatchCoverProps {
   title: string;
   coverImage?: string | null;
@@ -11,7 +12,7 @@ export function ClassDetailCover({ title, coverImage }: BatchCoverProps) {
       <div className="absolute inset-0">
         {coverImage ? (
           <img
-            src={`http://10.10.103.195:4000${coverImage.replace("/public", "")}`}
+            src={`http://${apiUrl}${coverImage.replace("/public", "")}`}
             alt={`Cover for ${title}`}
             className="w-full h-full object-cover"
             loading="eager"

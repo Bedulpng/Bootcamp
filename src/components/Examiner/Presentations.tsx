@@ -31,6 +31,7 @@ import axios from "axios";
 import NotePresentation from "./NoteFinalPresentation";
 import FilePreview from "./Class/FilePreview";
 import NoSubmitted from "./Class/NoTask";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function ExaminerPresentations() {
   const [selectedBatch, setSelectedBatch] = useState<string>("all");
@@ -46,6 +47,13 @@ export default function ExaminerPresentations() {
   const [presentationId, setPresentationId] = useState<string | undefined>(
     undefined
   );
+  const [selectedNote, setSelectedNote] = useState<String[]>([]);
+  const [showNoteDialog, setShowNoteDialog] = useState(false);
+
+  const handleNoteClick = (notes: string[]) => {
+    setSelectedNote(notes);
+    setShowNoteDialog(true);
+  };
 
   const addNote = (note: any) => {
     console.log("Note added:", note);
@@ -66,9 +74,7 @@ export default function ExaminerPresentations() {
   useEffect(() => {
     const fetchBatches = async () => {
       try {
-        const response = await axios.get(
-          "http://10.10.103.195:4000/admin/batch"
-        );
+        const response = await axios.get(`http://${apiUrl}/admin/batch`);
         setBatches(response.data);
       } catch (error) {
         console.error("Error fetching batches:", error);
@@ -80,9 +86,7 @@ export default function ExaminerPresentations() {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const response = await axios.get(
-          "http://10.10.103.195:4000/admin/class"
-        );
+        const response = await axios.get(`http://${apiUrl}/admin/class`);
         setClasses(response.data);
       } catch (error) {
         console.error("Error fetching batches:", error);
@@ -99,7 +103,7 @@ export default function ExaminerPresentations() {
         if (selectedClass !== "all") params.classId = selectedClass;
 
         const response = await axios.get(
-          "http://10.10.103.195:4000/examiner/presentations/completions",
+          `http://${apiUrl}/examiner/presentations/completions`,
           { params }
         );
 
@@ -168,36 +172,46 @@ export default function ExaminerPresentations() {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50">
-                    <TableHead className="font-semibold">Student</TableHead>
-                    <TableHead className="font-semibold">Batch</TableHead>
-                    <TableHead className="font-semibold">Class</TableHead>
-                    <TableHead className="font-semibold">
+                    <TableHead className="font-semibold text-center">
+                      Student
+                    </TableHead>
+                    <TableHead className="font-semibold text-center">
+                      Batch
+                    </TableHead>
+                    <TableHead className="font-semibold text-center">
+                      Class
+                    </TableHead>
+                    <TableHead className="font-semibold text-center">
                       Final Presentation
                     </TableHead>
-                    <TableHead className="font-semibold">Status</TableHead>
-                    <TableHead className="font-semibold">Action</TableHead>
+                    <TableHead className="font-semibold text-center">
+                      Status
+                    </TableHead>
+                    <TableHead className="font-semibold text-center">
+                      Action
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
                     Array.from({ length: 5 }).map((_, index) => (
                       <TableRow key={index}>
-                        <TableCell>
+                        <TableCell className="text-center">
                           <Skeleton className="h-6 w-32" />
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-center">
                           <Skeleton className="h-6 w-20" />
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-center">
                           <Skeleton className="h-6 w-28" />
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-center">
                           <Skeleton className="h-6 w-40" />
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-center">
                           <Skeleton className="h-6 w-24" />
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-center">
                           <Skeleton className="h-8 w-20" />
                         </TableCell>
                       </TableRow>
@@ -208,24 +222,30 @@ export default function ExaminerPresentations() {
                         key={presentation.id}
                         className="hover:bg-gray-50"
                       >
-                        <TableCell className="font-medium">
+                        <TableCell className="font-medium text-center">
                           {presentation.user.fullName}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-center">
                           {presentation.final.batch.batchTitle}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-center">
                           {presentation.final.class.className}
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-center">
                           <Dialog>
                             <DialogTrigger asChild>
                               <Button
                                 variant="link"
                                 className="p-0 h-auto font-normal"
                               >
-                                {presentation.submissionFiles.map(
-                                  (f) => f.filename
+                                {presentation.submissionFiles.length > 0 ? (
+                                  presentation.submissionFiles.map(
+                                    (f) => f.filename
+                                  )
+                                ) : (
+                                  <span className="text-gray-500 italic">
+                                    No file provided
+                                  </span>
                                 )}
                                 <Eye className="ml-2 h-4 w-4" />
                               </Button>
@@ -246,7 +266,7 @@ export default function ExaminerPresentations() {
                             </DialogContent>
                           </Dialog>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="text-center">
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${
                               presentation.status === "SUBMITTED"
@@ -257,7 +277,7 @@ export default function ExaminerPresentations() {
                             {presentation.status}
                           </span>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className="flex gap-2">
                           <Button
                             variant="default"
                             size="sm"
@@ -271,6 +291,18 @@ export default function ExaminerPresentations() {
                           >
                             Grade
                           </Button>
+                          <Button
+                            variant="default"
+                            size="sm"
+                            className="bg-indigo-600 hover:bg-indigo-700"
+                            onClick={() =>
+                              handleNoteClick(
+                                presentation.notes.map((n) => n.content)
+                              )
+                            }
+                          >
+                            View Note
+                          </Button>
                         </TableCell>
                       </TableRow>
                     ))
@@ -282,6 +314,28 @@ export default function ExaminerPresentations() {
                     </TableRow>
                   )}
                 </TableBody>
+
+                <Dialog open={showNoteDialog} onOpenChange={setShowNoteDialog}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Presentation Notes</DialogTitle>
+                    </DialogHeader>
+                    <div className="p-4 space-y-2">
+                      {selectedNote.length > 0 ? (
+                        selectedNote.map((note, index) => (
+                          <div
+                            key={index}
+                            className="p-3 bg-gray-100 rounded-lg border"
+                          >
+                            <p className="text-gray-700">{note}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-gray-500">No notes available.</p>
+                      )}
+                    </div>
+                  </DialogContent>
+                </Dialog>
 
                 <Dialog open={showNoteForm} onOpenChange={setShowNoteForm}>
                   <DialogContent>

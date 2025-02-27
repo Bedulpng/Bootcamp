@@ -14,6 +14,7 @@ import {
 import { jwtDecode } from "jwt-decode"; // You need to install this package: npm install jwt-decode
 import axios from "axios"; // You need to install this package: npm install axios
 import { NotificationPopup } from "./Notification/Notification";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function NavbarMentor() {
   const location = useLocation();
@@ -36,14 +37,14 @@ export default function NavbarMentor() {
 
         // Fetch mentor details
         const response = await axios.get(
-          `http://10.10.103.195:4000/admin/mentor/${userId}`
+          `http://${apiUrl}/admin/mentor/${userId}`
         );
         setMentorName(response.data.fullName);
         setMentorRole(response.data.role);
 
         // Fetch the professional profile image
         const profileResponse = await axios.get(
-          `http://10.10.103.195:4000/trainee/${userId}/pro`
+          `http://${apiUrl}/trainee/${userId}/pro`
         );
         if (profileResponse.data && profileResponse.data.profileImage) {
           setProfileImage(profileResponse.data.profileImage); // Store the profile image path
@@ -76,7 +77,7 @@ export default function NavbarMentor() {
 
     try {
       const response = await axios.post(
-        "http://10.10.103.195:4000/trainee/logout",
+        `http://${apiUrl}/trainee/logout`,
         {
           accessToken,
         }
@@ -141,7 +142,7 @@ export default function NavbarMentor() {
               <Button variant="ghost" className="flex items-center gap-2 p-1">
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
                   <AvatarImage
-                    src={`http://10.10.103.195:4000${profileImage}`}
+                    src={`http://${apiUrl}${profileImage}`}
                     alt="Mentor"
                   />
                   <AvatarFallback>

@@ -5,6 +5,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { isAuthenticated } from "./utils/middleware";
 import { DotSpinner } from "./SpinnerLoading";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface RoleBasedRouteProps {
   children: React.ReactNode;
@@ -39,7 +40,7 @@ const Rbac: React.FC<RoleBasedRouteProps> = ({ children, routeName }) => {
     const fetchAllowedRoles = async () => {
       try {
         const response = await axios.get(
-          `http://10.10.103.195:4000/api/allowed?route=${routeName}`
+          `http://${apiUrl}/api/allowed?route=${routeName}`
         );
         setAllowedRoles(response.data.allowedRoles);
       } catch (error) {

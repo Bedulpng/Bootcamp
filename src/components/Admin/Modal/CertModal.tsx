@@ -23,6 +23,8 @@ import {
 import { fetchTrainees } from "@/Api/FetchUsersByRole";
 import { fetchCB } from "@/Api/FetchingBatches&Classes";
 import { Trainee, Batch, Class } from "@/types/Trainee";
+const apiUrl = import.meta.env.VITE_API_URL;
+import { toast } from "react-hot-toast";
 
 type CertificateFormData = {
   traineeId: string;
@@ -96,24 +98,36 @@ export function CertificateModal({ isOpen, setIsOpen }: CertificateModalProps) {
       formData.append("classId", data.classId);
       formData.append("batchId", data.batchId);
       formData.append("certificate", data.file[0]);
-
+  
       const response = await axios.post(
-        "http://10.10.103.195:4000/uploads/certificate",
+        `http://${apiUrl}/uploads/certificate`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
         }
       );
-
+  
       if (response.status === 200 || response.status === 201) {
         console.log("Certificate posted successfully");
+        toast.success("Certificate uploaded successfully!");
         setIsOpen(false);
         reset();
       } else {
         console.error("Failed to post certificate");
+        toast.error("Failed to upload certificate. Please try again.");
       }
     } catch (error) {
       console.error("Error posting certificate:", error);
+  
+      let errorMessage = "An unknown error occurred"; // Default error message
+  
+      if (axios.isAxiosError(error)) {
+        errorMessage = error.response?.data?.message || "Something went wrong";
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+  
+      toast.error(`Error: ${errorMessage}`); // Show error toast
     }
   };
 

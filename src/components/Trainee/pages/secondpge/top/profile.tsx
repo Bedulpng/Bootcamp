@@ -6,6 +6,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import SkeletonProfile from "@/components/Trainee/Skeleton/ProfileSkeleton";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const Profile: React.FC = () => {
   const [name, setName] = useState("");
@@ -31,7 +32,7 @@ const Profile: React.FC = () => {
 
         // Fetch mentor details
         const response = await axios.get(
-          `http://10.10.103.195:4000/trainee/users/${userId}`
+          `http://${apiUrl}/trainee/users/${userId}`
         );
         setName(response.data.fullName);
         setNick(response.data.nickname);
@@ -40,10 +41,10 @@ const Profile: React.FC = () => {
 
         // Fetch the professional profile image
         const profileResponse = await axios.get(
-          `http://10.10.103.195:4000/trainee/${userId}/pro`
+          `http://${apiUrl}/trainee/${userId}/pro`
         );
         const casualProfile = await axios.get(
-          `http://10.10.103.195:4000/trainee/${userId}/casual`
+          `http://${apiUrl}/trainee/${userId}/casual`
         );
         if (
           profileResponse.data &&
@@ -146,7 +147,7 @@ const Profile: React.FC = () => {
   
         // Send the request to the new router
         const response = await axios.put(
-          `http://10.10.103.195:4000/trainee/edit/${userId}`, // Updated endpoint
+          `http://${apiUrl}/trainee/edit/${userId}`, // Updated endpoint
           payload,
           {
             headers: {
@@ -173,7 +174,7 @@ const Profile: React.FC = () => {
           professionalFormData.append("file", photos.professional);
   
           const professionalResponse = await axios.post(
-            "http://10.10.103.195:4000/uploads/profile",
+            `http://${apiUrl}/uploads/profile`,
             professionalFormData,
             {
               headers: {
@@ -196,7 +197,7 @@ const Profile: React.FC = () => {
           informalFormData.append("file", photos.informal);
   
           const informalResponse = await axios.post(
-            "http://10.10.103.195:4000/uploads/profile",
+            `http://${apiUrl}/uploads/profile`,
             informalFormData,
             {
               headers: {
@@ -246,14 +247,14 @@ const Profile: React.FC = () => {
               <Avatar className="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center">
                 {activePhoto === "professional" && profileImage ? (
                   <AvatarImage
-                    src={`http://10.10.103.195:4000${profileImage
+                    src={`http://${apiUrl}${profileImage
                       .replace(/\\/g, "/")
                       .replace("public", "")}`}
                     alt="Professional Photo"
                   />
                 ) : activePhoto === "informal" && casProfile ? (
                   <AvatarImage
-                    src={`http://10.10.103.195:4000${casProfile
+                    src={`http://${apiUrl}${casProfile
                       .replace(/\\/g, "/")
                       .replace("public", "")}`}
                     alt="Casual Photo"

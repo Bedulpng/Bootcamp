@@ -12,6 +12,7 @@ import axios from "axios"
 import "react-phone-number-input/style.css"
 import { X } from "lucide-react" // Close icon
 import { ReviewModal } from "./ReviewForm"
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const steps = ["Personal", "Education", "Skills", "Review"]
 
@@ -89,7 +90,7 @@ export const MultiStepFormModal: React.FC<MultiStepFormModalProps> = ({ isOpen, 
     const formattedData = { ...personal, ...education, ...skills }
 
     try {
-      await axios.put("http://10.10.103.195:4000/trainee/verify", formattedData, {
+      await axios.put(`http://${apiUrl}/trainee/verify`, formattedData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

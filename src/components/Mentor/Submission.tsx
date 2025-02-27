@@ -14,6 +14,7 @@ import {
 import NoteLesson from "./Notes/NoteLesson";
 import FilePreview from "./FilePreview";
 import NoSubmitted from "./NoTask";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 function Challenge() {
   const { classId, id } = useParams<{
@@ -63,7 +64,7 @@ function Challenge() {
     const fetchCompletion = async () => {
       try {
         const completionData = await axios.get(
-          `http://10.10.103.195:4000/mentor/lesson/${id}/completions`
+          `http://${apiUrl}/mentor/lesson/${id}/completions`
         );
         setCompletions(completionData.data); // Set the entire response data
         console.log("Completions:", completionData.data);
@@ -74,7 +75,7 @@ function Challenge() {
             console.log("Lesson not found, falling back to challenge route...");
             try {
               const challengeData = await axios.get(
-                `http://10.10.103.195:4000/mentor/challenge/${id}/completions`
+                `http://${apiUrl}/mentor/challenge/${id}/completions`
               );
               setCompletions(challengeData.data); // Set the data from the challenge route
               console.log("Challenge completions:", challengeData.data);

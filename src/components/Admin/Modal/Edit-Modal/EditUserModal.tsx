@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import axios from 'axios'
+const apiUrl = import.meta.env.VITE_API_URL;
 
 
 type FormData = {
@@ -59,7 +60,7 @@ export default function UserModalEdit({ open, setOpen, id, fullName }: UserModal
   
       // Sending the PUT request with the form data and authorization header
       const response = await axios.put(
-       `http://10.10.103.195:4000/trainee/edit/${id}`,
+       `http://${apiUrl}/trainee/edit/${id}`,
         {
           fullName: data.fullName,
           nickname: data.nickname,

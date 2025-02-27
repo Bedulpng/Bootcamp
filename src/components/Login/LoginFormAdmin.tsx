@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Mail, Lock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export function LoginForm() {
   const [email, setEmail] = useState('')
@@ -21,7 +22,7 @@ export function LoginForm() {
     };
 
     try {
-      const response = await axios.post('http://10.10.103.195:4000/trainee/login', payload);
+      const response = await axios.post(`http://${apiUrl}/trainee/login`, payload);
       const { accessToken, refreshToken } = response.data;
 
       localStorage.setItem('accessToken', accessToken);

@@ -4,6 +4,7 @@ import { Batch, Class } from "../../types/Trainee";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const DashboardPage = () => {
   const { batchId } = useParams<{ batchId: string }>();
@@ -15,7 +16,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchBatch = async () => {
       try {
-        const response = await fetch(`http://10.10.103.195:4000/admin/batchs/${batchId}`);
+        const response = await fetch(`http://${apiUrl}/admin/batchs/${batchId}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch batch with ID: ${batchId}`);
         }
@@ -33,7 +34,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const response = await fetch(`http://10.10.103.195:4000/admin/class/${batchId}/batch`);
+        const response = await fetch(`http://${apiUrl}/admin/class/${batchId}/batch`);
         if (!response.ok) {
           throw new Error(`Failed to fetch classes for batch with ID: ${batchId}`);
         }

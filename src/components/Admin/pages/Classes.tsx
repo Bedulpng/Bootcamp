@@ -18,6 +18,7 @@ import { EditClassModal } from "../Modal/Edit-Modal/EditClassModal";
 import { ColorPickerModal } from "@/components/Mentor/ClassCard/ColorPickerModal";
 import { ImageCropModal } from "@/components/Mentor/ClassCard/ImageCropModal";
 import NoSubmitted from "@/components/Examiner/Class/NoTask";
+import { DeleteClassModal } from "../Modal/Edit-Modal/DeleteClass";
 
 export default function Classes() {
   const [isClassModalOpen, setIsClassModalOpen] = useState(false);
@@ -29,6 +30,9 @@ export default function Classes() {
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [isImageCropOpen, setIsImageCropOpen] = useState(false);
   const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
+  const [title, setTitle] = useState<string>("");
+  const [selectedId, setSelectedId] = useState<string>(""); // State for selected batch ID
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   useEffect(() => {
     const getClasses = async () => {
@@ -88,6 +92,16 @@ export default function Classes() {
     setIsImageCropOpen(false);
   };
 
+  const handleOpenUserDelete = (id: string, title: string) => {
+    setTitle(title); // Set the selected batch title
+    setSelectedId(id); // Set the selected batch ID
+    setIsDeleteOpen(true);
+  };
+
+  const handleCloseUserDelete = () => {
+    setIsDeleteOpen(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -108,6 +122,12 @@ export default function Classes() {
           selectedClassId={selectedClassId}
           selectedClassTitle={selectedClassTitle}
         />
+        <DeleteClassModal
+                  isOpen={isDeleteOpen}
+                  id={selectedId}
+                  classTitle={title}
+                  onClose={handleCloseUserDelete}
+                />
         {isColorPickerOpen && selectedClassId && (
           <ColorPickerModal
             isOpen={isColorPickerOpen}
@@ -217,7 +237,7 @@ export default function Classes() {
                         className="text-red-500 hover:text-red-500"
                         onClick={() =>
                           // handleOpenUserDelete(user.id, user.fullName ?? "-")
-                          console.log("waiwia")
+                          handleOpenUserDelete(classes.id, classes.className ?? "-")
                         }
                       >
                         <Trash2Icon className="h-4 w-4" />

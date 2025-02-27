@@ -11,6 +11,7 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { jwtDecode } from "jwt-decode"
 import toast from "react-hot-toast"
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ChallengeUploadFormProps {
   onSuccess: () => void
@@ -79,7 +80,7 @@ export default function ChallengeUpload({ onSuccess, classId, batchId }: Challen
     files.forEach((file) => formData.append("files", file));
   
     try {
-      const response = await fetch("http://10.10.103.195:4000/uploads/challenge", {
+      const response = await fetch(`http://${apiUrl}/uploads/challenge`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${refreshToken}`, 

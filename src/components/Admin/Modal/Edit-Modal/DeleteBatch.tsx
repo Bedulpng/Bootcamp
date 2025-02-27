@@ -8,26 +8,24 @@ import {
   import axios from "axios";
   const apiUrl = import.meta.env.VITE_API_URL;
   
-  interface DeleteUserModalProps {
+  interface DeleteBatchModalProps {
     isOpen: boolean;
     onClose: () => void;
-    fullName: string;
+    batchTitle: string;
     id: string;
   }
   
-  export function DeleteUserModal({
+  export function DeleteBatchModal({
     isOpen,
     onClose,
-    fullName,
+    batchTitle,
     id,
-  }: DeleteUserModalProps) {
+  }: DeleteBatchModalProps) {
     const onConfirm = async () => {
         try {
           // Send DELETE request to the backend to delete the user
-          const response = await axios.delete(`http://${apiUrl}/admin/user/${id}`);
-      
-          console.log("User deleted successfully:", response.data);
-          onClose(); // Close the modal after successful deletion
+          await axios.delete(`http://${apiUrl}/admin/batch/${id}`);
+                onClose(); // Close the modal after successful deletion
         } catch (error) {
             if (axios.isAxiosError(error)) {
               // Handle Axios-specific error
@@ -46,13 +44,13 @@ import {
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold mb-4">
-              Delete User
+              Delete Batch
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
           <p className="text-sm text-gray-500">
-            Are you sure you want to delete the user{" "}
-            <strong className="font-bold">"{fullName}"</strong>? This action cannot be undone.
+            Are you sure you want to delete batch {" "}
+            <strong className="font-bold">"{batchTitle}"</strong>? This action cannot be undone.
           </p>
             <div className="flex justify-end space-x-2">
               <button
@@ -65,7 +63,7 @@ import {
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
                 onClick={onConfirm}
               >
-                Delete User
+                Delete Batch
               </button>
             </div>
           </div>

@@ -7,6 +7,7 @@
     import { BatchCover } from "./BatchCover";
     import { ColorPickerModal } from "./EditCover";
     import { ImageCropModal } from "./ImageCrop";
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     interface BatchCardsProps {
     batches: Batch[];
@@ -39,7 +40,7 @@
             onClick={async () => {
                 try {
                 const response = await fetch(
-                    `http://10.10.103.195:4000/admin/batchs/${batch.id}`
+                    `http://${apiUrl}/admin/batchs/${batch.id}`
                 );
                 if (!response.ok) {
                     throw new Error(`Failed to fetch batch with ID: ${batch.id}`);

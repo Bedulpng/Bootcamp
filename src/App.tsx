@@ -35,7 +35,7 @@ import { LoginForm } from "./components/Login/LoginFormAdmin";
 import NotAuthorized from "./components/Unauthorized";
 import NotesManagement from "./components/Admin/pages/ManageNotes/Notes-Management";
 import ClassDetails from "./components/Mentor/ClassPage";
-import TraineeMain from "./components/Trainee/pages/secondpge/ClassDetail";
+import TraineeMain from "./components/Trainee/pages/secondpge/TraineeMain";
 import ClassesPage from "./components/Trainee/pages/secondpge/ClassPage";
 import { SidebarTrainee } from "./components/Trainee/pages/secondpge/SideBarTrainee";
 import NavbarTrainee from "./components/Trainee/pages/secondpge/layouts/navbar";

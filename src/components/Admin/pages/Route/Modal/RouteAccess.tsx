@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface RouteAccessModalProps {
   route: RoutePermissions | null;
@@ -37,7 +38,7 @@ export function RouteAccessModal({
     const fetchRoles = async () => {
       try {
         const { data } = await axios.get(
-          "http://10.10.103.195:4000/admin/role/roles"
+          `http://${apiUrl}/admin/role/roles`
         );
         const roles = data.tableRoles.map((role: any) => ({
           id: role.id,
@@ -89,7 +90,7 @@ export function RouteAccessModal({
         }
 
         await axios.put(
-          `http://10.10.103.195:4000/api/route-permissions/${route.id}`,
+          `http://${apiUrl}/api/route-permissions/${route.id}`,
           {
             addRoleIds: rolesToAdd,
             removeRoleIds: rolesToRemove,

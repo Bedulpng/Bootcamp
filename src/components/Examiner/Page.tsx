@@ -10,6 +10,7 @@ import {
 } from "@/types/Trainee";
 import axios from "axios";
 import BatchCards from "./Batch/BatchCard";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function ExaminerDashboard() {
 
@@ -23,7 +24,7 @@ export default function ExaminerDashboard() {
     const fetchBatches = async () => {
       try {
         const response = await axios.get(
-          "http://10.10.103.195:4000/admin/batch"
+          `http://${apiUrl}/admin/batch`
         );
         setBatches(response.data);
       } catch (error) {
@@ -39,7 +40,7 @@ export default function ExaminerDashboard() {
         const params: Record<string, string> = {};
 
         const response = await axios.get(
-          "http://10.10.103.195:4000/examiner/presentations/completions",
+          `http://${apiUrl}/examiner/presentations/completions`,
           { params }
         );
 

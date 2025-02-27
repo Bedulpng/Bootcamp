@@ -4,6 +4,7 @@ import { Mentor, Trainee, Batch } from "@/types/Trainee";
 import { fetchBatches } from "@/Api/FetchingBatches&Classes";
 import { fetchTrainees, fetchMentors } from "@/Api/FetchUsersByRole";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ClassModalProps {
   isOpen: boolean;
@@ -105,7 +106,7 @@ export const EditClassModal: React.FC<ClassModalProps> = ({ isOpen, onClose, sel
         batchId: selectedBatch.map((b) => b.id),
         participants: participants.map((p) => p.id),
       };
-      await axios.put(`http://10.10.103.195:4000/admin/class/${selectedClassId}`, payload, {
+      await axios.put(`http://${apiUrl}/admin/class/${selectedClassId}`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
         }

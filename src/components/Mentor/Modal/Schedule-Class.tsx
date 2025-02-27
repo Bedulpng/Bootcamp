@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import axios from 'axios'
+const apiUrl = import.meta.env.VITE_API_URL;
 
 // Define the schedule interface to match Prisma schema
 interface Schedule {
@@ -95,7 +96,7 @@ export function ScheduleClassModal({ isOpen, onClose, onSubmit }: { isOpen: bool
   
     try {
       const response = await axios.post(
-        'http://10.10.103.195:4000/mentor/schedule',
+        `http://${apiUrl}/mentor/schedule`,
         newSchedule,
         {
           headers: {

@@ -231,7 +231,7 @@ export default function DashboardAdmin() {
             </Button>
             <UserModalForm open={isUserOpen} setOpen={setIsUserOpen} />
             <Button className="w-full" variant="outline" onClick={handleOpenClassModal}>
-              Schedule Class
+              Create New Class
             </Button>
             <ClassModal
               isOpen={isClassModalOpen}

@@ -14,7 +14,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trainee, Note, Visibility } from "../../../types/Trainee";
+import { Trainee, Note, Visibility } from "@/types/Trainee";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function NotesPage() {
   const [trainees, setTrainees] = useState<Trainee[]>([]);
@@ -30,7 +31,7 @@ export default function NotesPage() {
     const fetchTrainees = async () => {
       try {
         const response = await axios.get(
-          "http://10.10.103.195:4000/admin/users/TRAINEE"
+          `http://${apiUrl}/admin/users/TRAINEE`
         );
         setTrainees(response.data);
       } catch (error) {
@@ -54,7 +55,7 @@ export default function NotesPage() {
         );
         const graderId = decodedToken.id;
 
-        let endpoint = `http://10.10.103.195:4000/mentor/notes/${graderId}`;
+        let endpoint = `http://${apiUrl}/mentor/notes/${graderId}`;
         if (filter !== "All") {
           endpoint += `/${filter}`;
         }

@@ -17,6 +17,7 @@ import { BatchModal } from "../Modal/BatchModal";
 import { ColorPickerModal } from "@/components/Mentor/Batch/EditCover";
 import { ImageCropModal } from "@/components/Mentor/Batch/ImageCrop";
 import NoSubmitted from "@/components/Examiner/Class/NoTask";
+import { DeleteBatchModal } from "../Modal/Edit-Modal/DeleteBatch";
 
 export default function BatchAdmin() {
   const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
@@ -28,6 +29,9 @@ export default function BatchAdmin() {
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
   const [isImageCropOpen, setIsImageCropOpen] = useState(false);
   const [tempImageUrl, setTempImageUrl] = useState<string | null>(null);
+  const [title, setTitle] = useState<string>("");
+  const [selectedId, setSelectedId] = useState<string>(""); // State for selected batch ID
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   useEffect(() => {
     const getBatches = async () => {
@@ -87,6 +91,16 @@ export default function BatchAdmin() {
     setIsImageCropOpen(false);
   };
 
+  const handleOpenUserDelete = (id: string, title: string) => {
+    setTitle(title); // Set the selected batch title
+    setSelectedId(id); // Set the selected batch ID
+    setIsDeleteOpen(true);
+  };
+
+  const handleCloseUserDelete = () => {
+    setIsDeleteOpen(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -100,6 +114,12 @@ export default function BatchAdmin() {
           onClose={handleCloseBatchEditModal}
           batchId={selectedBatchId}
           batchTitles={batchTitle}
+        />
+        <DeleteBatchModal
+          isOpen={isDeleteOpen}
+          id={selectedId}
+          batchTitle={title}
+          onClose={handleCloseUserDelete}
         />
         <BatchModal isOpen={isBatchModalOpen} onClose={handleCloseBatchModal} />
         {isColorPickerOpen && selectedBatchId && (
@@ -188,7 +208,7 @@ export default function BatchAdmin() {
                         className="text-red-500 hover:text-red-500"
                         onClick={() =>
                           // handleOpenUserDelete(user.id, user.fullName ?? "-")
-                          console.log("waiwia")
+                          handleOpenUserDelete(batch.id, batch.batchTitle ?? "-")
                         }
                       >
                         <Trash2Icon className="h-4 w-4" />

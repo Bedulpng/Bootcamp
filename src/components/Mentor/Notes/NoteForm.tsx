@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Note, Trainee} from "../../../types/Trainee";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 type NoteFormProps = {
   addNote: (note: Note) => void;
@@ -39,7 +40,7 @@ export default function NoteForm({ addNote, selectedTrainee, onCancel }: NoteFor
       }
 
       const response = await axios.post(
-        "http://10.10.103.195:4000/mentor/note/add",
+        `http://${apiUrl}/mentor/note/add`,
         {
           content,
           visibility,

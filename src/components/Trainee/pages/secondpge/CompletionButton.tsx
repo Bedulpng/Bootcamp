@@ -21,6 +21,7 @@ import { useLocation } from "react-router-dom";
 import { getChallengeStatus, getLessonStatus, getPresentationStatus } from "@/Api/SubmitAssignment";
 import ViewNoteModal from "../Modal/ViewNote";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface SubmissionFormProps {
   itemId: string | undefined;
@@ -79,6 +80,7 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
             break;
           case "presentation":
             response = await getPresentationStatus(Id, userId);
+            console.log(getPresentationStatus)
             break;
           default:
             console.warn("Unknown item type.");
@@ -141,10 +143,10 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
 
     const endpoint =
       itemType === "lesson"
-        ? `http://10.10.103.195:4000/complete/lesson/${itemId}`
+        ? `http://${apiUrl}/complete/lesson/${itemId}`
         : itemType === "challenge"
-        ? `http://10.10.103.195:4000/complete/challenge/${itemId}`
-        : `http://10.10.103.195:4000/complete/presentation/${itemId}`;
+        ? `http://${apiUrl}/complete/challenge/${itemId}`
+        : `http://${apiUrl}/complete/presentation/${itemId}`;
 
     try {
       const response = await axios.post(endpoint, formData, {

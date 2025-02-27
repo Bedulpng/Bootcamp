@@ -1,4 +1,5 @@
 "use client"
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ClassCoverProps {
   className: string
@@ -10,7 +11,7 @@ export function ClassCover({ className, coverImage }: ClassCoverProps) {
     <div className="relative w-full pt-[56.25%] rounded-t-lg overflow-hidden">
       {coverImage ? (
         <img
-          src={`http://10.10.103.195:4000${coverImage.replace("/public", "")}`}
+          src={`http://${apiUrl}${coverImage.replace("/public", "")}`}
           alt={`Cover for ${className}`}
           className="absolute inset-0 w-full h-full object-cover"
           loading="eager"

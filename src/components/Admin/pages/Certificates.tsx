@@ -7,7 +7,8 @@ import { Certificate } from "@/types/Trainee";
 import { fetchAllCertificates } from "@/Api/FetchCertificate";
 import { CertificateModal } from "../Modal/CertModal";
 import NoSubmitted from "@/components/Examiner/Class/NoTask";
-
+import { toast } from "react-hot-toast";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function Certificates() {
   const [certOpen, setIsCertOpen] = useState(false);
@@ -32,6 +33,47 @@ export default function Certificates() {
     setIsCertOpen(true);
   }
 
+  const handleDownload = async (fileUrl: string, fileName: string) => {
+    try {
+      if (!fileUrl) {
+        toast.error("No file available for download.");
+        return;
+      }
+  
+      const response = await fetch(`http://${apiUrl}${fileUrl}`, {
+        method: "GET",
+        mode: "cors", // Ensure CORS mode is enabled
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to fetch file: ${response.statusText}`);
+      }
+  
+      const blob = await response.blob();
+      const fileType = blob.type; // Get the actual file type (e.g., image/png)
+  
+      console.log("Downloaded file type:", fileType); // Debugging: check the MIME type
+  
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+  
+      // Ensure the correct file extension
+      const extension = fileType.split("/")[1] || "png";
+      a.href = url;
+      a.download = fileName || `certificate.${extension}`;
+  
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+  
+      window.URL.revokeObjectURL(url);
+      toast.success("Certificate downloaded successfully!");
+    } catch (error) {
+      console.error("Download error:", error);
+      toast.error("Failed to download certificate.");
+    }
+  };
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -67,9 +109,22 @@ export default function Certificates() {
                     <TableCell className="text-center">{cert.trainee?.fullName ?? "N/A"}</TableCell>
                     <TableCell className="text-center">{cert.class?.className ?? "N/A"}</TableCell>
                     <TableCell className="text-center">{cert.batch?.batchTitle ?? "N/A"}</TableCell>
-                    <TableCell className="text-center">{cert.issuedAt ?? "N/A"}</TableCell>
+                    <TableCell className="text-center">{cert.issuedAt
+                        ? new Date(cert.issuedAt).toLocaleDateString(
+                            "en-GB",
+                            {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            }
+                          )
+                        : "N/A"}</TableCell>
                     <TableCell className="text-center">
-                      <Button variant="ghost" size="icon">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDownload(cert.filepath.replace("public", ""), `${cert.trainee?.fullName}_certificate`)}
+                      >
                         <Download className="h-4 w-4" />
                       </Button>
                     </TableCell>

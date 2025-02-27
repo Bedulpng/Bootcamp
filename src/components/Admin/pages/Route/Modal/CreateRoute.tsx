@@ -28,6 +28,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface CreateRouteModalProps {
   isOpen: boolean;
@@ -50,7 +51,7 @@ export function CreateRouteModal({
     if (!routePath || selectedAccessRoleIds.length === 0) return;
 
     try {
-      await axios.post("http://10.10.103.195:4000/api/route-permissions", {
+      await axios.post(`http://${apiUrl}/api/route-permissions`, {
         route: routePath.startsWith("/") ? routePath : `/${routePath}`,
         roleIds: selectedAccessRoleIds,
       });

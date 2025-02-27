@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ClassCover } from "./CoverClass";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface ClassCardProps {
   classNames: string;
@@ -41,7 +42,7 @@ export function ClassCard({
       <div className="relative">
         <Avatar className="absolute -top-10 right-4 h-20 w-20 border-4 border-white shadow-lg z-20">
           <AvatarImage
-            src={`http://10.10.103.195:4000${mentorProfile
+            src={`http://${apiUrl}${mentorProfile
               .replace(/\\/g, "/")
               .replace("public", "")}`}
             alt={mentorName}

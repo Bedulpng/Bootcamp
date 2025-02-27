@@ -16,6 +16,7 @@ import { NotificationPopup } from "@/components/Mentor/Notification/Notification
 import LogoutModal from "@/components/Trainee/pages/Modal/Logout";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const NavbarExaminer: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
@@ -33,14 +34,14 @@ const NavbarExaminer: React.FC = () => {
 
         // Fetch mentor details
         const response = await axios.get(
-          `http://10.10.103.195:4000/admin/mentor/${userId}`
+          `http://${apiUrl}/admin/mentor/${userId}`
         );
         setTraineeName(response.data.fullName);
         setTraineeRole(response.data.role);
 
         // Fetch the professional profile image
         const profileResponse = await axios.get(
-          `http://10.10.103.195:4000/trainee/${userId}/pro`
+          `http://${apiUrl}/trainee/${userId}/pro`
         );
         if (profileResponse.data && profileResponse.data.profileImage) {
           setProfileImage(profileResponse.data.profileImage); // Store the profile image path
@@ -79,7 +80,7 @@ const NavbarExaminer: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://10.10.103.195:4000/trainee/logout",
+        `http://${apiUrl}/trainee/logout`,
         {
           accessToken,
         }
@@ -113,7 +114,7 @@ const NavbarExaminer: React.FC = () => {
               <Button variant="ghost" className="flex items-center gap-2 p-1">
                 <Avatar className="h-10 w-10 border-2 border-gray-200 rounded-full">
                   <AvatarImage
-                    src={`http://10.10.103.195:4000${profileImage}`}
+                    src={`http://${apiUrl}${profileImage}`}
                     alt="Trainee"
                   />
                   <AvatarFallback>

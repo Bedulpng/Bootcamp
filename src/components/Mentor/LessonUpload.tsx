@@ -11,6 +11,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 interface LessonUploadFormProps {
   onSuccess: () => void;
@@ -94,7 +95,7 @@ export default function UploadForm({
 
     try {
       const response = await fetch(
-        "http://10.10.103.195:4000/uploads/lesson",
+        `http://${apiUrl}/uploads/lesson`,
         {
           method: "POST",
           headers: {

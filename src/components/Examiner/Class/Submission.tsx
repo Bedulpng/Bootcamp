@@ -17,10 +17,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import NoteLesson from "./NoteLesson";
 import FilePreview from "./FilePreview";
 import NoSubmitted from "./NoTask";
 import { DialogTrigger } from "@radix-ui/react-dialog";
+import NotePresentation from "../NoteFinalPresentation";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 function ExaminerSubmissionPage() {
   const { classId, id } = useParams<{
@@ -67,7 +68,7 @@ function ExaminerSubmissionPage() {
     const fetchCompletion = async () => {
       try {
         const completionData = await axios.get(
-          `http://10.10.103.195:4000/examiner/presentation/${id}/completions`
+          `http://${apiUrl}/examiner/presentation/${id}/completions`
         );
         setCompletions(completionData.data); // Set the entire response data
         setPresentations(completionData.data.completions); // Set the presentations data
@@ -79,29 +80,6 @@ function ExaminerSubmissionPage() {
 
     fetchCompletion();
   }, [id]);
-
-//   useEffect(() => {
-//     const fetchFinalPresentations = async () => {
-//       try {
-//         if (!classId) {
-//           return;
-//         }
-
-//         const params: Record<string, string> = { classId };
-
-//         const response = await axios.get(
-//           "http://10.10.103.195:4000/examiner/presentations/completions",
-//           { params }
-//         );
-
-//         setPresentations(response.data);
-//       } catch (err) {
-//         console.error("Failed to fetch final presentations:", err);
-//       }
-//     };
-
-//     fetchFinalPresentations();
-//   }, [classId]);
 
   // Pagination logic
   const startIndex = (page - 1) * itemsPerPage;
@@ -312,11 +290,11 @@ function ExaminerSubmissionPage() {
           <DialogHeader>
             <DialogTitle>Grade Submisson</DialogTitle>
           </DialogHeader>
-          <NoteLesson
+          <NotePresentation
             addNote={addNote}
             selectedTrainee={selectedTrainee}
             onCancel={handleCancel}
-            completionId={completionId}
+            presentationId={completionId}
           />
         </DialogContent>
       </Dialog>

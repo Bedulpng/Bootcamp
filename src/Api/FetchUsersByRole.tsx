@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { Trainee } from '../types/Trainee';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 // Axios function to fetch trainees with the fixed role "TRAINEE"
 export async function fetchTrainees(): Promise<Trainee[]> {
   try {
-    const response = await axios.get('http://10.10.103.195:4000/admin/users/TRAINEE');
+    const response = await axios.get(`http://${apiUrl}/admin/users/TRAINEE`);
     return response.data;
   } catch (error) {
     console.error("Error fetching trainees:", error);
@@ -14,7 +15,7 @@ export async function fetchTrainees(): Promise<Trainee[]> {
 
 export async function fetchMentors(): Promise<Trainee[]> {
   try {
-    const response = await axios.get('http://10.10.103.195:4000/admin/users/MENTOR');
+    const response = await axios.get(`http://${apiUrl}/admin/users/MENTOR`);
     return response.data;
   } catch (error) {
     console.error("Error fetching mentor:", error);

@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Note, Trainee} from "../../../types/Trainee";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 type NoteLessonProps = {
   addNote: (note: Note) => void;
@@ -39,7 +40,7 @@ export default function NoteLesson({ addNote, selectedTrainee, completionId, onC
       try {
         // Attempt to add a note to the lesson completion
         const response = await axios.post(
-          `http://10.10.103.195:4000/mentor/note/${completionId}/lesson`,
+          `http://${apiUrl}/mentor/note/${completionId}/lesson`,
           {
             content,
             visibility,
@@ -61,7 +62,7 @@ export default function NoteLesson({ addNote, selectedTrainee, completionId, onC
           console.log("LessonCompletion not found, trying ChallengeCompletion route...");
           // Fallback to the challenge completion note router
           const response = await axios.post(
-            `http://10.10.103.195:4000/mentor/note/${completionId}/challenge`,
+            `http://${apiUrl}/mentor/note/${completionId}/challenge`,
             {
               content,
               visibility,

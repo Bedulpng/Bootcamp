@@ -1,6 +1,7 @@
 // src/utils/middleware.ts
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import axios from 'axios';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 // Extend JwtPayload to include custom fields
 interface CustomJwtPayload extends JwtPayload {
@@ -43,7 +44,7 @@ export const isVerified = async (): Promise<boolean> => {
     const token = localStorage.getItem("refreshToken");
     if (!token) return false;
 
-    const response = await axios.get("http://10.10.103.195:4000/trainee/status", {
+    const response = await axios.get(`http://${apiUrl}/trainee/status`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -83,7 +84,7 @@ export const checkTokenValidity = async (): Promise<boolean> => {
 
   try {
     await axios.post(
-      'http://10.10.103.195:4000/api/check-token',
+      `http://${apiUrl}/api/check-token`,
       {}, 
       {
         headers: {

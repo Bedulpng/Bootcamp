@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Files } from "@/types/Trainee";
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const FilePreview: React.FC<{ file: Files }> = ({ file }) => {
     const [, setAspectRatio] = useState<{
@@ -26,7 +27,7 @@ const FilePreview: React.FC<{ file: Files }> = ({ file }) => {
     const renderVideo = () => (
       <div className="w-full aspect-video bg-black flex items-center justify-center">
         <video
-          src={`http://10.10.103.195:4000${file.filepath
+          src={`http://${apiUrl}${file.filepath
             .replace(/\\/g, "/")
             .replace("public", "")}`}
           controls
@@ -41,7 +42,7 @@ const FilePreview: React.FC<{ file: Files }> = ({ file }) => {
     const renderPDF = () => (
       <iframe
         // src={`file.filepath.replace`}
-        src={`http://10.10.103.195:4000${file.filepath
+        src={`http://${apiUrl}${file.filepath
           .replace(/\\/g, "/")
           .replace("public", "")}`}
         title={`Preview of ${file.filename}`}

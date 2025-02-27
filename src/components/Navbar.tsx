@@ -14,46 +14,54 @@ function Modal({ isOpen, closeModal }: { isOpen: boolean; closeModal: () => void
 
   return createPortal(
     <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
+      {isOpen && (
         <motion.div
-          className="relative bg-white p-8 rounded-xl max-w-md mx-auto shadow-lg"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
-          transition={{ type: "spring", damping: 15 }}
+          className="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }} // Smooth fade-out when closing
+          onClick={closeModal} // Close when clicking outside
         >
-          {/* Close Button */}
-          <button onClick={closeModal} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
-            <X className="w-5 h-5" />
-          </button>
+          <motion.div
+            className="relative bg-white p-8 rounded-xl max-w-md mx-auto shadow-lg"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }} // Shrinks & fades out when closing
+            transition={{
+              duration: 0.8,
+              delay: 0.1,
+              ease: [0, 0.71, 0.2, 1.01],
+          }}            
+          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+          >
+            {/* Close Button */}
+            <button onClick={closeModal} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+              <X className="w-5 h-5" />
+            </button>
 
-          {/* Modal Content */}
-          <h2 className="text-center text-xl font-semibold mb-6">Login Account as</h2>
-          <div className="flex justify-center space-x-4">
-            <button
-              className="flex items-center px-4 py-2 bg-gray-100 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors"
-              onClick={() => navigate("/login/trainee")}
-            >
-              <User2 className="h-5 w-5 mr-2" />
-              Trainee
-            </button>
-            <button
-              className="flex items-center px-4 py-2 bg-gray-100 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors"
-              onClick={() => navigate("/login/mentor")}
-            >
-              <Users className="h-5 w-5 mr-2" />
-              Grader
-            </button>
-          </div>
+            {/* Modal Content */}
+            <h2 className="text-center text-xl font-semibold mb-6">Login Account as</h2>
+            <div className="flex justify-center space-x-4">
+              <button
+                className="flex items-center px-4 py-2 bg-gray-100 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors"
+                onClick={() => navigate("/login/trainee")}
+              >
+                <User2 className="h-5 w-5 mr-2" />
+                Trainee
+              </button>
+              <button
+                className="flex items-center px-4 py-2 bg-gray-100 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors"
+                onClick={() => navigate("/login/mentor")}
+              >
+                <Users className="h-5 w-5 mr-2" />
+                Grader
+              </button>
+            </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
     </AnimatePresence>,
-    document.body // Ensures modal renders outside navbar constraints
+    document.body // Renders outside of the navbar constraints
   );
 }
 

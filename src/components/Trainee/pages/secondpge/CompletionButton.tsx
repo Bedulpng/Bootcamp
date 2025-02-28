@@ -18,7 +18,11 @@ import {
 import { Note, type Files } from "@/types/Trainee";
 import { jwtDecode } from "jwt-decode";
 import { useLocation } from "react-router-dom";
-import { getChallengeStatus, getLessonStatus, getPresentationStatus } from "@/Api/SubmitAssignment";
+import {
+  getChallengeStatus,
+  getLessonStatus,
+  getPresentationStatus,
+} from "@/Api/SubmitAssignment";
 import ViewNoteModal from "../Modal/ViewNote";
 import axios from "axios";
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -80,7 +84,7 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
             break;
           case "presentation":
             response = await getPresentationStatus(Id, userId);
-            console.log(getPresentationStatus)
+            console.log(getPresentationStatus);
             break;
           default:
             console.warn("Unknown item type.");
@@ -91,7 +95,11 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
           setSubmissionFiles(response.submissionFiles || []);
           setSubmissionNote(response.notes || []);
           setStatus(response.status || "");
-          setIsSubmitted(response.status === "SUBMITTED" || response.status === "GRADED");
+          setIsSubmitted(
+            response.status === "SUBMITTED" ||
+              response.status === "GRADED" ||
+              response.status === "LATE"
+          );
         }
       } catch (error) {
         console.error("Error fetching status:", error);
@@ -101,7 +109,12 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
     fetchStatus();
   }, [itemType, itemId, userId]);
 
-  const allowedFileTypes = ["image/png", "image/jpeg", "application/pdf", "video/mp4"];
+  const allowedFileTypes = [
+    "image/png",
+    "image/jpeg",
+    "application/pdf",
+    "video/mp4",
+  ];
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -119,7 +132,6 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
     }
   };
 
-
   const handleRemoveFile = (file: File) => {
     setFiles((prevFiles) => prevFiles.filter((f) => f !== file));
   };
@@ -136,7 +148,7 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
     formData.append("userId", String(userId));
     files.forEach((file) => formData.append("files", file));
 
-    console.log("FormData entries:", );
+    console.log("FormData entries:");
     for (const [key, value] of formData.entries()) {
       console.log(`${key}:`, value);
     }
@@ -164,11 +176,30 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
 
   if (isSubmitted) {
     return (
-      <Card className="w-[300px] shadow-lg">
-        <CardContent className="pt-6">
+      <Card className="w-[320px] shadow-xl rounded-2xl border border-muted bg-white">
+        <CardContent className="pt-6 space-y-4">
+          {/* Status Display */}
+          <div className="flex items-center justify-between p-2 rounded-lg bg-secondary">
+            <span className="text-sm font-medium text-secondary-foreground">
+              Status:
+            </span>
+            <span
+              className={`px-2 py-1 text-xs font-semibold rounded-lg ${
+                status === "LATE"
+                  ? "bg-red-100 text-red-600"
+                  : status === "SUBMITTED" || status === "GRADED"
+                  ? "bg-green-100 text-green-600"
+                  : "bg-blue-100 text-blue-600"
+              }`}
+            >
+              {status}
+            </span>
+          </div>
+
+          {/* Submission Files */}
           {submissionFiles.length > 0 ? (
-            <div className="flex items-center gap-2 p-2 bg-primary/5 rounded-lg">
-              <FileText className="h-4 w-4 text-primary" />
+            <div className="flex items-center gap-2 p-3 bg-primary/10 rounded-lg">
+              <FileText className="h-5 w-5 text-primary" />
               <span className="text-sm flex-1 truncate">
                 {submissionFiles.map((f) => f.filename).join(", ")}
               </span>
@@ -179,11 +210,12 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
             </div>
           )}
 
-          <div className="my-4 border-t border-muted"></div>
+          <div className="border-t border-muted"></div>
 
+          {/* Submission Notes */}
           {submissionNote.length > 0 ? (
-            <div className="mt-4 flex items-center justify-center gap-2">
-              <span className="text-sm text-center">View Notes</span>
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-sm font-medium">View Notes</span>
               <button
                 className="p-1 text-muted-foreground hover:text-primary transition"
                 onClick={handleModalOpen}
@@ -198,18 +230,31 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
             </div>
           )}
 
-          {isModalOpen && <ViewNoteModal notes={submissionNote} onClose={handleModalClose} />}
+          {isModalOpen && (
+            <ViewNoteModal notes={submissionNote} onClose={handleModalClose} />
+          )}
         </CardContent>
       </Card>
     );
   }
+  console.log(status);
 
   return (
     <Card className="w-full max-w-[300px] shadow-md">
       <CardHeader className="pb-4">
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-medium">Assignment</CardTitle>
-          <span className="text-sm text-green-600">{status}</span>
+          <span
+            className={`px-2 py-1 text-xs font-semibold rounded-lg ${
+              status === "LATE"
+                ? "bg-red-100 text-red-600"
+                : status === "SUBMITTED" || status === "GRADED"
+                ? "bg-green-100 text-green-600"
+                : "bg-blue-100 text-blue-600"
+            }`}
+          >
+            {status}
+          </span>
         </div>
       </CardHeader>
 
@@ -248,14 +293,6 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
                 >
                   <span className="truncate mr-2">{file.name}</span>
                   <div className="flex gap-2">
-                    {/* <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 p-0 hover:bg-primary/10"
-                      onClick={() => handlePreviewFile(file)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button> */}
                     <Button
                       variant="ghost"
                       size="icon"
@@ -301,7 +338,8 @@ export default function SubmissionForm({ itemId }: SubmissionFormProps) {
             <AlertDialogHeader>
               <AlertDialogTitle>Mark as complete?</AlertDialogTitle>
               <AlertDialogDescription>
-                You don't have any attachments for this {itemType}. Are you sure you want to continue?
+                You don't have any attachments for this {itemType}. Are you sure
+                you want to continue?
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

@@ -152,7 +152,6 @@ export default function LessonsPage() {
     { value: "ALL", label: "All" },
     { value: "ASSIGNED", label: "Assigned" },
     { value: "SUBMITTED", label: "Submitted" },
-    { value: "NOTSUBMITTED", label: "Not Submitted" },
     { value: "LATE", label: "Late" },
     { value: "GRADED", label: "Graded" },
   ];

@@ -50,7 +50,10 @@ export default function ClassDetails() {
     };
 
     fetchData();
-  }, [classId]);
+
+    const interval = setInterval(fetchData, 5000); // Auto-refresh every 5 seconds
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, [classId, activeTab]);
 
   const navItems = [
     { id: "participants", icon: Users, label: "Participants" },

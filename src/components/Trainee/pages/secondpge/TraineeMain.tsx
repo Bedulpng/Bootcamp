@@ -23,7 +23,7 @@ export default function TraineeMain() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const order = filterOption === "Oldest" ? "desc" : "asc"; // Map filter to order
+        const order = filterOption === "Oldest" ? "asc" : "desc"; // Map filter to order
         const classData = await fetchClassById(classId, order);
         setClasses(classData);
       } catch (error) {

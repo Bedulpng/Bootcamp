@@ -81,7 +81,7 @@ export default function ClassesPage() {
   return (
     <div>
       {classes.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 place-items-center cursor-pointer">
+        <div className="flex flex-wrap gap-[50px] grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 place-items-center cursor-pointer">
           {classes.map((cls) => {
             const transformedClass = transformClassData(cls);
             return (

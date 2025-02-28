@@ -59,7 +59,7 @@ export function ClassCard({
       {/* Content Area */}
       <div className="p-4 pt-12 flex-1">
         <div className="h-[80px] bg-muted/30 rounded-lg flex items-center justify-center text-muted-foreground text-sm font-medium">
-          Additional Info
+          
         </div>
       </div>
 

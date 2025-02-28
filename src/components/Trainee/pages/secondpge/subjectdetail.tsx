@@ -72,6 +72,9 @@ export default function SubjectDetail() {
                 <p className="text-sm text-gray-600 mt-1">
                   {data?.mentor?.fullName || "No Mentor Available"}
                 </p>
+                <p className="text-sm text-gray-600 mt-1">
+                  {/* {data? || "No Mentor Available"} */}
+                </p>
               </div>
             </div>
 

@@ -84,6 +84,9 @@ export default function ExaminerNotes() {
       const params: Record<string, string | number> = { page };
       if (selectedBatch !== "all") params.batchId = selectedBatch;
       if (selectedClass !== "all") params.classId = selectedClass;
+      if (selectedLesson !== "all") params.lessonId = selectedLesson;
+      if (selectedChallenge !== "all") params.challengeId = selectedChallenge;
+      console.log(selectedChallenge, selectedLesson)
 
       const response = await axios.get(`http://${apiUrl}/mentor/note/notes`, {
         params,
@@ -100,7 +103,7 @@ export default function ExaminerNotes() {
 
   useEffect(() => {
     fetchNotes(currentPage);
-  }, [currentPage, selectedBatch, selectedClass]);
+  }, [currentPage, selectedBatch, selectedClass, selectedLesson, selectedChallenge]);
 
   useEffect(() => {
     // Simulate API call

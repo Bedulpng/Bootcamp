@@ -28,6 +28,7 @@ import { Batch, Class, Note } from "@/types/Trainee";
 import axios from "axios";
 import NoSubmitted from "@/components/Examiner/Class/NoTask";
 import TraineeSearch from "./TraineeSearch";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export default function ExaminerNotes() {
@@ -42,6 +43,8 @@ export default function ExaminerNotes() {
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [showNoteDialog, setShowNoteDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const handleNoteClick = (notes: Note) => {
     setSelectedNote(notes);
@@ -76,26 +79,28 @@ export default function ExaminerNotes() {
     fetchClasses();
   }, []);
 
+  const fetchNotes = async (page = 1) => {
+    try {
+      const params: Record<string, string | number> = { page };
+      if (selectedBatch !== "all") params.batchId = selectedBatch;
+      if (selectedClass !== "all") params.classId = selectedClass;
+
+      const response = await axios.get(`http://${apiUrl}/mentor/note/notes`, {
+        params,
+      });
+      setNotes(response.data.notes);
+      setCurrentPage(response.data.currentPage);
+      setTotalPages(response.data.totalPages);
+    } catch (err) {
+      console.error("Failed to fetch notes:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchFinalNotes = async () => {
-      try {
-        const params: Record<string, string> = {};
-        if (selectedBatch !== "all") params.batchId = selectedBatch;
-        if (selectedClass !== "all") params.classId = selectedClass;
-
-        const response = await axios.get(`http://${apiUrl}/mentor/note/notes`, {
-          params,
-        });
-
-        setNotes(response.data);
-      } catch (err) {
-        console.error("Failed to fetch final Notes:", err);
-      } finally {
-      }
-    };
-
-    fetchFinalNotes();
-  }, [selectedBatch, selectedClass]);
+    fetchNotes(currentPage);
+  }, [currentPage, selectedBatch, selectedClass]);
 
   useEffect(() => {
     // Simulate API call
@@ -317,6 +322,21 @@ export default function ExaminerNotes() {
                 </Dialog>
               </Table>
             </div>
+            <div className="flex justify-center mt-4">
+        <Button 
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} 
+          disabled={currentPage === 1}
+        >
+          <ChevronLeft />
+        </Button>
+        <span className="mx-4">Page {currentPage} of {totalPages}</span>
+        <Button 
+          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} 
+          disabled={currentPage === totalPages}
+        >
+          <ChevronRight />
+        </Button>
+      </div>
           </div>
         </div>
       </main>

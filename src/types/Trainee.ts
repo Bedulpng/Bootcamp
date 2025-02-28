@@ -166,12 +166,24 @@ export interface Note {
   lessonCompletion: {
     id: string
     lesson: {
+      class: {
+        className: string;
+      }
+      batch: {
+        batchTitle: string;
+      }
       title: string;
     }
   }
   challengeCompletion: {
     id: string
     challenge: {
+      class: {
+        className: string;
+      }
+      batch: {
+        batchTitle: string;
+      }
       title: string;
     }
   }

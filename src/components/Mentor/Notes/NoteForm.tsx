@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Note, Trainee} from "../../../types/Trainee";
+import { Note, Trainee, Batch, Class } from "../../../types/Trainee";
 const apiUrl = import.meta.env.VITE_API_URL;
 
 type NoteFormProps = {
@@ -14,10 +21,44 @@ type NoteFormProps = {
   onCancel: () => void;
 };
 
-export default function NoteForm({ addNote, selectedTrainee, onCancel }: NoteFormProps) {
+export default function NoteForm({
+  addNote,
+  selectedTrainee,
+  onCancel,
+}: NoteFormProps) {
   const [content, setContent] = useState("");
-  const [visibility, setVisibility] = useState<"FOR_TRAINEE" | "FOR_GRADER">("FOR_TRAINEE");
+  const [visibility, setVisibility] = useState<"FOR_TRAINEE" | "FOR_GRADER">(
+    "FOR_TRAINEE"
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [batches, setBatches] = useState<Batch[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
+  const [selectedBatch, setSelectedBatch] = useState<string>("all");
+  const [selectedClass, setSelectedClass] = useState<string>("all");
+
+  useEffect(() => {
+    const fetchBatches = async () => {
+      try {
+        const response = await axios.get(`http://${apiUrl}/admin/batch`);
+        setBatches(response.data);
+      } catch (error) {
+        console.error("Error fetching batches:", error);
+      }
+    };
+    fetchBatches();
+  }, []);
+
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const response = await axios.get(`http://${apiUrl}/admin/class`);
+        setClasses(response.data);
+      } catch (error) {
+        console.error("Error fetching batches:", error);
+      }
+    };
+    fetchClasses();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +87,8 @@ export default function NoteForm({ addNote, selectedTrainee, onCancel }: NoteFor
           visibility,
           graderId,
           traineeId: selectedTrainee.id,
+          classId: selectedClass,
+          batchId: selectedBatch,
         },
         {
           headers: {
@@ -63,10 +106,12 @@ export default function NoteForm({ addNote, selectedTrainee, onCancel }: NoteFor
       alert("Failed to add note. Please try again.");
     }
   };
-  
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-md">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6 bg-white p-6 rounded-lg shadow-md"
+    >
       {selectedTrainee && (
         <div className="mb-4">
           <p className="text-sm text-gray-600">{selectedTrainee.fullName}</p>
@@ -80,33 +125,85 @@ export default function NoteForm({ addNote, selectedTrainee, onCancel }: NoteFor
         className="min-h-[120px] border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
       />
 
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-gray-700">Visibility</p>
-        <RadioGroup
-          className="space-y-2"
-          value={visibility}
-          onValueChange={(value: "FOR_TRAINEE" | "FOR_GRADER") => setVisibility(value)}
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="FOR_TRAINEE" id="for_trainee" />
-            <Label htmlFor="for_trainee" className="cursor-pointer text-gray-700">
-              For Trainee
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="FOR_GRADER" id="for_grader" />
-            <Label htmlFor="for_grader" className="cursor-pointer text-gray-700">
-              For Grader
-            </Label>
-          </div>
-        </RadioGroup>
+      <div className="flex items-start space-x-[130px]">
+        {/* Visibility (Radio Group) */}
+        <div>
+          <p className="text-sm font-medium text-gray-700 text-center mb-[20px]">Visibility</p>
+          <RadioGroup
+            className="space-y-2"
+            value={visibility}
+            onValueChange={(value: "FOR_TRAINEE" | "FOR_GRADER") =>
+              setVisibility(value)
+            }
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="FOR_TRAINEE" id="for_trainee" />
+              <Label
+                htmlFor="for_trainee"
+                className="cursor-pointer text-gray-700"
+              >
+                For Trainee
+              </Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="FOR_GRADER" id="for_grader" />
+              <Label
+                htmlFor="for_grader"
+                className="cursor-pointer text-gray-700"
+              >
+                For Grader
+              </Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {/* Batch & Class Select Block */}
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-gray-700 text-center mb-[12px]">Batch & Class</p>
+          <Select value={selectedBatch} onValueChange={setSelectedBatch}>
+            <SelectTrigger className="w-[180px] bg-white">
+              <SelectValue placeholder="Select Batch" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Batches</SelectItem>
+              {batches.map((batch) => (
+                <SelectItem key={batch.id} value={batch.id}>
+                  {batch.batchTitle}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={selectedClass} onValueChange={setSelectedClass}>
+            <SelectTrigger className="w-[180px] bg-white">
+              <SelectValue placeholder="Select Class" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Classes</SelectItem>
+              {classes.map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+                  {c.className}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="flex justify-end space-x-3">
-        <Button type="button" variant="outline" onClick={onCancel} className="px-4 py-2 border-gray-300">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          className="px-4 py-2 border-gray-300"
+        >
           Cancel
         </Button>
-        <Button type="submit" disabled={isSubmitting} className="px-4 py-2 bg-indigo-600 text-white">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="px-4 py-2 bg-indigo-600 text-white"
+        >
           {isSubmitting ? "Adding..." : "Add Note"}
         </Button>
       </div>
